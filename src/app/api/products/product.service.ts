@@ -40,8 +40,8 @@ export const getAllProducts = async (search?: string) => {
     imageUrl: p.imageUrl || (p.images && p.images.length > 0 ? p.images[0] : ""),
     sizeDimensions: p.sizeDimensions || p.dimensions || "",
     currentStock: p.currentStock !== undefined ? p.currentStock : (p.inStock ? 5 : 0),
-    sku: p.sku || p.id,
-    barcode: p.barcode || p.sku || p.id
+    sku: p.sku || p.id || p._id?.toString(),
+    barcode: p.barcode || p.sku || p.id || p._id?.toString()
   }));
 };
 
@@ -55,8 +55,8 @@ export const getProductById = async (id: string) => {
     imageUrl: p.imageUrl || (p.images && p.images.length > 0 ? p.images[0] : ""),
     sizeDimensions: p.sizeDimensions || p.dimensions || "",
     currentStock: p.currentStock !== undefined ? p.currentStock : (p.inStock ? 5 : 0),
-    sku: p.sku || p.id,
-    barcode: p.barcode || p.sku || p.id
+    sku: p.sku || p.id || p._id?.toString(),
+    barcode: p.barcode || p.sku || p.id || p._id?.toString()
   };
 };
 
