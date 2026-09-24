@@ -821,9 +821,7 @@ const ProductFormModal: React.FC<ProductFormModalProps> = ({
     barcode: nextBarcode,
     warrantyYears: product?.warrantyYears || 5,
     description: product?.description || '',
-    imageUrl:
-      product?.imageUrl ||
-      'https://images.unsplash.com/photo-1555041469-a586c61ea9bc?auto=format&fit=crop&w=800&q=80',
+    imageUrl: product?.imageUrl || '',
     featuredInCatalogue: product?.featuredInCatalogue ?? true,
     specifications: product?.specifications || ['High-grade bespoke manufacture'],
     customizable: product?.customizable ?? true,
