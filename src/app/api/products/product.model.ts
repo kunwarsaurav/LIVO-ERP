@@ -5,6 +5,15 @@ export interface IProductDocument extends Omit<ProductType, "id">, Document {
   id: string;
   createdAt: Date;
   updatedAt: Date;
+  
+  // Website specific fields mapped from ERP
+  price?: number;
+  originalPrice?: number;
+  images?: string[];
+  dimensions?: string;
+  inStock?: boolean;
+  room?: string;
+  isPopular?: boolean;
 }
 
 const ProductSchema = new Schema<IProductDocument>(
@@ -34,6 +43,15 @@ const ProductSchema = new Schema<IProductDocument>(
     featuredInCatalogue: { type: Boolean, default: true },
     specifications: { type: [String], default: [] },
     customizable: { type: Boolean, default: true },
+
+    // Website-specific mapped fields (so they don't get stripped)
+    price: { type: Number },
+    originalPrice: { type: Number },
+    images: { type: [String], default: [] },
+    dimensions: { type: String, default: "" },
+    inStock: { type: Boolean, default: true },
+    room: { type: String, default: "all" },
+    isPopular: { type: Boolean, default: false },
   },
   {
     timestamps: true,

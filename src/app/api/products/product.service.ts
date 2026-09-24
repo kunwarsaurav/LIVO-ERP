@@ -6,7 +6,18 @@ const productFilter = (id: string) =>
   mongoose.isValidObjectId(id) ? { $or: [{ id }, { _id: id }] } : { id };
 
 export const createProduct = async (product: CreateProductInput) => {
-  return ProductModel.create(product as IProductDocument);
+  // Map ERP fields to Website-compatible fields automatically
+  const mappedProduct = {
+    ...product,
+    price: product.sellingPrice,
+    originalPrice: product.mrp,
+    images: product.imageUrl ? [product.imageUrl] : [],
+    dimensions: product.sizeDimensions || "",
+    inStock: (product.currentStock || 0) > 0,
+    room: "all", // Required by website
+  };
+  
+  return ProductModel.create(mappedProduct as IProductDocument);
 };
 
 export const getAllProducts = async (search?: string) => {
@@ -30,7 +41,15 @@ export const updateProductById = async (
   id: string,
   validatedData: Partial<CreateProductInput>,
 ) => {
-  return ProductModel.findOneAndUpdate(productFilter(id), validatedData, {
+  // Map ERP fields to Website-compatible fields during updates too
+  const mappedUpdate: any = { ...validatedData };
+  if (validatedData.sellingPrice !== undefined) mappedUpdate.price = validatedData.sellingPrice;
+  if (validatedData.mrp !== undefined) mappedUpdate.originalPrice = validatedData.mrp;
+  if (validatedData.imageUrl !== undefined) mappedUpdate.images = validatedData.imageUrl ? [validatedData.imageUrl] : [];
+  if (validatedData.sizeDimensions !== undefined) mappedUpdate.dimensions = validatedData.sizeDimensions;
+  if (validatedData.currentStock !== undefined) mappedUpdate.inStock = validatedData.currentStock > 0;
+
+  return ProductModel.findOneAndUpdate(productFilter(id), mappedUpdate, {
     returnDocument: "after",
     runValidators: true,
   });
