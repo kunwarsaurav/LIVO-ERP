@@ -1,5 +1,7 @@
+"use client";
+
 import React, { useState } from 'react';
-import { ERPProvider, useERP } from './context/ERPContext';
+import { useERP } from './context/ERPContext';
 import { Header } from './components/layout/Header';
 import { Sidebar, NavTab } from './components/layout/Sidebar';
 import { OverviewDashboard } from './components/dashboard/OverviewDashboard';
@@ -13,7 +15,7 @@ import { SalesCRMModule } from './components/crm/SalesCRMModule';
 import { PrintDocumentModal } from './components/common/PrintDocumentModal';
 import { Product, Invoice, Quotation } from './types';
 
-const MainApp: React.FC = () => {
+export default function App() {
   const [currentTab, setCurrentTab] = useState<NavTab>('dashboard');
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedProductForTag, setSelectedProductForTag] = useState<Product | undefined>(undefined);
@@ -99,13 +101,5 @@ const MainApp: React.FC = () => {
         />
       )}
     </div>
-  );
-};
-
-export default function App() {
-  return (
-    <ERPProvider>
-      <MainApp />
-    </ERPProvider>
   );
 }
