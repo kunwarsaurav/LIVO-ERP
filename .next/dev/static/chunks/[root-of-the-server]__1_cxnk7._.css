@@ -83,6 +83,14 @@
       --tw-translate-x: 0;
       --tw-translate-y: 0;
       --tw-translate-z: 0;
+      --tw-scale-x: 1;
+      --tw-scale-y: 1;
+      --tw-scale-z: 1;
+      --tw-rotate-x: initial;
+      --tw-rotate-y: initial;
+      --tw-rotate-z: initial;
+      --tw-skew-x: initial;
+      --tw-skew-y: initial;
       --tw-space-y-reverse: 0;
       --tw-divide-y-reverse: 0;
       --tw-border-style: solid;
@@ -135,9 +143,6 @@
       --tw-backdrop-saturate: initial;
       --tw-backdrop-sepia: initial;
       --tw-duration: initial;
-      --tw-scale-x: 1;
-      --tw-scale-y: 1;
-      --tw-scale-z: 1;
     }
   }
 }
@@ -187,6 +192,7 @@
     --color-rose-600: #e70044;
     --color-rose-700: #c20039;
     --color-rose-800: #a30037;
+    --color-gray-500: #6a7282;
     --color-stone-50: #fafaf9;
     --color-stone-100: #f5f5f4;
     --color-stone-200: #e7e5e4;
@@ -291,6 +297,7 @@
       --color-rose-600: lab(49.1882% 81.577 36.0311);
       --color-rose-700: lab(41.1651% 71.6251 30.3087);
       --color-rose-800: lab(34.6481% 60.802 20.1957);
+      --color-gray-500: lab(47.7841% -.393212 -10.0268);
       --color-stone-50: lab(98.2686% -.0991821 .364304);
       --color-stone-100: lab(96.5286% -.0991821 .36428);
       --color-stone-200: lab(91.055% .663072 .865591);
@@ -555,6 +562,10 @@
 @layer components;
 
 @layer utilities {
+  .visible {
+    visibility: visible;
+  }
+
   .absolute {
     position: absolute;
   }
@@ -669,6 +680,10 @@
     }
   }
 
+  .m-0 {
+    margin: 0;
+  }
+
   .mx-2 {
     margin-inline: calc(var(--spacing) * 2);
   }
@@ -693,6 +708,10 @@
     margin-top: var(--spacing);
   }
 
+  .mt-1\.5 {
+    margin-top: calc(var(--spacing) * 1.5);
+  }
+
   .mt-2 {
     margin-top: calc(var(--spacing) * 2);
   }
@@ -707,6 +726,18 @@
 
   .mt-6 {
     margin-top: calc(var(--spacing) * 6);
+  }
+
+  .mt-10 {
+    margin-top: calc(var(--spacing) * 10);
+  }
+
+  .mt-\[1px\] {
+    margin-top: 1px;
+  }
+
+  .mb-0\.5 {
+    margin-bottom: calc(var(--spacing) * .5);
   }
 
   .mb-1 {
@@ -731,6 +762,10 @@
 
   .mb-5 {
     margin-bottom: calc(var(--spacing) * 5);
+  }
+
+  .mb-\[1px\] {
+    margin-bottom: 1px;
   }
 
   .line-clamp-1 {
@@ -761,6 +796,10 @@
 
   .hidden {
     display: none;
+  }
+
+  .inline {
+    display: inline;
   }
 
   .inline-block {
@@ -821,6 +860,10 @@
 
   .h-64 {
     height: calc(var(--spacing) * 64);
+  }
+
+  .h-\[25mm\] {
+    height: 25mm;
   }
 
   .h-full {
@@ -907,6 +950,10 @@
     width: calc(var(--spacing) * 48);
   }
 
+  .w-\[50mm\] {
+    width: 50mm;
+  }
+
   .w-full {
     width: 100%;
   }
@@ -983,9 +1030,28 @@
     flex-shrink: 0;
   }
 
+  .origin-top {
+    transform-origin: top;
+  }
+
   .-translate-y-1\/2 {
     --tw-translate-y: calc(calc(1 / 2 * 100%) * -1);
     translate: var(--tw-translate-x) var(--tw-translate-y);
+  }
+
+  .scale-90 {
+    --tw-scale-x: 90%;
+    --tw-scale-y: 90%;
+    --tw-scale-z: 90%;
+    scale: var(--tw-scale-x) var(--tw-scale-y);
+  }
+
+  .scale-\[0\.85\] {
+    scale: .85;
+  }
+
+  .transform {
+    transform: var(--tw-rotate-x, ) var(--tw-rotate-y, ) var(--tw-rotate-z, ) var(--tw-skew-x, ) var(--tw-skew-y, );
   }
 
   .animate-pulse {
@@ -2070,6 +2136,10 @@
     line-height: var(--tw-leading, var(--text-xs--line-height));
   }
 
+  .text-\[7px\] {
+    font-size: 7px;
+  }
+
   .text-\[8px\] {
     font-size: 8px;
   }
@@ -2161,6 +2231,10 @@
     letter-spacing: var(--tracking-widest);
   }
 
+  .text-ellipsis {
+    text-overflow: ellipsis;
+  }
+
   .whitespace-nowrap {
     white-space: nowrap;
   }
@@ -2215,6 +2289,10 @@
     color: var(--color-amber-950);
   }
 
+  .text-black {
+    color: var(--color-black);
+  }
+
   .text-blue-600 {
     color: var(--color-blue-600);
   }
@@ -2265,6 +2343,10 @@
 
   .text-emerald-900 {
     color: var(--color-emerald-900);
+  }
+
+  .text-gray-500 {
+    color: var(--color-gray-500);
   }
 
   .text-rose-500 {
@@ -2603,6 +2685,10 @@
     border-color: var(--color-amber-500);
   }
 
+  .focus\:border-amber-600:focus {
+    border-color: var(--color-amber-600);
+  }
+
   .focus\:ring-1:focus {
     --tw-ring-shadow: var(--tw-ring-inset, ) 0 0 0 calc(1px + var(--tw-ring-offset-width)) var(--tw-ring-color, currentcolor);
     box-shadow: var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow);
@@ -2746,12 +2832,40 @@
       margin-block: 0;
     }
 
+    .print\:mt-0 {
+      margin-top: 0;
+    }
+
     .print\:hidden {
       display: none;
     }
 
+    .print\:h-\[25mm\] {
+      height: 25mm;
+    }
+
+    .print\:w-\[50mm\] {
+      width: 50mm;
+    }
+
+    .print\:w-auto {
+      width: auto;
+    }
+
     .print\:max-w-none {
       max-width: none;
+    }
+
+    .print\:items-start {
+      align-items: flex-start;
+    }
+
+    .print\:justify-start {
+      justify-content: flex-start;
+    }
+
+    .print\:rounded-none {
+      border-radius: 0;
     }
 
     .print\:border-none {
@@ -2765,6 +2879,10 @@
 
     .print\:p-0 {
       padding: 0;
+    }
+
+    .print\:p-2 {
+      padding: calc(var(--spacing) * 2);
     }
 
     .print\:shadow-none {
@@ -2826,6 +2944,49 @@
   syntax: "*";
   inherits: false;
   initial-value: 0;
+}
+
+@property --tw-scale-x {
+  syntax: "*";
+  inherits: false;
+  initial-value: 1;
+}
+
+@property --tw-scale-y {
+  syntax: "*";
+  inherits: false;
+  initial-value: 1;
+}
+
+@property --tw-scale-z {
+  syntax: "*";
+  inherits: false;
+  initial-value: 1;
+}
+
+@property --tw-rotate-x {
+  syntax: "*";
+  inherits: false
+}
+
+@property --tw-rotate-y {
+  syntax: "*";
+  inherits: false
+}
+
+@property --tw-rotate-z {
+  syntax: "*";
+  inherits: false
+}
+
+@property --tw-skew-x {
+  syntax: "*";
+  inherits: false
+}
+
+@property --tw-skew-y {
+  syntax: "*";
+  inherits: false
 }
 
 @property --tw-space-y-reverse {
@@ -3105,24 +3266,6 @@
 @property --tw-duration {
   syntax: "*";
   inherits: false
-}
-
-@property --tw-scale-x {
-  syntax: "*";
-  inherits: false;
-  initial-value: 1;
-}
-
-@property --tw-scale-y {
-  syntax: "*";
-  inherits: false;
-  initial-value: 1;
-}
-
-@property --tw-scale-z {
-  syntax: "*";
-  inherits: false;
-  initial-value: 1;
 }
 
 @keyframes pulse {

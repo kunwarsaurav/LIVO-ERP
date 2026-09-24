@@ -1061,7 +1061,7 @@ var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$x$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__X$3e$__ = __turbopack_context__.i("[project]/node_modules/lucide-react/dist/esm/icons/x.js [app-ssr] (ecmascript) <export default as X>");
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$printer$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__Printer$3e$__ = __turbopack_context__.i("[project]/node_modules/lucide-react/dist/esm/icons/printer.js [app-ssr] (ecmascript) <export default as Printer>");
 var __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$utils$2f$formatters$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/src/utils/formatters.ts [app-ssr] (ecmascript)");
-var __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$utils$2f$barcode$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/src/utils/barcode.ts [app-ssr] (ecmascript)");
+var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$qrcode$2e$react$2f$lib$2f$esm$2f$index$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/qrcode.react/lib/esm/index.js [app-ssr] (ecmascript)");
 ;
 ;
 ;
@@ -1074,7 +1074,7 @@ const PrintDocumentModal = ({ document, onClose })=>{
     const isInvoice = document.type === 'invoice';
     const inv = isInvoice ? document.data : null;
     const quote = !isInvoice ? document.data : null;
-    const qrSvg = (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$utils$2f$barcode$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["generateQRCodeSVG"])(`https://livofurniture.com/verify-doc?doc=${isInvoice ? inv?.invoiceNumber : quote?.quoteNumber}&trn=100349281900003`, 100);
+    const qrValue = `https://livofurniture.com/verify-doc?doc=${isInvoice ? inv?.invoiceNumber : quote?.quoteNumber}&trn=100349281900003`;
     return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
         className: "fixed inset-0 z-50 bg-stone-900/70 backdrop-blur-xs flex items-center justify-center p-4 overflow-y-auto print:p-0 print:bg-white print:static",
         children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1088,7 +1088,7 @@ const PrintDocumentModal = ({ document, onClose })=>{
                             children: isInvoice ? 'Official Tax Invoice Document' : 'Bespoke Design Quotation'
                         }, void 0, false, {
                             fileName: "[project]/src/components/common/PrintDocumentModal.tsx",
-                            lineNumber: 39,
+                            lineNumber: 36,
                             columnNumber: 11
                         }, ("TURBOPACK compile-time value", void 0)),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1102,20 +1102,20 @@ const PrintDocumentModal = ({ document, onClose })=>{
                                             className: "w-3.5 h-3.5"
                                         }, void 0, false, {
                                             fileName: "[project]/src/components/common/PrintDocumentModal.tsx",
-                                            lineNumber: 47,
+                                            lineNumber: 44,
                                             columnNumber: 15
                                         }, ("TURBOPACK compile-time value", void 0)),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
                                             children: "Print / Save PDF"
                                         }, void 0, false, {
                                             fileName: "[project]/src/components/common/PrintDocumentModal.tsx",
-                                            lineNumber: 48,
+                                            lineNumber: 45,
                                             columnNumber: 15
                                         }, ("TURBOPACK compile-time value", void 0))
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/src/components/common/PrintDocumentModal.tsx",
-                                    lineNumber: 43,
+                                    lineNumber: 40,
                                     columnNumber: 13
                                 }, ("TURBOPACK compile-time value", void 0)),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -1125,24 +1125,24 @@ const PrintDocumentModal = ({ document, onClose })=>{
                                         className: "w-5 h-5"
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/common/PrintDocumentModal.tsx",
-                                        lineNumber: 54,
+                                        lineNumber: 51,
                                         columnNumber: 15
                                     }, ("TURBOPACK compile-time value", void 0))
                                 }, void 0, false, {
                                     fileName: "[project]/src/components/common/PrintDocumentModal.tsx",
-                                    lineNumber: 50,
+                                    lineNumber: 47,
                                     columnNumber: 13
                                 }, ("TURBOPACK compile-time value", void 0))
                             ]
                         }, void 0, true, {
                             fileName: "[project]/src/components/common/PrintDocumentModal.tsx",
-                            lineNumber: 42,
+                            lineNumber: 39,
                             columnNumber: 11
                         }, ("TURBOPACK compile-time value", void 0))
                     ]
                 }, void 0, true, {
                     fileName: "[project]/src/components/common/PrintDocumentModal.tsx",
-                    lineNumber: 38,
+                    lineNumber: 35,
                     columnNumber: 9
                 }, ("TURBOPACK compile-time value", void 0)),
                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1158,7 +1158,7 @@ const PrintDocumentModal = ({ document, onClose })=>{
                                             children: "LIVO FURNITURE"
                                         }, void 0, false, {
                                             fileName: "[project]/src/components/common/PrintDocumentModal.tsx",
-                                            lineNumber: 64,
+                                            lineNumber: 61,
                                             columnNumber: 15
                                         }, ("TURBOPACK compile-time value", void 0)),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -1166,7 +1166,7 @@ const PrintDocumentModal = ({ document, onClose })=>{
                                             children: "HAUTE LIVING & INTERIOR ATELIER"
                                         }, void 0, false, {
                                             fileName: "[project]/src/components/common/PrintDocumentModal.tsx",
-                                            lineNumber: 67,
+                                            lineNumber: 64,
                                             columnNumber: 15
                                         }, ("TURBOPACK compile-time value", void 0)),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1176,33 +1176,33 @@ const PrintDocumentModal = ({ document, onClose })=>{
                                                     children: "Showroom: Al Quoz Industrial 1, Sheikh Zayed Road, Dubai, UAE"
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/components/common/PrintDocumentModal.tsx",
-                                                    lineNumber: 71,
+                                                    lineNumber: 68,
                                                     columnNumber: 17
                                                 }, ("TURBOPACK compile-time value", void 0)),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                                     children: "Corporate Tax Registration TRN: 100349281900003"
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/components/common/PrintDocumentModal.tsx",
-                                                    lineNumber: 72,
+                                                    lineNumber: 69,
                                                     columnNumber: 17
                                                 }, ("TURBOPACK compile-time value", void 0)),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                                     children: "Email: atelier@livofurniture.com • Phone: +971 4 388 9200"
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/components/common/PrintDocumentModal.tsx",
-                                                    lineNumber: 73,
+                                                    lineNumber: 70,
                                                     columnNumber: 17
                                                 }, ("TURBOPACK compile-time value", void 0))
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/src/components/common/PrintDocumentModal.tsx",
-                                            lineNumber: 70,
+                                            lineNumber: 67,
                                             columnNumber: 15
                                         }, ("TURBOPACK compile-time value", void 0))
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/src/components/common/PrintDocumentModal.tsx",
-                                    lineNumber: 63,
+                                    lineNumber: 60,
                                     columnNumber: 13
                                 }, ("TURBOPACK compile-time value", void 0)),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1213,7 +1213,7 @@ const PrintDocumentModal = ({ document, onClose })=>{
                                             children: isInvoice ? 'TAX INVOICE' : 'FORMAL QUOTATION'
                                         }, void 0, false, {
                                             fileName: "[project]/src/components/common/PrintDocumentModal.tsx",
-                                            lineNumber: 78,
+                                            lineNumber: 75,
                                             columnNumber: 15
                                         }, ("TURBOPACK compile-time value", void 0)),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1221,7 +1221,7 @@ const PrintDocumentModal = ({ document, onClose })=>{
                                             children: isInvoice ? inv?.invoiceNumber : quote?.quoteNumber
                                         }, void 0, false, {
                                             fileName: "[project]/src/components/common/PrintDocumentModal.tsx",
-                                            lineNumber: 81,
+                                            lineNumber: 78,
                                             columnNumber: 15
                                         }, ("TURBOPACK compile-time value", void 0)),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1232,7 +1232,7 @@ const PrintDocumentModal = ({ document, onClose })=>{
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/src/components/common/PrintDocumentModal.tsx",
-                                            lineNumber: 84,
+                                            lineNumber: 81,
                                             columnNumber: 15
                                         }, ("TURBOPACK compile-time value", void 0)),
                                         isInvoice && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1243,19 +1243,19 @@ const PrintDocumentModal = ({ document, onClose })=>{
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/src/components/common/PrintDocumentModal.tsx",
-                                            lineNumber: 88,
+                                            lineNumber: 85,
                                             columnNumber: 17
                                         }, ("TURBOPACK compile-time value", void 0))
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/src/components/common/PrintDocumentModal.tsx",
-                                    lineNumber: 77,
+                                    lineNumber: 74,
                                     columnNumber: 13
                                 }, ("TURBOPACK compile-time value", void 0))
                             ]
                         }, void 0, true, {
                             fileName: "[project]/src/components/common/PrintDocumentModal.tsx",
-                            lineNumber: 62,
+                            lineNumber: 59,
                             columnNumber: 11
                         }, ("TURBOPACK compile-time value", void 0)),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1268,7 +1268,7 @@ const PrintDocumentModal = ({ document, onClose })=>{
                                             children: "Billed To (Client):"
                                         }, void 0, false, {
                                             fileName: "[project]/src/components/common/PrintDocumentModal.tsx",
-                                            lineNumber: 98,
+                                            lineNumber: 95,
                                             columnNumber: 15
                                         }, ("TURBOPACK compile-time value", void 0)),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1276,7 +1276,7 @@ const PrintDocumentModal = ({ document, onClose })=>{
                                             children: isInvoice ? inv?.customerName : quote?.customerName
                                         }, void 0, false, {
                                             fileName: "[project]/src/components/common/PrintDocumentModal.tsx",
-                                            lineNumber: 101,
+                                            lineNumber: 98,
                                             columnNumber: 15
                                         }, ("TURBOPACK compile-time value", void 0)),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1284,7 +1284,7 @@ const PrintDocumentModal = ({ document, onClose })=>{
                                             children: isInvoice ? inv?.customerAddress : quote?.projectAddress
                                         }, void 0, false, {
                                             fileName: "[project]/src/components/common/PrintDocumentModal.tsx",
-                                            lineNumber: 104,
+                                            lineNumber: 101,
                                             columnNumber: 15
                                         }, ("TURBOPACK compile-time value", void 0)),
                                         !isInvoice && quote?.customerPhone && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1295,13 +1295,13 @@ const PrintDocumentModal = ({ document, onClose })=>{
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/src/components/common/PrintDocumentModal.tsx",
-                                            lineNumber: 108,
+                                            lineNumber: 105,
                                             columnNumber: 17
                                         }, ("TURBOPACK compile-time value", void 0))
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/src/components/common/PrintDocumentModal.tsx",
-                                    lineNumber: 97,
+                                    lineNumber: 94,
                                     columnNumber: 13
                                 }, ("TURBOPACK compile-time value", void 0)),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1312,7 +1312,7 @@ const PrintDocumentModal = ({ document, onClose })=>{
                                             children: "Project Information:"
                                         }, void 0, false, {
                                             fileName: "[project]/src/components/common/PrintDocumentModal.tsx",
-                                            lineNumber: 113,
+                                            lineNumber: 110,
                                             columnNumber: 15
                                         }, ("TURBOPACK compile-time value", void 0)),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1320,7 +1320,7 @@ const PrintDocumentModal = ({ document, onClose })=>{
                                             children: isInvoice ? inv?.invoiceType : quote?.projectTitle
                                         }, void 0, false, {
                                             fileName: "[project]/src/components/common/PrintDocumentModal.tsx",
-                                            lineNumber: 116,
+                                            lineNumber: 113,
                                             columnNumber: 15
                                         }, ("TURBOPACK compile-time value", void 0)),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1328,7 +1328,7 @@ const PrintDocumentModal = ({ document, onClose })=>{
                                             children: isInvoice ? `Payment Method: ${inv?.paymentMethod || 'Bank Wire'}` : `Valid Until: ${(0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$utils$2f$formatters$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["formatDate"])(quote?.validUntil)}`
                                         }, void 0, false, {
                                             fileName: "[project]/src/components/common/PrintDocumentModal.tsx",
-                                            lineNumber: 119,
+                                            lineNumber: 116,
                                             columnNumber: 15
                                         }, ("TURBOPACK compile-time value", void 0)),
                                         isInvoice && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1339,19 +1339,19 @@ const PrintDocumentModal = ({ document, onClose })=>{
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/src/components/common/PrintDocumentModal.tsx",
-                                            lineNumber: 125,
+                                            lineNumber: 122,
                                             columnNumber: 17
                                         }, ("TURBOPACK compile-time value", void 0))
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/src/components/common/PrintDocumentModal.tsx",
-                                    lineNumber: 112,
+                                    lineNumber: 109,
                                     columnNumber: 13
                                 }, ("TURBOPACK compile-time value", void 0))
                             ]
                         }, void 0, true, {
                             fileName: "[project]/src/components/common/PrintDocumentModal.tsx",
-                            lineNumber: 96,
+                            lineNumber: 93,
                             columnNumber: 11
                         }, ("TURBOPACK compile-time value", void 0)),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1368,7 +1368,7 @@ const PrintDocumentModal = ({ document, onClose })=>{
                                                     children: "#"
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/components/common/PrintDocumentModal.tsx",
-                                                    lineNumber: 137,
+                                                    lineNumber: 134,
                                                     columnNumber: 19
                                                 }, ("TURBOPACK compile-time value", void 0)),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("th", {
@@ -1376,7 +1376,7 @@ const PrintDocumentModal = ({ document, onClose })=>{
                                                     children: "Item Description"
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/components/common/PrintDocumentModal.tsx",
-                                                    lineNumber: 138,
+                                                    lineNumber: 135,
                                                     columnNumber: 19
                                                 }, ("TURBOPACK compile-time value", void 0)),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("th", {
@@ -1384,7 +1384,7 @@ const PrintDocumentModal = ({ document, onClose })=>{
                                                     children: "SKU"
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/components/common/PrintDocumentModal.tsx",
-                                                    lineNumber: 139,
+                                                    lineNumber: 136,
                                                     columnNumber: 19
                                                 }, ("TURBOPACK compile-time value", void 0)),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("th", {
@@ -1392,7 +1392,7 @@ const PrintDocumentModal = ({ document, onClose })=>{
                                                     children: "Qty"
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/components/common/PrintDocumentModal.tsx",
-                                                    lineNumber: 140,
+                                                    lineNumber: 137,
                                                     columnNumber: 19
                                                 }, ("TURBOPACK compile-time value", void 0)),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("th", {
@@ -1400,7 +1400,7 @@ const PrintDocumentModal = ({ document, onClose })=>{
                                                     children: "Unit Price"
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/components/common/PrintDocumentModal.tsx",
-                                                    lineNumber: 141,
+                                                    lineNumber: 138,
                                                     columnNumber: 19
                                                 }, ("TURBOPACK compile-time value", void 0)),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("th", {
@@ -1408,7 +1408,7 @@ const PrintDocumentModal = ({ document, onClose })=>{
                                                     children: "Taxable"
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/components/common/PrintDocumentModal.tsx",
-                                                    lineNumber: 142,
+                                                    lineNumber: 139,
                                                     columnNumber: 19
                                                 }, ("TURBOPACK compile-time value", void 0)),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("th", {
@@ -1416,7 +1416,7 @@ const PrintDocumentModal = ({ document, onClose })=>{
                                                     children: "VAT (5%)"
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/components/common/PrintDocumentModal.tsx",
-                                                    lineNumber: 143,
+                                                    lineNumber: 140,
                                                     columnNumber: 19
                                                 }, ("TURBOPACK compile-time value", void 0)),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("th", {
@@ -1424,18 +1424,18 @@ const PrintDocumentModal = ({ document, onClose })=>{
                                                     children: "Total"
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/components/common/PrintDocumentModal.tsx",
-                                                    lineNumber: 144,
+                                                    lineNumber: 141,
                                                     columnNumber: 19
                                                 }, ("TURBOPACK compile-time value", void 0))
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/src/components/common/PrintDocumentModal.tsx",
-                                            lineNumber: 136,
+                                            lineNumber: 133,
                                             columnNumber: 17
                                         }, ("TURBOPACK compile-time value", void 0))
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/common/PrintDocumentModal.tsx",
-                                        lineNumber: 135,
+                                        lineNumber: 132,
                                         columnNumber: 15
                                     }, ("TURBOPACK compile-time value", void 0)),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("tbody", {
@@ -1448,7 +1448,7 @@ const PrintDocumentModal = ({ document, onClose })=>{
                                                             children: idx + 1
                                                         }, void 0, false, {
                                                             fileName: "[project]/src/components/common/PrintDocumentModal.tsx",
-                                                            lineNumber: 151,
+                                                            lineNumber: 148,
                                                             columnNumber: 23
                                                         }, ("TURBOPACK compile-time value", void 0)),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("td", {
@@ -1456,7 +1456,7 @@ const PrintDocumentModal = ({ document, onClose })=>{
                                                             children: it.name
                                                         }, void 0, false, {
                                                             fileName: "[project]/src/components/common/PrintDocumentModal.tsx",
-                                                            lineNumber: 152,
+                                                            lineNumber: 149,
                                                             columnNumber: 23
                                                         }, ("TURBOPACK compile-time value", void 0)),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("td", {
@@ -1464,7 +1464,7 @@ const PrintDocumentModal = ({ document, onClose })=>{
                                                             children: it.sku
                                                         }, void 0, false, {
                                                             fileName: "[project]/src/components/common/PrintDocumentModal.tsx",
-                                                            lineNumber: 153,
+                                                            lineNumber: 150,
                                                             columnNumber: 23
                                                         }, ("TURBOPACK compile-time value", void 0)),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("td", {
@@ -1472,7 +1472,7 @@ const PrintDocumentModal = ({ document, onClose })=>{
                                                             children: it.quantity
                                                         }, void 0, false, {
                                                             fileName: "[project]/src/components/common/PrintDocumentModal.tsx",
-                                                            lineNumber: 154,
+                                                            lineNumber: 151,
                                                             columnNumber: 23
                                                         }, ("TURBOPACK compile-time value", void 0)),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("td", {
@@ -1480,7 +1480,7 @@ const PrintDocumentModal = ({ document, onClose })=>{
                                                             children: (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$utils$2f$formatters$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["formatCurrency"])(it.unitPrice)
                                                         }, void 0, false, {
                                                             fileName: "[project]/src/components/common/PrintDocumentModal.tsx",
-                                                            lineNumber: 155,
+                                                            lineNumber: 152,
                                                             columnNumber: 23
                                                         }, ("TURBOPACK compile-time value", void 0)),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("td", {
@@ -1488,7 +1488,7 @@ const PrintDocumentModal = ({ document, onClose })=>{
                                                             children: (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$utils$2f$formatters$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["formatCurrency"])(it.taxableAmount)
                                                         }, void 0, false, {
                                                             fileName: "[project]/src/components/common/PrintDocumentModal.tsx",
-                                                            lineNumber: 156,
+                                                            lineNumber: 153,
                                                             columnNumber: 23
                                                         }, ("TURBOPACK compile-time value", void 0)),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("td", {
@@ -1496,7 +1496,7 @@ const PrintDocumentModal = ({ document, onClose })=>{
                                                             children: (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$utils$2f$formatters$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["formatCurrency"])(it.vatAmount)
                                                         }, void 0, false, {
                                                             fileName: "[project]/src/components/common/PrintDocumentModal.tsx",
-                                                            lineNumber: 157,
+                                                            lineNumber: 154,
                                                             columnNumber: 23
                                                         }, ("TURBOPACK compile-time value", void 0)),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("td", {
@@ -1504,13 +1504,13 @@ const PrintDocumentModal = ({ document, onClose })=>{
                                                             children: (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$utils$2f$formatters$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["formatCurrency"])(it.total)
                                                         }, void 0, false, {
                                                             fileName: "[project]/src/components/common/PrintDocumentModal.tsx",
-                                                            lineNumber: 160,
+                                                            lineNumber: 157,
                                                             columnNumber: 23
                                                         }, ("TURBOPACK compile-time value", void 0))
                                                     ]
                                                 }, idx, true, {
                                                     fileName: "[project]/src/components/common/PrintDocumentModal.tsx",
-                                                    lineNumber: 150,
+                                                    lineNumber: 147,
                                                     columnNumber: 21
                                                 }, ("TURBOPACK compile-time value", void 0))),
                                             !isInvoice && quote?.items.map((it, idx)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("tr", {
@@ -1520,7 +1520,7 @@ const PrintDocumentModal = ({ document, onClose })=>{
                                                             children: idx + 1
                                                         }, void 0, false, {
                                                             fileName: "[project]/src/components/common/PrintDocumentModal.tsx",
-                                                            lineNumber: 169,
+                                                            lineNumber: 166,
                                                             columnNumber: 23
                                                         }, ("TURBOPACK compile-time value", void 0)),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("td", {
@@ -1531,7 +1531,7 @@ const PrintDocumentModal = ({ document, onClose })=>{
                                                                     children: it.name
                                                                 }, void 0, false, {
                                                                     fileName: "[project]/src/components/common/PrintDocumentModal.tsx",
-                                                                    lineNumber: 171,
+                                                                    lineNumber: 168,
                                                                     columnNumber: 25
                                                                 }, ("TURBOPACK compile-time value", void 0)),
                                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1543,13 +1543,13 @@ const PrintDocumentModal = ({ document, onClose })=>{
                                                                     ]
                                                                 }, void 0, true, {
                                                                     fileName: "[project]/src/components/common/PrintDocumentModal.tsx",
-                                                                    lineNumber: 172,
+                                                                    lineNumber: 169,
                                                                     columnNumber: 25
                                                                 }, ("TURBOPACK compile-time value", void 0))
                                                             ]
                                                         }, void 0, true, {
                                                             fileName: "[project]/src/components/common/PrintDocumentModal.tsx",
-                                                            lineNumber: 170,
+                                                            lineNumber: 167,
                                                             columnNumber: 23
                                                         }, ("TURBOPACK compile-time value", void 0)),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("td", {
@@ -1557,7 +1557,7 @@ const PrintDocumentModal = ({ document, onClose })=>{
                                                             children: it.sku
                                                         }, void 0, false, {
                                                             fileName: "[project]/src/components/common/PrintDocumentModal.tsx",
-                                                            lineNumber: 176,
+                                                            lineNumber: 173,
                                                             columnNumber: 23
                                                         }, ("TURBOPACK compile-time value", void 0)),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("td", {
@@ -1565,7 +1565,7 @@ const PrintDocumentModal = ({ document, onClose })=>{
                                                             children: it.quantity
                                                         }, void 0, false, {
                                                             fileName: "[project]/src/components/common/PrintDocumentModal.tsx",
-                                                            lineNumber: 177,
+                                                            lineNumber: 174,
                                                             columnNumber: 23
                                                         }, ("TURBOPACK compile-time value", void 0)),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("td", {
@@ -1573,7 +1573,7 @@ const PrintDocumentModal = ({ document, onClose })=>{
                                                             children: (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$utils$2f$formatters$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["formatCurrency"])(it.unitPrice)
                                                         }, void 0, false, {
                                                             fileName: "[project]/src/components/common/PrintDocumentModal.tsx",
-                                                            lineNumber: 178,
+                                                            lineNumber: 175,
                                                             columnNumber: 23
                                                         }, ("TURBOPACK compile-time value", void 0)),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("td", {
@@ -1581,7 +1581,7 @@ const PrintDocumentModal = ({ document, onClose })=>{
                                                             children: (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$utils$2f$formatters$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["formatCurrency"])(it.total)
                                                         }, void 0, false, {
                                                             fileName: "[project]/src/components/common/PrintDocumentModal.tsx",
-                                                            lineNumber: 179,
+                                                            lineNumber: 176,
                                                             columnNumber: 23
                                                         }, ("TURBOPACK compile-time value", void 0)),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("td", {
@@ -1589,7 +1589,7 @@ const PrintDocumentModal = ({ document, onClose })=>{
                                                             children: (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$utils$2f$formatters$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["formatCurrency"])(it.total * 0.05)
                                                         }, void 0, false, {
                                                             fileName: "[project]/src/components/common/PrintDocumentModal.tsx",
-                                                            lineNumber: 180,
+                                                            lineNumber: 177,
                                                             columnNumber: 23
                                                         }, ("TURBOPACK compile-time value", void 0)),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("td", {
@@ -1597,30 +1597,30 @@ const PrintDocumentModal = ({ document, onClose })=>{
                                                             children: (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$utils$2f$formatters$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["formatCurrency"])(it.total * 1.05)
                                                         }, void 0, false, {
                                                             fileName: "[project]/src/components/common/PrintDocumentModal.tsx",
-                                                            lineNumber: 183,
+                                                            lineNumber: 180,
                                                             columnNumber: 23
                                                         }, ("TURBOPACK compile-time value", void 0))
                                                     ]
                                                 }, idx, true, {
                                                     fileName: "[project]/src/components/common/PrintDocumentModal.tsx",
-                                                    lineNumber: 168,
+                                                    lineNumber: 165,
                                                     columnNumber: 21
                                                 }, ("TURBOPACK compile-time value", void 0)))
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/components/common/PrintDocumentModal.tsx",
-                                        lineNumber: 147,
+                                        lineNumber: 144,
                                         columnNumber: 15
                                     }, ("TURBOPACK compile-time value", void 0))
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/components/common/PrintDocumentModal.tsx",
-                                lineNumber: 134,
+                                lineNumber: 131,
                                 columnNumber: 13
                             }, ("TURBOPACK compile-time value", void 0))
                         }, void 0, false, {
                             fileName: "[project]/src/components/common/PrintDocumentModal.tsx",
-                            lineNumber: 133,
+                            lineNumber: 130,
                             columnNumber: 11
                         }, ("TURBOPACK compile-time value", void 0)),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1629,14 +1629,15 @@ const PrintDocumentModal = ({ document, onClose })=>{
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                     className: "flex items-center gap-4",
                                     children: [
-                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                            dangerouslySetInnerHTML: {
-                                                __html: qrSvg
-                                            },
-                                            className: "[&>svg]:w-20 [&>svg]:h-20 p-1 border border-stone-300 rounded bg-white"
+                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$qrcode$2e$react$2f$lib$2f$esm$2f$index$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["QRCodeSVG"], {
+                                            value: qrValue,
+                                            size: 80,
+                                            level: "M",
+                                            includeMargin: true,
+                                            className: "border border-stone-300 rounded bg-white"
                                         }, void 0, false, {
                                             fileName: "[project]/src/components/common/PrintDocumentModal.tsx",
-                                            lineNumber: 196,
+                                            lineNumber: 193,
                                             columnNumber: 15
                                         }, ("TURBOPACK compile-time value", void 0)),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1673,7 +1674,7 @@ const PrintDocumentModal = ({ document, onClose })=>{
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/src/components/common/PrintDocumentModal.tsx",
-                                    lineNumber: 195,
+                                    lineNumber: 192,
                                     columnNumber: 13
                                 }, ("TURBOPACK compile-time value", void 0)),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1784,7 +1785,7 @@ const PrintDocumentModal = ({ document, onClose })=>{
                             ]
                         }, void 0, true, {
                             fileName: "[project]/src/components/common/PrintDocumentModal.tsx",
-                            lineNumber: 193,
+                            lineNumber: 190,
                             columnNumber: 11
                         }, ("TURBOPACK compile-time value", void 0)),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1859,18 +1860,18 @@ const PrintDocumentModal = ({ document, onClose })=>{
                     ]
                 }, void 0, true, {
                     fileName: "[project]/src/components/common/PrintDocumentModal.tsx",
-                    lineNumber: 60,
+                    lineNumber: 57,
                     columnNumber: 9
                 }, ("TURBOPACK compile-time value", void 0))
             ]
         }, void 0, true, {
             fileName: "[project]/src/components/common/PrintDocumentModal.tsx",
-            lineNumber: 36,
+            lineNumber: 33,
             columnNumber: 7
         }, ("TURBOPACK compile-time value", void 0))
     }, void 0, false, {
         fileName: "[project]/src/components/common/PrintDocumentModal.tsx",
-        lineNumber: 35,
+        lineNumber: 32,
         columnNumber: 5
     }, ("TURBOPACK compile-time value", void 0));
 };
@@ -3502,9 +3503,11 @@ var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$qr$2d$code$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__QrCode$3e$__ = __turbopack_context__.i("[project]/node_modules/lucide-react/dist/esm/icons/qr-code.js [app-ssr] (ecmascript) <export default as QrCode>");
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$printer$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__Printer$3e$__ = __turbopack_context__.i("[project]/node_modules/lucide-react/dist/esm/icons/printer.js [app-ssr] (ecmascript) <export default as Printer>");
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$award$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__Award$3e$__ = __turbopack_context__.i("[project]/node_modules/lucide-react/dist/esm/icons/award.js [app-ssr] (ecmascript) <export default as Award>");
+var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$react$2d$barcode$2f$lib$2f$react$2d$barcode$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/react-barcode/lib/react-barcode.js [app-ssr] (ecmascript)");
+var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$qrcode$2e$react$2f$lib$2f$esm$2f$index$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/qrcode.react/lib/esm/index.js [app-ssr] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$context$2f$ERPContext$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/src/context/ERPContext.tsx [app-ssr] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$utils$2f$formatters$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/src/utils/formatters.ts [app-ssr] (ecmascript)");
-var __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$utils$2f$barcode$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/src/utils/barcode.ts [app-ssr] (ecmascript)");
+;
 ;
 ;
 ;
@@ -3524,15 +3527,46 @@ const ProductTagSystem = ({ initialSelectedProduct })=>{
     // Batch print mode
     const [batchCategory, setBatchCategory] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])('All');
     const [isBatchMode, setIsBatchMode] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(false);
-    const barcodeSvg = selectedProduct?.sku ? (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$utils$2f$barcode$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["generateBarcodeSVG"])(selectedProduct.sku, 240, 50) : '';
-    const qrSvg = selectedProduct?.sku ? (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$utils$2f$barcode$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["generateQRCodeSVG"])(`https://livofurniture.com/verify?sku=${selectedProduct.sku}&serial=${selectedProduct.barcode}`, 110) : '';
+    const qrValue = selectedProduct?.barcode ? `https://livofurniture.com/verify?barcode=${selectedProduct.barcode}&sku=${selectedProduct.sku}` : '';
     const batchProducts = products.filter((p)=>batchCategory === 'All' || p.category === batchCategory);
     const handlePrint = ()=>{
         window.print();
     };
+    // Print CSS injected inline — isolates the tag from the rest of the app UI
+    const printStyles = `
+    @media print {
+      @page { size: A5 portrait; margin: 8mm; }
+      body * { visibility: hidden !important; }
+      #printable-tag, #printable-tag * { visibility: visible !important; }
+      #printable-tag {
+        position: fixed !important;
+        top: 0 !important;
+        left: 0 !important;
+        width: 148mm !important;
+        box-shadow: none !important;
+        border: 1px solid #ccc !important;
+        border-radius: 0 !important;
+        margin: 0 !important;
+      }
+      #batch-print-grid { display: none !important; }
+    }
+    @media print.batch-mode {
+      #printable-tag { display: none !important; }
+      #batch-print-grid, #batch-print-grid * { visibility: visible !important; }
+    }
+  `;
     return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
         className: "space-y-6",
         children: [
+            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("style", {
+                dangerouslySetInnerHTML: {
+                    __html: printStyles
+                }
+            }, void 0, false, {
+                fileName: "[project]/src/components/mrp/ProductTagSystem.tsx",
+                lineNumber: 76,
+                columnNumber: 7
+            }, ("TURBOPACK compile-time value", void 0)),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                 className: "flex flex-col md:flex-row md:items-center justify-between gap-4",
                 children: [
@@ -3545,14 +3579,14 @@ const ProductTagSystem = ({ initialSelectedProduct })=>{
                                         className: "w-5 h-5 text-amber-700"
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/mrp/ProductTagSystem.tsx",
-                                        lineNumber: 62,
+                                        lineNumber: 81,
                                         columnNumber: 13
                                     }, ("TURBOPACK compile-time value", void 0)),
                                     "MRP / Product Tag Studio"
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/components/mrp/ProductTagSystem.tsx",
-                                lineNumber: 61,
+                                lineNumber: 80,
                                 columnNumber: 11
                             }, ("TURBOPACK compile-time value", void 0)),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -3560,13 +3594,13 @@ const ProductTagSystem = ({ initialSelectedProduct })=>{
                                 children: "Generate and print luxury showroom hang tags, shelf talkers, and spec sheets with dynamic barcodes and warranty QR codes."
                             }, void 0, false, {
                                 fileName: "[project]/src/components/mrp/ProductTagSystem.tsx",
-                                lineNumber: 65,
+                                lineNumber: 84,
                                 columnNumber: 11
                             }, ("TURBOPACK compile-time value", void 0))
                         ]
                     }, void 0, true, {
                         fileName: "[project]/src/components/mrp/ProductTagSystem.tsx",
-                        lineNumber: 60,
+                        lineNumber: 79,
                         columnNumber: 9
                     }, ("TURBOPACK compile-time value", void 0)),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -3578,7 +3612,7 @@ const ProductTagSystem = ({ initialSelectedProduct })=>{
                                 children: isBatchMode ? 'Switch to Single Tag' : 'Batch Print Mode'
                             }, void 0, false, {
                                 fileName: "[project]/src/components/mrp/ProductTagSystem.tsx",
-                                lineNumber: 71,
+                                lineNumber: 90,
                                 columnNumber: 11
                             }, ("TURBOPACK compile-time value", void 0)),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -3589,7 +3623,7 @@ const ProductTagSystem = ({ initialSelectedProduct })=>{
                                         className: "w-3.5 h-3.5 text-amber-400"
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/mrp/ProductTagSystem.tsx",
-                                        lineNumber: 85,
+                                        lineNumber: 104,
                                         columnNumber: 13
                                     }, ("TURBOPACK compile-time value", void 0)),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -3599,25 +3633,25 @@ const ProductTagSystem = ({ initialSelectedProduct })=>{
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/components/mrp/ProductTagSystem.tsx",
-                                        lineNumber: 86,
+                                        lineNumber: 105,
                                         columnNumber: 13
                                     }, ("TURBOPACK compile-time value", void 0))
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/components/mrp/ProductTagSystem.tsx",
-                                lineNumber: 81,
+                                lineNumber: 100,
                                 columnNumber: 11
                             }, ("TURBOPACK compile-time value", void 0))
                         ]
                     }, void 0, true, {
                         fileName: "[project]/src/components/mrp/ProductTagSystem.tsx",
-                        lineNumber: 70,
+                        lineNumber: 89,
                         columnNumber: 9
                     }, ("TURBOPACK compile-time value", void 0))
                 ]
             }, void 0, true, {
                 fileName: "[project]/src/components/mrp/ProductTagSystem.tsx",
-                lineNumber: 59,
+                lineNumber: 78,
                 columnNumber: 7
             }, ("TURBOPACK compile-time value", void 0)),
             !isBatchMode ? /* SINGLE TAG DESIGNER & PREVIEW */ /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -3633,7 +3667,7 @@ const ProductTagSystem = ({ initialSelectedProduct })=>{
                                         children: "Select Product to Tag"
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/mrp/ProductTagSystem.tsx",
-                                        lineNumber: 97,
+                                        lineNumber: 116,
                                         columnNumber: 15
                                     }, ("TURBOPACK compile-time value", void 0)),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("select", {
@@ -3655,18 +3689,18 @@ const ProductTagSystem = ({ initialSelectedProduct })=>{
                                                 ]
                                             }, p.id, true, {
                                                 fileName: "[project]/src/components/mrp/ProductTagSystem.tsx",
-                                                lineNumber: 109,
+                                                lineNumber: 128,
                                                 columnNumber: 19
                                             }, ("TURBOPACK compile-time value", void 0)))
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/mrp/ProductTagSystem.tsx",
-                                        lineNumber: 100,
+                                        lineNumber: 119,
                                         columnNumber: 15
                                     }, ("TURBOPACK compile-time value", void 0))
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/components/mrp/ProductTagSystem.tsx",
-                                lineNumber: 96,
+                                lineNumber: 115,
                                 columnNumber: 13
                             }, ("TURBOPACK compile-time value", void 0)),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -3676,7 +3710,7 @@ const ProductTagSystem = ({ initialSelectedProduct })=>{
                                         children: "Tag Layout Archetype"
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/mrp/ProductTagSystem.tsx",
-                                        lineNumber: 118,
+                                        lineNumber: 137,
                                         columnNumber: 15
                                     }, ("TURBOPACK compile-time value", void 0)),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -3701,18 +3735,18 @@ const ProductTagSystem = ({ initialSelectedProduct })=>{
                                                 children: fmt.label
                                             }, fmt.id, false, {
                                                 fileName: "[project]/src/components/mrp/ProductTagSystem.tsx",
-                                                lineNumber: 127,
+                                                lineNumber: 146,
                                                 columnNumber: 19
                                             }, ("TURBOPACK compile-time value", void 0)))
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/mrp/ProductTagSystem.tsx",
-                                        lineNumber: 121,
+                                        lineNumber: 140,
                                         columnNumber: 15
                                     }, ("TURBOPACK compile-time value", void 0))
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/components/mrp/ProductTagSystem.tsx",
-                                lineNumber: 117,
+                                lineNumber: 136,
                                 columnNumber: 13
                             }, ("TURBOPACK compile-time value", void 0)),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -3723,7 +3757,7 @@ const ProductTagSystem = ({ initialSelectedProduct })=>{
                                         children: "Display Elements"
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/mrp/ProductTagSystem.tsx",
-                                        lineNumber: 145,
+                                        lineNumber: 164,
                                         columnNumber: 15
                                     }, ("TURBOPACK compile-time value", void 0)),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("label", {
@@ -3736,20 +3770,20 @@ const ProductTagSystem = ({ initialSelectedProduct })=>{
                                                 className: "rounded text-amber-600 focus:ring-amber-500"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/components/mrp/ProductTagSystem.tsx",
-                                                lineNumber: 150,
+                                                lineNumber: 169,
                                                 columnNumber: 17
                                             }, ("TURBOPACK compile-time value", void 0)),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
                                                 children: "Include Code-128 Barcode"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/components/mrp/ProductTagSystem.tsx",
-                                                lineNumber: 156,
+                                                lineNumber: 175,
                                                 columnNumber: 17
                                             }, ("TURBOPACK compile-time value", void 0))
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/components/mrp/ProductTagSystem.tsx",
-                                        lineNumber: 149,
+                                        lineNumber: 168,
                                         columnNumber: 15
                                     }, ("TURBOPACK compile-time value", void 0)),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("label", {
@@ -3762,20 +3796,20 @@ const ProductTagSystem = ({ initialSelectedProduct })=>{
                                                 className: "rounded text-amber-600 focus:ring-amber-500"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/components/mrp/ProductTagSystem.tsx",
-                                                lineNumber: 160,
+                                                lineNumber: 179,
                                                 columnNumber: 17
                                             }, ("TURBOPACK compile-time value", void 0)),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
                                                 children: "Include Digital Warranty & Verification QR"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/components/mrp/ProductTagSystem.tsx",
-                                                lineNumber: 166,
+                                                lineNumber: 185,
                                                 columnNumber: 17
                                             }, ("TURBOPACK compile-time value", void 0))
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/components/mrp/ProductTagSystem.tsx",
-                                        lineNumber: 159,
+                                        lineNumber: 178,
                                         columnNumber: 15
                                     }, ("TURBOPACK compile-time value", void 0)),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("label", {
@@ -3788,20 +3822,20 @@ const ProductTagSystem = ({ initialSelectedProduct })=>{
                                                 className: "rounded text-amber-600 focus:ring-amber-500"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/components/mrp/ProductTagSystem.tsx",
-                                                lineNumber: 170,
+                                                lineNumber: 189,
                                                 columnNumber: 17
                                             }, ("TURBOPACK compile-time value", void 0)),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
                                                 children: "Show MRP Strike-through Price"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/components/mrp/ProductTagSystem.tsx",
-                                                lineNumber: 176,
+                                                lineNumber: 195,
                                                 columnNumber: 17
                                             }, ("TURBOPACK compile-time value", void 0))
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/components/mrp/ProductTagSystem.tsx",
-                                        lineNumber: 169,
+                                        lineNumber: 188,
                                         columnNumber: 15
                                     }, ("TURBOPACK compile-time value", void 0)),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("label", {
@@ -3814,26 +3848,26 @@ const ProductTagSystem = ({ initialSelectedProduct })=>{
                                                 className: "rounded text-amber-600 focus:ring-amber-500"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/components/mrp/ProductTagSystem.tsx",
-                                                lineNumber: 180,
+                                                lineNumber: 199,
                                                 columnNumber: 17
                                             }, ("TURBOPACK compile-time value", void 0)),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
                                                 children: "Show Official Warranty Badge"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/components/mrp/ProductTagSystem.tsx",
-                                                lineNumber: 186,
+                                                lineNumber: 205,
                                                 columnNumber: 17
                                             }, ("TURBOPACK compile-time value", void 0))
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/components/mrp/ProductTagSystem.tsx",
-                                        lineNumber: 179,
+                                        lineNumber: 198,
                                         columnNumber: 15
                                     }, ("TURBOPACK compile-time value", void 0))
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/components/mrp/ProductTagSystem.tsx",
-                                lineNumber: 144,
+                                lineNumber: 163,
                                 columnNumber: 13
                             }, ("TURBOPACK compile-time value", void 0)),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -3843,7 +3877,7 @@ const ProductTagSystem = ({ initialSelectedProduct })=>{
                                         children: "Custom Tag Header Note"
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/mrp/ProductTagSystem.tsx",
-                                        lineNumber: 191,
+                                        lineNumber: 210,
                                         columnNumber: 15
                                     }, ("TURBOPACK compile-time value", void 0)),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
@@ -3854,13 +3888,13 @@ const ProductTagSystem = ({ initialSelectedProduct })=>{
                                         className: "w-full px-3 py-1.5 text-xs bg-stone-50 border border-stone-300 rounded-lg"
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/mrp/ProductTagSystem.tsx",
-                                        lineNumber: 194,
+                                        lineNumber: 213,
                                         columnNumber: 15
                                     }, ("TURBOPACK compile-time value", void 0))
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/components/mrp/ProductTagSystem.tsx",
-                                lineNumber: 190,
+                                lineNumber: 209,
                                 columnNumber: 13
                             }, ("TURBOPACK compile-time value", void 0)),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -3872,7 +3906,7 @@ const ProductTagSystem = ({ initialSelectedProduct })=>{
                                                 children: "SKU:"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/components/mrp/ProductTagSystem.tsx",
-                                                lineNumber: 206,
+                                                lineNumber: 225,
                                                 columnNumber: 17
                                             }, ("TURBOPACK compile-time value", void 0)),
                                             " ",
@@ -3882,7 +3916,7 @@ const ProductTagSystem = ({ initialSelectedProduct })=>{
                                                 children: "Model:"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/components/mrp/ProductTagSystem.tsx",
-                                                lineNumber: 206,
+                                                lineNumber: 225,
                                                 columnNumber: 63
                                             }, ("TURBOPACK compile-time value", void 0)),
                                             " ",
@@ -3890,7 +3924,7 @@ const ProductTagSystem = ({ initialSelectedProduct })=>{
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/components/mrp/ProductTagSystem.tsx",
-                                        lineNumber: 205,
+                                        lineNumber: 224,
                                         columnNumber: 15
                                     }, ("TURBOPACK compile-time value", void 0)),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -3899,7 +3933,7 @@ const ProductTagSystem = ({ initialSelectedProduct })=>{
                                                 children: "Size:"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/components/mrp/ProductTagSystem.tsx",
-                                                lineNumber: 209,
+                                                lineNumber: 228,
                                                 columnNumber: 17
                                             }, ("TURBOPACK compile-time value", void 0)),
                                             " ",
@@ -3907,7 +3941,7 @@ const ProductTagSystem = ({ initialSelectedProduct })=>{
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/components/mrp/ProductTagSystem.tsx",
-                                        lineNumber: 208,
+                                        lineNumber: 227,
                                         columnNumber: 15
                                     }, ("TURBOPACK compile-time value", void 0)),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -3916,7 +3950,7 @@ const ProductTagSystem = ({ initialSelectedProduct })=>{
                                                 children: "Finish:"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/components/mrp/ProductTagSystem.tsx",
-                                                lineNumber: 212,
+                                                lineNumber: 231,
                                                 columnNumber: 17
                                             }, ("TURBOPACK compile-time value", void 0)),
                                             " ",
@@ -3924,7 +3958,7 @@ const ProductTagSystem = ({ initialSelectedProduct })=>{
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/components/mrp/ProductTagSystem.tsx",
-                                        lineNumber: 211,
+                                        lineNumber: 230,
                                         columnNumber: 15
                                     }, ("TURBOPACK compile-time value", void 0)),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -3933,7 +3967,7 @@ const ProductTagSystem = ({ initialSelectedProduct })=>{
                                                 children: "Warranty:"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/components/mrp/ProductTagSystem.tsx",
-                                                lineNumber: 215,
+                                                lineNumber: 234,
                                                 columnNumber: 17
                                             }, ("TURBOPACK compile-time value", void 0)),
                                             " ",
@@ -3942,19 +3976,19 @@ const ProductTagSystem = ({ initialSelectedProduct })=>{
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/components/mrp/ProductTagSystem.tsx",
-                                        lineNumber: 214,
+                                        lineNumber: 233,
                                         columnNumber: 15
                                     }, ("TURBOPACK compile-time value", void 0))
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/components/mrp/ProductTagSystem.tsx",
-                                lineNumber: 204,
+                                lineNumber: 223,
                                 columnNumber: 13
                             }, ("TURBOPACK compile-time value", void 0))
                         ]
                     }, void 0, true, {
                         fileName: "[project]/src/components/mrp/ProductTagSystem.tsx",
-                        lineNumber: 95,
+                        lineNumber: 114,
                         columnNumber: 11
                     }, ("TURBOPACK compile-time value", void 0)),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -3967,7 +4001,7 @@ const ProductTagSystem = ({ initialSelectedProduct })=>{
                                     className: "w-4 h-4 rounded-full border-2 border-stone-800 bg-stone-100 mx-auto mb-3 shadow-inner"
                                 }, void 0, false, {
                                     fileName: "[project]/src/components/mrp/ProductTagSystem.tsx",
-                                    lineNumber: 235,
+                                    lineNumber: 254,
                                     columnNumber: 17
                                 }, ("TURBOPACK compile-time value", void 0)),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -3978,7 +4012,7 @@ const ProductTagSystem = ({ initialSelectedProduct })=>{
                                             children: "LIVO FURNITURE"
                                         }, void 0, false, {
                                             fileName: "[project]/src/components/mrp/ProductTagSystem.tsx",
-                                            lineNumber: 240,
+                                            lineNumber: 259,
                                             columnNumber: 17
                                         }, ("TURBOPACK compile-time value", void 0)),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -3986,7 +4020,7 @@ const ProductTagSystem = ({ initialSelectedProduct })=>{
                                             children: "HAUTE LIVING & INTERIOR ATELIER"
                                         }, void 0, false, {
                                             fileName: "[project]/src/components/mrp/ProductTagSystem.tsx",
-                                            lineNumber: 243,
+                                            lineNumber: 262,
                                             columnNumber: 17
                                         }, ("TURBOPACK compile-time value", void 0)),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -3994,13 +4028,13 @@ const ProductTagSystem = ({ initialSelectedProduct })=>{
                                             children: customTagline
                                         }, void 0, false, {
                                             fileName: "[project]/src/components/mrp/ProductTagSystem.tsx",
-                                            lineNumber: 246,
+                                            lineNumber: 265,
                                             columnNumber: 17
                                         }, ("TURBOPACK compile-time value", void 0))
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/src/components/mrp/ProductTagSystem.tsx",
-                                    lineNumber: 239,
+                                    lineNumber: 258,
                                     columnNumber: 15
                                 }, ("TURBOPACK compile-time value", void 0)),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -4011,7 +4045,7 @@ const ProductTagSystem = ({ initialSelectedProduct })=>{
                                             children: selectedProduct.brand
                                         }, void 0, false, {
                                             fileName: "[project]/src/components/mrp/ProductTagSystem.tsx",
-                                            lineNumber: 253,
+                                            lineNumber: 272,
                                             columnNumber: 17
                                         }, ("TURBOPACK compile-time value", void 0)),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("h3", {
@@ -4019,13 +4053,13 @@ const ProductTagSystem = ({ initialSelectedProduct })=>{
                                             children: selectedProduct.name
                                         }, void 0, false, {
                                             fileName: "[project]/src/components/mrp/ProductTagSystem.tsx",
-                                            lineNumber: 256,
+                                            lineNumber: 275,
                                             columnNumber: 17
                                         }, ("TURBOPACK compile-time value", void 0))
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/src/components/mrp/ProductTagSystem.tsx",
-                                    lineNumber: 252,
+                                    lineNumber: 271,
                                     columnNumber: 15
                                 }, ("TURBOPACK compile-time value", void 0)),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -4039,7 +4073,7 @@ const ProductTagSystem = ({ initialSelectedProduct })=>{
                                                     children: "SKU Code:"
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/components/mrp/ProductTagSystem.tsx",
-                                                    lineNumber: 264,
+                                                    lineNumber: 283,
                                                     columnNumber: 19
                                                 }, ("TURBOPACK compile-time value", void 0)),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -4047,13 +4081,13 @@ const ProductTagSystem = ({ initialSelectedProduct })=>{
                                                     children: selectedProduct.sku
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/components/mrp/ProductTagSystem.tsx",
-                                                    lineNumber: 265,
+                                                    lineNumber: 284,
                                                     columnNumber: 19
                                                 }, ("TURBOPACK compile-time value", void 0))
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/src/components/mrp/ProductTagSystem.tsx",
-                                            lineNumber: 263,
+                                            lineNumber: 282,
                                             columnNumber: 17
                                         }, ("TURBOPACK compile-time value", void 0)),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -4064,7 +4098,7 @@ const ProductTagSystem = ({ initialSelectedProduct })=>{
                                                     children: "Model Number:"
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/components/mrp/ProductTagSystem.tsx",
-                                                    lineNumber: 268,
+                                                    lineNumber: 287,
                                                     columnNumber: 19
                                                 }, ("TURBOPACK compile-time value", void 0)),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -4072,13 +4106,13 @@ const ProductTagSystem = ({ initialSelectedProduct })=>{
                                                     children: selectedProduct.modelNumber
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/components/mrp/ProductTagSystem.tsx",
-                                                    lineNumber: 269,
+                                                    lineNumber: 288,
                                                     columnNumber: 19
                                                 }, ("TURBOPACK compile-time value", void 0))
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/src/components/mrp/ProductTagSystem.tsx",
-                                            lineNumber: 267,
+                                            lineNumber: 286,
                                             columnNumber: 17
                                         }, ("TURBOPACK compile-time value", void 0)),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -4089,7 +4123,7 @@ const ProductTagSystem = ({ initialSelectedProduct })=>{
                                                     children: "Dimensions / Size:"
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/components/mrp/ProductTagSystem.tsx",
-                                                    lineNumber: 272,
+                                                    lineNumber: 291,
                                                     columnNumber: 19
                                                 }, ("TURBOPACK compile-time value", void 0)),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -4097,13 +4131,13 @@ const ProductTagSystem = ({ initialSelectedProduct })=>{
                                                     children: selectedProduct.sizeDimensions
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/components/mrp/ProductTagSystem.tsx",
-                                                    lineNumber: 273,
+                                                    lineNumber: 292,
                                                     columnNumber: 19
                                                 }, ("TURBOPACK compile-time value", void 0))
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/src/components/mrp/ProductTagSystem.tsx",
-                                            lineNumber: 271,
+                                            lineNumber: 290,
                                             columnNumber: 17
                                         }, ("TURBOPACK compile-time value", void 0)),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -4114,7 +4148,7 @@ const ProductTagSystem = ({ initialSelectedProduct })=>{
                                                     children: "Colour / Finish:"
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/components/mrp/ProductTagSystem.tsx",
-                                                    lineNumber: 278,
+                                                    lineNumber: 297,
                                                     columnNumber: 19
                                                 }, ("TURBOPACK compile-time value", void 0)),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -4122,13 +4156,13 @@ const ProductTagSystem = ({ initialSelectedProduct })=>{
                                                     children: selectedProduct.colorFinish
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/components/mrp/ProductTagSystem.tsx",
-                                                    lineNumber: 279,
+                                                    lineNumber: 298,
                                                     columnNumber: 19
                                                 }, ("TURBOPACK compile-time value", void 0))
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/src/components/mrp/ProductTagSystem.tsx",
-                                            lineNumber: 277,
+                                            lineNumber: 296,
                                             columnNumber: 17
                                         }, ("TURBOPACK compile-time value", void 0)),
                                         selectedProduct.material && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -4139,7 +4173,7 @@ const ProductTagSystem = ({ initialSelectedProduct })=>{
                                                     children: "Material:"
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/components/mrp/ProductTagSystem.tsx",
-                                                    lineNumber: 285,
+                                                    lineNumber: 304,
                                                     columnNumber: 21
                                                 }, ("TURBOPACK compile-time value", void 0)),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -4147,19 +4181,19 @@ const ProductTagSystem = ({ initialSelectedProduct })=>{
                                                     children: selectedProduct.material
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/components/mrp/ProductTagSystem.tsx",
-                                                    lineNumber: 286,
+                                                    lineNumber: 305,
                                                     columnNumber: 21
                                                 }, ("TURBOPACK compile-time value", void 0))
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/src/components/mrp/ProductTagSystem.tsx",
-                                            lineNumber: 284,
+                                            lineNumber: 303,
                                             columnNumber: 19
                                         }, ("TURBOPACK compile-time value", void 0))
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/src/components/mrp/ProductTagSystem.tsx",
-                                    lineNumber: 262,
+                                    lineNumber: 281,
                                     columnNumber: 15
                                 }, ("TURBOPACK compile-time value", void 0)),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -4172,7 +4206,7 @@ const ProductTagSystem = ({ initialSelectedProduct })=>{
                                                     children: "Showroom Selling Price"
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/components/mrp/ProductTagSystem.tsx",
-                                                    lineNumber: 296,
+                                                    lineNumber: 315,
                                                     columnNumber: 19
                                                 }, ("TURBOPACK compile-time value", void 0)),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -4180,7 +4214,7 @@ const ProductTagSystem = ({ initialSelectedProduct })=>{
                                                     children: (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$utils$2f$formatters$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["formatCurrency"])(selectedProduct.sellingPrice)
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/components/mrp/ProductTagSystem.tsx",
-                                                    lineNumber: 299,
+                                                    lineNumber: 318,
                                                     columnNumber: 19
                                                 }, ("TURBOPACK compile-time value", void 0)),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -4188,13 +4222,13 @@ const ProductTagSystem = ({ initialSelectedProduct })=>{
                                                     children: "Inclusive of 5% Tax & Assembly"
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/components/mrp/ProductTagSystem.tsx",
-                                                    lineNumber: 302,
+                                                    lineNumber: 321,
                                                     columnNumber: 19
                                                 }, ("TURBOPACK compile-time value", void 0))
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/src/components/mrp/ProductTagSystem.tsx",
-                                            lineNumber: 295,
+                                            lineNumber: 314,
                                             columnNumber: 17
                                         }, ("TURBOPACK compile-time value", void 0)),
                                         showMrpStrike && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -4205,7 +4239,7 @@ const ProductTagSystem = ({ initialSelectedProduct })=>{
                                                     children: "Standard MRP"
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/components/mrp/ProductTagSystem.tsx",
-                                                    lineNumber: 307,
+                                                    lineNumber: 326,
                                                     columnNumber: 21
                                                 }, ("TURBOPACK compile-time value", void 0)),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -4213,7 +4247,7 @@ const ProductTagSystem = ({ initialSelectedProduct })=>{
                                                     children: (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$utils$2f$formatters$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["formatCurrency"])(selectedProduct.mrp)
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/components/mrp/ProductTagSystem.tsx",
-                                                    lineNumber: 310,
+                                                    lineNumber: 329,
                                                     columnNumber: 21
                                                 }, ("TURBOPACK compile-time value", void 0)),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -4224,52 +4258,57 @@ const ProductTagSystem = ({ initialSelectedProduct })=>{
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "[project]/src/components/mrp/ProductTagSystem.tsx",
-                                                    lineNumber: 313,
+                                                    lineNumber: 332,
                                                     columnNumber: 21
                                                 }, ("TURBOPACK compile-time value", void 0))
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/src/components/mrp/ProductTagSystem.tsx",
-                                            lineNumber: 306,
+                                            lineNumber: 325,
                                             columnNumber: 19
                                         }, ("TURBOPACK compile-time value", void 0))
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/src/components/mrp/ProductTagSystem.tsx",
-                                    lineNumber: 294,
+                                    lineNumber: 313,
                                     columnNumber: 15
                                 }, ("TURBOPACK compile-time value", void 0)),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                     className: "pt-2 border-t border-stone-200 flex items-center justify-between gap-4",
                                     children: [
-                                        showBarcode && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                            className: "flex-1",
-                                            children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                                dangerouslySetInnerHTML: {
-                                                    __html: barcodeSvg
-                                                },
-                                                className: "[&>svg]:w-full [&>svg]:h-auto flex justify-center"
+                                        showBarcode && selectedProduct?.barcode && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                            className: "flex-1 flex justify-center",
+                                            children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$react$2d$barcode$2f$lib$2f$react$2d$barcode$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["default"], {
+                                                value: selectedProduct.barcode,
+                                                width: 1.4,
+                                                height: 48,
+                                                displayValue: true,
+                                                fontSize: 10,
+                                                margin: 0,
+                                                background: "transparent",
+                                                lineColor: "#1c1917"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/components/mrp/ProductTagSystem.tsx",
-                                                lineNumber: 324,
+                                                lineNumber: 343,
                                                 columnNumber: 21
                                             }, ("TURBOPACK compile-time value", void 0))
                                         }, void 0, false, {
                                             fileName: "[project]/src/components/mrp/ProductTagSystem.tsx",
-                                            lineNumber: 323,
+                                            lineNumber: 342,
                                             columnNumber: 19
                                         }, ("TURBOPACK compile-time value", void 0)),
                                         showQR && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                             className: "flex flex-col items-center shrink-0",
                                             children: [
-                                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                                    dangerouslySetInnerHTML: {
-                                                        __html: qrSvg
-                                                    },
-                                                    className: "[&>svg]:w-14 [&>svg]:h-14 border border-stone-300 p-0.5 rounded bg-white"
+                                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$qrcode$2e$react$2f$lib$2f$esm$2f$index$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["QRCodeSVG"], {
+                                                    value: qrValue || 'https://livofurniture.com',
+                                                    size: 56,
+                                                    level: "M",
+                                                    includeMargin: true,
+                                                    className: "border border-stone-300 p-0.5 rounded bg-white"
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/components/mrp/ProductTagSystem.tsx",
-                                                    lineNumber: 333,
+                                                    lineNumber: 358,
                                                     columnNumber: 21
                                                 }, ("TURBOPACK compile-time value", void 0)),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -4277,19 +4316,19 @@ const ProductTagSystem = ({ initialSelectedProduct })=>{
                                                     children: "Scan Certificate"
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/components/mrp/ProductTagSystem.tsx",
-                                                    lineNumber: 337,
+                                                    lineNumber: 365,
                                                     columnNumber: 21
                                                 }, ("TURBOPACK compile-time value", void 0))
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/src/components/mrp/ProductTagSystem.tsx",
-                                            lineNumber: 332,
+                                            lineNumber: 357,
                                             columnNumber: 19
                                         }, ("TURBOPACK compile-time value", void 0))
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/src/components/mrp/ProductTagSystem.tsx",
-                                    lineNumber: 321,
+                                    lineNumber: 340,
                                     columnNumber: 15
                                 }, ("TURBOPACK compile-time value", void 0)),
                                 showWarranty && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -4302,7 +4341,7 @@ const ProductTagSystem = ({ initialSelectedProduct })=>{
                                                     className: "w-3.5 h-3.5 text-amber-700"
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/components/mrp/ProductTagSystem.tsx",
-                                                    lineNumber: 348,
+                                                    lineNumber: 376,
                                                     columnNumber: 21
                                                 }, ("TURBOPACK compile-time value", void 0)),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -4313,13 +4352,13 @@ const ProductTagSystem = ({ initialSelectedProduct })=>{
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "[project]/src/components/mrp/ProductTagSystem.tsx",
-                                                    lineNumber: 349,
+                                                    lineNumber: 377,
                                                     columnNumber: 21
                                                 }, ("TURBOPACK compile-time value", void 0))
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/src/components/mrp/ProductTagSystem.tsx",
-                                            lineNumber: 347,
+                                            lineNumber: 375,
                                             columnNumber: 19
                                         }, ("TURBOPACK compile-time value", void 0)),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -4330,30 +4369,30 @@ const ProductTagSystem = ({ initialSelectedProduct })=>{
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/src/components/mrp/ProductTagSystem.tsx",
-                                            lineNumber: 353,
+                                            lineNumber: 381,
                                             columnNumber: 19
                                         }, ("TURBOPACK compile-time value", void 0))
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/src/components/mrp/ProductTagSystem.tsx",
-                                    lineNumber: 346,
+                                    lineNumber: 374,
                                     columnNumber: 17
                                 }, ("TURBOPACK compile-time value", void 0))
                             ]
                         }, void 0, true, {
                             fileName: "[project]/src/components/mrp/ProductTagSystem.tsx",
-                            lineNumber: 223,
+                            lineNumber: 242,
                             columnNumber: 13
                         }, ("TURBOPACK compile-time value", void 0))
                     }, void 0, false, {
                         fileName: "[project]/src/components/mrp/ProductTagSystem.tsx",
-                        lineNumber: 221,
+                        lineNumber: 240,
                         columnNumber: 11
                     }, ("TURBOPACK compile-time value", void 0))
                 ]
             }, void 0, true, {
                 fileName: "[project]/src/components/mrp/ProductTagSystem.tsx",
-                lineNumber: 93,
+                lineNumber: 112,
                 columnNumber: 9
             }, ("TURBOPACK compile-time value", void 0)) : /* BATCH PRINT SHEET VIEW */ /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                 className: "space-y-4",
@@ -4369,7 +4408,7 @@ const ProductTagSystem = ({ initialSelectedProduct })=>{
                                         children: "Filter Category for Batch Printing:"
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/mrp/ProductTagSystem.tsx",
-                                        lineNumber: 366,
+                                        lineNumber: 394,
                                         columnNumber: 15
                                     }, ("TURBOPACK compile-time value", void 0)),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("select", {
@@ -4386,7 +4425,7 @@ const ProductTagSystem = ({ initialSelectedProduct })=>{
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/src/components/mrp/ProductTagSystem.tsx",
-                                                lineNumber: 374,
+                                                lineNumber: 402,
                                                 columnNumber: 17
                                             }, ("TURBOPACK compile-time value", void 0)),
                                             Array.from(new Set(products.map((p)=>p.category))).map((c)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("option", {
@@ -4394,19 +4433,19 @@ const ProductTagSystem = ({ initialSelectedProduct })=>{
                                                     children: c
                                                 }, c, false, {
                                                     fileName: "[project]/src/components/mrp/ProductTagSystem.tsx",
-                                                    lineNumber: 376,
+                                                    lineNumber: 404,
                                                     columnNumber: 19
                                                 }, ("TURBOPACK compile-time value", void 0)))
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/components/mrp/ProductTagSystem.tsx",
-                                        lineNumber: 369,
+                                        lineNumber: 397,
                                         columnNumber: 15
                                     }, ("TURBOPACK compile-time value", void 0))
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/components/mrp/ProductTagSystem.tsx",
-                                lineNumber: 365,
+                                lineNumber: 393,
                                 columnNumber: 13
                             }, ("TURBOPACK compile-time value", void 0)),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -4417,7 +4456,7 @@ const ProductTagSystem = ({ initialSelectedProduct })=>{
                                         className: "w-3.5 h-3.5"
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/mrp/ProductTagSystem.tsx",
-                                        lineNumber: 387,
+                                        lineNumber: 415,
                                         columnNumber: 15
                                     }, ("TURBOPACK compile-time value", void 0)),
                                     " Print Batch Sheet (",
@@ -4426,28 +4465,26 @@ const ProductTagSystem = ({ initialSelectedProduct })=>{
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/components/mrp/ProductTagSystem.tsx",
-                                lineNumber: 383,
+                                lineNumber: 411,
                                 columnNumber: 13
                             }, ("TURBOPACK compile-time value", void 0))
                         ]
                     }, void 0, true, {
                         fileName: "[project]/src/components/mrp/ProductTagSystem.tsx",
-                        lineNumber: 364,
+                        lineNumber: 392,
                         columnNumber: 11
                     }, ("TURBOPACK compile-time value", void 0)),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                        id: "batch-print-grid",
                         className: "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6",
-                        children: batchProducts.map((p)=>{
-                            const bCode = (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$utils$2f$barcode$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["generateBarcodeSVG"])(p.sku, 200, 44);
-                            const qCode = (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$utils$2f$barcode$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["generateQRCodeSVG"])(`https://livofurniture.com/verify?sku=${p.sku}`, 80);
-                            return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                        children: batchProducts.map((p)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                 className: "bg-white border-2 border-stone-800 rounded-xl p-4 shadow-sm text-stone-900 space-y-2.5 relative",
                                 children: [
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                         className: "w-3.5 h-3.5 rounded-full border border-stone-800 bg-stone-100 mx-auto"
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/mrp/ProductTagSystem.tsx",
-                                        lineNumber: 402,
+                                        lineNumber: 427,
                                         columnNumber: 19
                                     }, ("TURBOPACK compile-time value", void 0)),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -4458,7 +4495,7 @@ const ProductTagSystem = ({ initialSelectedProduct })=>{
                                                 children: "LIVO FURNITURE"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/components/mrp/ProductTagSystem.tsx",
-                                                lineNumber: 405,
+                                                lineNumber: 430,
                                                 columnNumber: 21
                                             }, ("TURBOPACK compile-time value", void 0)),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -4466,13 +4503,13 @@ const ProductTagSystem = ({ initialSelectedProduct })=>{
                                                 children: "Haute Living Atelier"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/components/mrp/ProductTagSystem.tsx",
-                                                lineNumber: 408,
+                                                lineNumber: 433,
                                                 columnNumber: 21
                                             }, ("TURBOPACK compile-time value", void 0))
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/components/mrp/ProductTagSystem.tsx",
-                                        lineNumber: 404,
+                                        lineNumber: 429,
                                         columnNumber: 19
                                     }, ("TURBOPACK compile-time value", void 0)),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -4482,7 +4519,7 @@ const ProductTagSystem = ({ initialSelectedProduct })=>{
                                                 children: p.brand
                                             }, void 0, false, {
                                                 fileName: "[project]/src/components/mrp/ProductTagSystem.tsx",
-                                                lineNumber: 414,
+                                                lineNumber: 439,
                                                 columnNumber: 21
                                             }, ("TURBOPACK compile-time value", void 0)),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("h4", {
@@ -4490,13 +4527,13 @@ const ProductTagSystem = ({ initialSelectedProduct })=>{
                                                 children: p.name
                                             }, void 0, false, {
                                                 fileName: "[project]/src/components/mrp/ProductTagSystem.tsx",
-                                                lineNumber: 415,
+                                                lineNumber: 440,
                                                 columnNumber: 21
                                             }, ("TURBOPACK compile-time value", void 0))
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/components/mrp/ProductTagSystem.tsx",
-                                        lineNumber: 413,
+                                        lineNumber: 438,
                                         columnNumber: 19
                                     }, ("TURBOPACK compile-time value", void 0)),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -4510,7 +4547,7 @@ const ProductTagSystem = ({ initialSelectedProduct })=>{
                                                         children: "SKU / Model:"
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/components/mrp/ProductTagSystem.tsx",
-                                                        lineNumber: 422,
+                                                        lineNumber: 447,
                                                         columnNumber: 23
                                                     }, ("TURBOPACK compile-time value", void 0)),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -4518,13 +4555,13 @@ const ProductTagSystem = ({ initialSelectedProduct })=>{
                                                         children: p.sku
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/components/mrp/ProductTagSystem.tsx",
-                                                        lineNumber: 423,
+                                                        lineNumber: 448,
                                                         columnNumber: 23
                                                     }, ("TURBOPACK compile-time value", void 0))
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/src/components/mrp/ProductTagSystem.tsx",
-                                                lineNumber: 421,
+                                                lineNumber: 446,
                                                 columnNumber: 21
                                             }, ("TURBOPACK compile-time value", void 0)),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -4535,7 +4572,7 @@ const ProductTagSystem = ({ initialSelectedProduct })=>{
                                                         children: "Dimensions:"
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/components/mrp/ProductTagSystem.tsx",
-                                                        lineNumber: 426,
+                                                        lineNumber: 451,
                                                         columnNumber: 23
                                                     }, ("TURBOPACK compile-time value", void 0)),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -4543,13 +4580,13 @@ const ProductTagSystem = ({ initialSelectedProduct })=>{
                                                         children: p.sizeDimensions
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/components/mrp/ProductTagSystem.tsx",
-                                                        lineNumber: 427,
+                                                        lineNumber: 452,
                                                         columnNumber: 23
                                                     }, ("TURBOPACK compile-time value", void 0))
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/src/components/mrp/ProductTagSystem.tsx",
-                                                lineNumber: 425,
+                                                lineNumber: 450,
                                                 columnNumber: 21
                                             }, ("TURBOPACK compile-time value", void 0)),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -4560,7 +4597,7 @@ const ProductTagSystem = ({ initialSelectedProduct })=>{
                                                         children: "Finish:"
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/components/mrp/ProductTagSystem.tsx",
-                                                        lineNumber: 430,
+                                                        lineNumber: 455,
                                                         columnNumber: 23
                                                     }, ("TURBOPACK compile-time value", void 0)),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -4568,19 +4605,19 @@ const ProductTagSystem = ({ initialSelectedProduct })=>{
                                                         children: p.colorFinish
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/components/mrp/ProductTagSystem.tsx",
-                                                        lineNumber: 431,
+                                                        lineNumber: 456,
                                                         columnNumber: 23
                                                     }, ("TURBOPACK compile-time value", void 0))
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/src/components/mrp/ProductTagSystem.tsx",
-                                                lineNumber: 429,
+                                                lineNumber: 454,
                                                 columnNumber: 21
                                             }, ("TURBOPACK compile-time value", void 0))
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/components/mrp/ProductTagSystem.tsx",
-                                        lineNumber: 420,
+                                        lineNumber: 445,
                                         columnNumber: 19
                                     }, ("TURBOPACK compile-time value", void 0)),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -4593,7 +4630,7 @@ const ProductTagSystem = ({ initialSelectedProduct })=>{
                                                         children: "Price"
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/components/mrp/ProductTagSystem.tsx",
-                                                        lineNumber: 437,
+                                                        lineNumber: 462,
                                                         columnNumber: 23
                                                     }, ("TURBOPACK compile-time value", void 0)),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -4601,13 +4638,13 @@ const ProductTagSystem = ({ initialSelectedProduct })=>{
                                                         children: (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$utils$2f$formatters$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["formatCurrency"])(p.sellingPrice)
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/components/mrp/ProductTagSystem.tsx",
-                                                        lineNumber: 438,
+                                                        lineNumber: 463,
                                                         columnNumber: 23
                                                     }, ("TURBOPACK compile-time value", void 0))
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/src/components/mrp/ProductTagSystem.tsx",
-                                                lineNumber: 436,
+                                                lineNumber: 461,
                                                 columnNumber: 21
                                             }, ("TURBOPACK compile-time value", void 0)),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -4618,7 +4655,7 @@ const ProductTagSystem = ({ initialSelectedProduct })=>{
                                                         children: "MRP"
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/components/mrp/ProductTagSystem.tsx",
-                                                        lineNumber: 441,
+                                                        lineNumber: 466,
                                                         columnNumber: 23
                                                     }, ("TURBOPACK compile-time value", void 0)),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -4626,48 +4663,60 @@ const ProductTagSystem = ({ initialSelectedProduct })=>{
                                                         children: (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$utils$2f$formatters$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["formatCurrency"])(p.mrp)
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/components/mrp/ProductTagSystem.tsx",
-                                                        lineNumber: 442,
+                                                        lineNumber: 467,
                                                         columnNumber: 23
                                                     }, ("TURBOPACK compile-time value", void 0))
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/src/components/mrp/ProductTagSystem.tsx",
-                                                lineNumber: 440,
+                                                lineNumber: 465,
                                                 columnNumber: 21
                                             }, ("TURBOPACK compile-time value", void 0))
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/components/mrp/ProductTagSystem.tsx",
-                                        lineNumber: 435,
+                                        lineNumber: 460,
                                         columnNumber: 19
                                     }, ("TURBOPACK compile-time value", void 0)),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                        className: "flex items-center justify-between pt-1",
+                                        className: "flex items-center justify-between pt-1 gap-2",
                                         children: [
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                                dangerouslySetInnerHTML: {
-                                                    __html: bCode
-                                                },
-                                                className: "[&>svg]:w-36 [&>svg]:h-auto"
+                                                className: "flex-1 flex justify-center",
+                                                children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$react$2d$barcode$2f$lib$2f$react$2d$barcode$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["default"], {
+                                                    value: p.barcode,
+                                                    width: 1.1,
+                                                    height: 36,
+                                                    displayValue: true,
+                                                    fontSize: 8,
+                                                    margin: 0,
+                                                    background: "transparent",
+                                                    lineColor: "#1c1917"
+                                                }, void 0, false, {
+                                                    fileName: "[project]/src/components/mrp/ProductTagSystem.tsx",
+                                                    lineNumber: 475,
+                                                    columnNumber: 23
+                                                }, ("TURBOPACK compile-time value", void 0))
                                             }, void 0, false, {
                                                 fileName: "[project]/src/components/mrp/ProductTagSystem.tsx",
-                                                lineNumber: 449,
+                                                lineNumber: 474,
                                                 columnNumber: 21
                                             }, ("TURBOPACK compile-time value", void 0)),
-                                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                                dangerouslySetInnerHTML: {
-                                                    __html: qCode
-                                                },
-                                                className: "[&>svg]:w-10 [&>svg]:h-10 border border-stone-200 p-0.5 rounded"
+                                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$qrcode$2e$react$2f$lib$2f$esm$2f$index$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["QRCodeSVG"], {
+                                                value: `https://livofurniture.com/verify?barcode=${p.barcode}&sku=${p.sku}`,
+                                                size: 40,
+                                                level: "M",
+                                                includeMargin: true,
+                                                className: "border border-stone-200 p-0.5 rounded shrink-0"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/components/mrp/ProductTagSystem.tsx",
-                                                lineNumber: 453,
+                                                lineNumber: 486,
                                                 columnNumber: 21
                                             }, ("TURBOPACK compile-time value", void 0))
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/components/mrp/ProductTagSystem.tsx",
-                                        lineNumber: 448,
+                                        lineNumber: 473,
                                         columnNumber: 19
                                     }, ("TURBOPACK compile-time value", void 0)),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -4679,31 +4728,30 @@ const ProductTagSystem = ({ initialSelectedProduct })=>{
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/components/mrp/ProductTagSystem.tsx",
-                                        lineNumber: 459,
+                                        lineNumber: 495,
                                         columnNumber: 19
                                     }, ("TURBOPACK compile-time value", void 0))
                                 ]
                             }, p.id, true, {
                                 fileName: "[project]/src/components/mrp/ProductTagSystem.tsx",
-                                lineNumber: 398,
+                                lineNumber: 423,
                                 columnNumber: 17
-                            }, ("TURBOPACK compile-time value", void 0));
-                        })
+                            }, ("TURBOPACK compile-time value", void 0)))
                     }, void 0, false, {
                         fileName: "[project]/src/components/mrp/ProductTagSystem.tsx",
-                        lineNumber: 392,
+                        lineNumber: 420,
                         columnNumber: 11
                     }, ("TURBOPACK compile-time value", void 0))
                 ]
             }, void 0, true, {
                 fileName: "[project]/src/components/mrp/ProductTagSystem.tsx",
-                lineNumber: 363,
+                lineNumber: 391,
                 columnNumber: 9
             }, ("TURBOPACK compile-time value", void 0))
         ]
     }, void 0, true, {
         fileName: "[project]/src/components/mrp/ProductTagSystem.tsx",
-        lineNumber: 57,
+        lineNumber: 74,
         columnNumber: 5
     }, ("TURBOPACK compile-time value", void 0));
 };

@@ -8,6 +8,7 @@ __turbopack_context__.s([
 ]);
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/next/dist/compiled/react/jsx-dev-runtime.js [app-client] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$react$2d$barcode$2f$lib$2f$react$2d$barcode$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/react-barcode/lib/react-barcode.js [app-client] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$boxes$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$export__default__as__Boxes$3e$__ = __turbopack_context__.i("[project]/node_modules/lucide-react/dist/esm/icons/boxes.js [app-client] (ecmascript) <export default as Boxes>");
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$triangle$2d$alert$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$export__default__as__AlertTriangle$3e$__ = __turbopack_context__.i("[project]/node_modules/lucide-react/dist/esm/icons/triangle-alert.js [app-client] (ecmascript) <export default as AlertTriangle>");
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$plus$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$export__default__as__Plus$3e$__ = __turbopack_context__.i("[project]/node_modules/lucide-react/dist/esm/icons/plus.js [app-client] (ecmascript) <export default as Plus>");
@@ -18,10 +19,13 @@ var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$re
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$trash$2d$2$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$export__default__as__Trash2$3e$__ = __turbopack_context__.i("[project]/node_modules/lucide-react/dist/esm/icons/trash-2.js [app-client] (ecmascript) <export default as Trash2>");
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$square$2d$pen$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$export__default__as__Edit$3e$__ = __turbopack_context__.i("[project]/node_modules/lucide-react/dist/esm/icons/square-pen.js [app-client] (ecmascript) <export default as Edit>");
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$building$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$export__default__as__Building$3e$__ = __turbopack_context__.i("[project]/node_modules/lucide-react/dist/esm/icons/building.js [app-client] (ecmascript) <export default as Building>");
+var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$printer$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$export__default__as__Printer$3e$__ = __turbopack_context__.i("[project]/node_modules/lucide-react/dist/esm/icons/printer.js [app-client] (ecmascript) <export default as Printer>");
 var __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$context$2f$ERPContext$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/src/context/ERPContext.tsx [app-client] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$utils$2f$formatters$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/src/utils/formatters.ts [app-client] (ecmascript)");
 ;
 var _s = __turbopack_context__.k.signature(), _s1 = __turbopack_context__.k.signature();
+"use client";
+;
 ;
 ;
 ;
@@ -113,14 +117,14 @@ const StockManagement = ({ onOpenTagModal })=>{
                                         className: "w-5 h-5 text-amber-700"
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/stock/StockManagement.tsx",
-                                        lineNumber: 132,
+                                        lineNumber: 135,
                                         columnNumber: 13
                                     }, ("TURBOPACK compile-time value", void 0)),
                                     "Stock & Inventory Management"
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/components/stock/StockManagement.tsx",
-                                lineNumber: 131,
+                                lineNumber: 134,
                                 columnNumber: 11
                             }, ("TURBOPACK compile-time value", void 0)),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -128,13 +132,13 @@ const StockManagement = ({ onOpenTagModal })=>{
                                 children: "Real-time multi-brand showroom stock, SKU tracking, procurement rates, selling prices, and live movement audit."
                             }, void 0, false, {
                                 fileName: "[project]/src/components/stock/StockManagement.tsx",
-                                lineNumber: 135,
+                                lineNumber: 138,
                                 columnNumber: 11
                             }, ("TURBOPACK compile-time value", void 0))
                         ]
                     }, void 0, true, {
                         fileName: "[project]/src/components/stock/StockManagement.tsx",
-                        lineNumber: 130,
+                        lineNumber: 133,
                         columnNumber: 9
                     }, ("TURBOPACK compile-time value", void 0)),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -150,31 +154,31 @@ const StockManagement = ({ onOpenTagModal })=>{
                                     className: "w-4 h-4 text-amber-400"
                                 }, void 0, false, {
                                     fileName: "[project]/src/components/stock/StockManagement.tsx",
-                                    lineNumber: 148,
+                                    lineNumber: 151,
                                     columnNumber: 13
                                 }, ("TURBOPACK compile-time value", void 0)),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
                                     children: "Register New Product"
                                 }, void 0, false, {
                                     fileName: "[project]/src/components/stock/StockManagement.tsx",
-                                    lineNumber: 149,
+                                    lineNumber: 152,
                                     columnNumber: 13
                                 }, ("TURBOPACK compile-time value", void 0))
                             ]
                         }, void 0, true, {
                             fileName: "[project]/src/components/stock/StockManagement.tsx",
-                            lineNumber: 141,
+                            lineNumber: 144,
                             columnNumber: 11
                         }, ("TURBOPACK compile-time value", void 0))
                     }, void 0, false, {
                         fileName: "[project]/src/components/stock/StockManagement.tsx",
-                        lineNumber: 140,
+                        lineNumber: 143,
                         columnNumber: 9
                     }, ("TURBOPACK compile-time value", void 0))
                 ]
             }, void 0, true, {
                 fileName: "[project]/src/components/stock/StockManagement.tsx",
-                lineNumber: 129,
+                lineNumber: 132,
                 columnNumber: 7
             }, ("TURBOPACK compile-time value", void 0)),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -188,7 +192,7 @@ const StockManagement = ({ onOpenTagModal })=>{
                                 children: "Total Catalog SKUs"
                             }, void 0, false, {
                                 fileName: "[project]/src/components/stock/StockManagement.tsx",
-                                lineNumber: 157,
+                                lineNumber: 160,
                                 columnNumber: 11
                             }, ("TURBOPACK compile-time value", void 0)),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -199,7 +203,7 @@ const StockManagement = ({ onOpenTagModal })=>{
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/components/stock/StockManagement.tsx",
-                                lineNumber: 158,
+                                lineNumber: 161,
                                 columnNumber: 11
                             }, ("TURBOPACK compile-time value", void 0)),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -210,13 +214,13 @@ const StockManagement = ({ onOpenTagModal })=>{
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/components/stock/StockManagement.tsx",
-                                lineNumber: 159,
+                                lineNumber: 162,
                                 columnNumber: 11
                             }, ("TURBOPACK compile-time value", void 0))
                         ]
                     }, void 0, true, {
                         fileName: "[project]/src/components/stock/StockManagement.tsx",
-                        lineNumber: 156,
+                        lineNumber: 159,
                         columnNumber: 9
                     }, ("TURBOPACK compile-time value", void 0)),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -227,7 +231,7 @@ const StockManagement = ({ onOpenTagModal })=>{
                                 children: "Total Units in Stock"
                             }, void 0, false, {
                                 fileName: "[project]/src/components/stock/StockManagement.tsx",
-                                lineNumber: 163,
+                                lineNumber: 166,
                                 columnNumber: 11
                             }, ("TURBOPACK compile-time value", void 0)),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -238,7 +242,7 @@ const StockManagement = ({ onOpenTagModal })=>{
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/components/stock/StockManagement.tsx",
-                                lineNumber: 164,
+                                lineNumber: 167,
                                 columnNumber: 11
                             }, ("TURBOPACK compile-time value", void 0)),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -246,13 +250,13 @@ const StockManagement = ({ onOpenTagModal })=>{
                                 children: "Showroom & Warehouse"
                             }, void 0, false, {
                                 fileName: "[project]/src/components/stock/StockManagement.tsx",
-                                lineNumber: 167,
+                                lineNumber: 170,
                                 columnNumber: 11
                             }, ("TURBOPACK compile-time value", void 0))
                         ]
                     }, void 0, true, {
                         fileName: "[project]/src/components/stock/StockManagement.tsx",
-                        lineNumber: 162,
+                        lineNumber: 165,
                         columnNumber: 9
                     }, ("TURBOPACK compile-time value", void 0)),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -263,7 +267,7 @@ const StockManagement = ({ onOpenTagModal })=>{
                                 children: "Stock Valuation (Cost)"
                             }, void 0, false, {
                                 fileName: "[project]/src/components/stock/StockManagement.tsx",
-                                lineNumber: 171,
+                                lineNumber: 174,
                                 columnNumber: 11
                             }, ("TURBOPACK compile-time value", void 0)),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -271,7 +275,7 @@ const StockManagement = ({ onOpenTagModal })=>{
                                 children: (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$utils$2f$formatters$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["formatCurrency"])(totalStockValueCost)
                             }, void 0, false, {
                                 fileName: "[project]/src/components/stock/StockManagement.tsx",
-                                lineNumber: 172,
+                                lineNumber: 175,
                                 columnNumber: 11
                             }, ("TURBOPACK compile-time value", void 0)),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -282,13 +286,13 @@ const StockManagement = ({ onOpenTagModal })=>{
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/components/stock/StockManagement.tsx",
-                                lineNumber: 175,
+                                lineNumber: 178,
                                 columnNumber: 11
                             }, ("TURBOPACK compile-time value", void 0))
                         ]
                     }, void 0, true, {
                         fileName: "[project]/src/components/stock/StockManagement.tsx",
-                        lineNumber: 170,
+                        lineNumber: 173,
                         columnNumber: 9
                     }, ("TURBOPACK compile-time value", void 0)),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -302,20 +306,20 @@ const StockManagement = ({ onOpenTagModal })=>{
                                         children: "Low-Stock Alerts"
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/stock/StockManagement.tsx",
-                                        lineNumber: 189,
+                                        lineNumber: 192,
                                         columnNumber: 13
                                     }, ("TURBOPACK compile-time value", void 0)),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$triangle$2d$alert$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$export__default__as__AlertTriangle$3e$__["AlertTriangle"], {
                                         className: "w-3.5 h-3.5 text-amber-600"
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/stock/StockManagement.tsx",
-                                        lineNumber: 190,
+                                        lineNumber: 193,
                                         columnNumber: 13
                                     }, ("TURBOPACK compile-time value", void 0))
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/components/stock/StockManagement.tsx",
-                                lineNumber: 188,
+                                lineNumber: 191,
                                 columnNumber: 11
                             }, ("TURBOPACK compile-time value", void 0)),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -326,7 +330,7 @@ const StockManagement = ({ onOpenTagModal })=>{
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/components/stock/StockManagement.tsx",
-                                lineNumber: 192,
+                                lineNumber: 195,
                                 columnNumber: 11
                             }, ("TURBOPACK compile-time value", void 0)),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -334,19 +338,19 @@ const StockManagement = ({ onOpenTagModal })=>{
                                 children: onlyLowStock ? 'Showing low stock only' : 'Click to filter low stock'
                             }, void 0, false, {
                                 fileName: "[project]/src/components/stock/StockManagement.tsx",
-                                lineNumber: 195,
+                                lineNumber: 198,
                                 columnNumber: 11
                             }, ("TURBOPACK compile-time value", void 0))
                         ]
                     }, void 0, true, {
                         fileName: "[project]/src/components/stock/StockManagement.tsx",
-                        lineNumber: 180,
+                        lineNumber: 183,
                         columnNumber: 9
                     }, ("TURBOPACK compile-time value", void 0))
                 ]
             }, void 0, true, {
                 fileName: "[project]/src/components/stock/StockManagement.tsx",
-                lineNumber: 155,
+                lineNumber: 158,
                 columnNumber: 7
             }, ("TURBOPACK compile-time value", void 0)),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -362,7 +366,7 @@ const StockManagement = ({ onOpenTagModal })=>{
                         ]
                     }, void 0, true, {
                         fileName: "[project]/src/components/stock/StockManagement.tsx",
-                        lineNumber: 203,
+                        lineNumber: 206,
                         columnNumber: 9
                     }, ("TURBOPACK compile-time value", void 0)),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -375,7 +379,7 @@ const StockManagement = ({ onOpenTagModal })=>{
                         ]
                     }, void 0, true, {
                         fileName: "[project]/src/components/stock/StockManagement.tsx",
-                        lineNumber: 213,
+                        lineNumber: 216,
                         columnNumber: 9
                     }, ("TURBOPACK compile-time value", void 0)),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -388,13 +392,13 @@ const StockManagement = ({ onOpenTagModal })=>{
                         ]
                     }, void 0, true, {
                         fileName: "[project]/src/components/stock/StockManagement.tsx",
-                        lineNumber: 223,
+                        lineNumber: 226,
                         columnNumber: 9
                     }, ("TURBOPACK compile-time value", void 0))
                 ]
             }, void 0, true, {
                 fileName: "[project]/src/components/stock/StockManagement.tsx",
-                lineNumber: 202,
+                lineNumber: 205,
                 columnNumber: 7
             }, ("TURBOPACK compile-time value", void 0)),
             activeTab === 'products' && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -413,7 +417,7 @@ const StockManagement = ({ onOpenTagModal })=>{
                                                 className: "w-3.5 h-3.5 text-stone-400 absolute left-3 top-1/2 -translate-y-1/2"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/components/stock/StockManagement.tsx",
-                                                lineNumber: 242,
+                                                lineNumber: 245,
                                                 columnNumber: 17
                                             }, ("TURBOPACK compile-time value", void 0)),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
@@ -424,13 +428,13 @@ const StockManagement = ({ onOpenTagModal })=>{
                                                 className: "w-full pl-8 pr-3 py-1.5 text-xs bg-stone-50 border border-stone-200 rounded-lg focus:outline-none focus:border-amber-500"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/components/stock/StockManagement.tsx",
-                                                lineNumber: 243,
+                                                lineNumber: 246,
                                                 columnNumber: 17
                                             }, ("TURBOPACK compile-time value", void 0))
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/components/stock/StockManagement.tsx",
-                                        lineNumber: 241,
+                                        lineNumber: 244,
                                         columnNumber: 15
                                     }, ("TURBOPACK compile-time value", void 0)),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("select", {
@@ -443,7 +447,7 @@ const StockManagement = ({ onOpenTagModal })=>{
                                                 children: "All Brands"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/components/stock/StockManagement.tsx",
-                                                lineNumber: 258,
+                                                lineNumber: 261,
                                                 columnNumber: 17
                                             }, ("TURBOPACK compile-time value", void 0)),
                                             allBrands.map((b)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("option", {
@@ -451,13 +455,13 @@ const StockManagement = ({ onOpenTagModal })=>{
                                                     children: b
                                                 }, b, false, {
                                                     fileName: "[project]/src/components/stock/StockManagement.tsx",
-                                                    lineNumber: 260,
+                                                    lineNumber: 263,
                                                     columnNumber: 19
                                                 }, ("TURBOPACK compile-time value", void 0)))
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/components/stock/StockManagement.tsx",
-                                        lineNumber: 253,
+                                        lineNumber: 256,
                                         columnNumber: 15
                                     }, ("TURBOPACK compile-time value", void 0)),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("select", {
@@ -470,7 +474,7 @@ const StockManagement = ({ onOpenTagModal })=>{
                                                 children: "All Categories"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/components/stock/StockManagement.tsx",
-                                                lineNumber: 272,
+                                                lineNumber: 275,
                                                 columnNumber: 17
                                             }, ("TURBOPACK compile-time value", void 0)),
                                             allCategories.map((c)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("option", {
@@ -478,19 +482,19 @@ const StockManagement = ({ onOpenTagModal })=>{
                                                     children: c
                                                 }, c, false, {
                                                     fileName: "[project]/src/components/stock/StockManagement.tsx",
-                                                    lineNumber: 274,
+                                                    lineNumber: 277,
                                                     columnNumber: 19
                                                 }, ("TURBOPACK compile-time value", void 0)))
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/components/stock/StockManagement.tsx",
-                                        lineNumber: 267,
+                                        lineNumber: 270,
                                         columnNumber: 15
                                     }, ("TURBOPACK compile-time value", void 0))
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/components/stock/StockManagement.tsx",
-                                lineNumber: 240,
+                                lineNumber: 243,
                                 columnNumber: 13
                             }, ("TURBOPACK compile-time value", void 0)),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -505,7 +509,7 @@ const StockManagement = ({ onOpenTagModal })=>{
                                             className: "rounded text-amber-600 focus:ring-amber-500"
                                         }, void 0, false, {
                                             fileName: "[project]/src/components/stock/StockManagement.tsx",
-                                            lineNumber: 283,
+                                            lineNumber: 286,
                                             columnNumber: 17
                                         }, ("TURBOPACK compile-time value", void 0)),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -513,24 +517,24 @@ const StockManagement = ({ onOpenTagModal })=>{
                                             children: "Low Stock Alerts Only"
                                         }, void 0, false, {
                                             fileName: "[project]/src/components/stock/StockManagement.tsx",
-                                            lineNumber: 289,
+                                            lineNumber: 292,
                                             columnNumber: 17
                                         }, ("TURBOPACK compile-time value", void 0))
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/src/components/stock/StockManagement.tsx",
-                                    lineNumber: 282,
+                                    lineNumber: 285,
                                     columnNumber: 15
                                 }, ("TURBOPACK compile-time value", void 0))
                             }, void 0, false, {
                                 fileName: "[project]/src/components/stock/StockManagement.tsx",
-                                lineNumber: 281,
+                                lineNumber: 284,
                                 columnNumber: 13
                             }, ("TURBOPACK compile-time value", void 0))
                         ]
                     }, void 0, true, {
                         fileName: "[project]/src/components/stock/StockManagement.tsx",
-                        lineNumber: 239,
+                        lineNumber: 242,
                         columnNumber: 11
                     }, ("TURBOPACK compile-time value", void 0)),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -549,7 +553,7 @@ const StockManagement = ({ onOpenTagModal })=>{
                                                     children: "Product & SKU"
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/components/stock/StockManagement.tsx",
-                                                    lineNumber: 300,
+                                                    lineNumber: 303,
                                                     columnNumber: 21
                                                 }, ("TURBOPACK compile-time value", void 0)),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("th", {
@@ -557,7 +561,7 @@ const StockManagement = ({ onOpenTagModal })=>{
                                                     children: "Category & Brand"
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/components/stock/StockManagement.tsx",
-                                                    lineNumber: 301,
+                                                    lineNumber: 304,
                                                     columnNumber: 21
                                                 }, ("TURBOPACK compile-time value", void 0)),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("th", {
@@ -565,7 +569,7 @@ const StockManagement = ({ onOpenTagModal })=>{
                                                     children: "Dimensions & Finish"
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/components/stock/StockManagement.tsx",
-                                                    lineNumber: 302,
+                                                    lineNumber: 305,
                                                     columnNumber: 21
                                                 }, ("TURBOPACK compile-time value", void 0)),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("th", {
@@ -573,7 +577,7 @@ const StockManagement = ({ onOpenTagModal })=>{
                                                     children: "Purchase Price"
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/components/stock/StockManagement.tsx",
-                                                    lineNumber: 303,
+                                                    lineNumber: 306,
                                                     columnNumber: 21
                                                 }, ("TURBOPACK compile-time value", void 0)),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("th", {
@@ -581,7 +585,7 @@ const StockManagement = ({ onOpenTagModal })=>{
                                                     children: "Selling / MRP"
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/components/stock/StockManagement.tsx",
-                                                    lineNumber: 304,
+                                                    lineNumber: 307,
                                                     columnNumber: 21
                                                 }, ("TURBOPACK compile-time value", void 0)),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("th", {
@@ -589,7 +593,7 @@ const StockManagement = ({ onOpenTagModal })=>{
                                                     children: "Stock Count"
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/components/stock/StockManagement.tsx",
-                                                    lineNumber: 305,
+                                                    lineNumber: 308,
                                                     columnNumber: 21
                                                 }, ("TURBOPACK compile-time value", void 0)),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("th", {
@@ -597,7 +601,7 @@ const StockManagement = ({ onOpenTagModal })=>{
                                                     children: "Supplier"
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/components/stock/StockManagement.tsx",
-                                                    lineNumber: 306,
+                                                    lineNumber: 309,
                                                     columnNumber: 21
                                                 }, ("TURBOPACK compile-time value", void 0)),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("th", {
@@ -605,18 +609,18 @@ const StockManagement = ({ onOpenTagModal })=>{
                                                     children: "Actions"
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/components/stock/StockManagement.tsx",
-                                                    lineNumber: 307,
+                                                    lineNumber: 310,
                                                     columnNumber: 21
                                                 }, ("TURBOPACK compile-time value", void 0))
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/src/components/stock/StockManagement.tsx",
-                                            lineNumber: 299,
+                                            lineNumber: 302,
                                             columnNumber: 19
                                         }, ("TURBOPACK compile-time value", void 0))
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/stock/StockManagement.tsx",
-                                        lineNumber: 298,
+                                        lineNumber: 301,
                                         columnNumber: 17
                                     }, ("TURBOPACK compile-time value", void 0)),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("tbody", {
@@ -628,12 +632,12 @@ const StockManagement = ({ onOpenTagModal })=>{
                                                 children: "No products match your current filter parameters."
                                             }, void 0, false, {
                                                 fileName: "[project]/src/components/stock/StockManagement.tsx",
-                                                lineNumber: 313,
+                                                lineNumber: 316,
                                                 columnNumber: 23
                                             }, ("TURBOPACK compile-time value", void 0))
                                         }, void 0, false, {
                                             fileName: "[project]/src/components/stock/StockManagement.tsx",
-                                            lineNumber: 312,
+                                            lineNumber: 315,
                                             columnNumber: 21
                                         }, ("TURBOPACK compile-time value", void 0)) : filteredProducts.map((product)=>{
                                             const isLowStock = product.currentStock <= product.minAlertStock;
@@ -653,7 +657,7 @@ const StockManagement = ({ onOpenTagModal })=>{
                                                                     referrerPolicy: "no-referrer"
                                                                 }, void 0, false, {
                                                                     fileName: "[project]/src/components/stock/StockManagement.tsx",
-                                                                    lineNumber: 329,
+                                                                    lineNumber: 332,
                                                                     columnNumber: 31
                                                                 }, ("TURBOPACK compile-time value", void 0)),
                                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -663,7 +667,7 @@ const StockManagement = ({ onOpenTagModal })=>{
                                                                             children: product.name
                                                                         }, void 0, false, {
                                                                             fileName: "[project]/src/components/stock/StockManagement.tsx",
-                                                                            lineNumber: 336,
+                                                                            lineNumber: 339,
                                                                             columnNumber: 33
                                                                         }, ("TURBOPACK compile-time value", void 0)),
                                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -674,7 +678,7 @@ const StockManagement = ({ onOpenTagModal })=>{
                                                                                     children: product.sku
                                                                                 }, void 0, false, {
                                                                                     fileName: "[project]/src/components/stock/StockManagement.tsx",
-                                                                                    lineNumber: 338,
+                                                                                    lineNumber: 341,
                                                                                     columnNumber: 35
                                                                                 }, ("TURBOPACK compile-time value", void 0)),
                                                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -682,30 +686,54 @@ const StockManagement = ({ onOpenTagModal })=>{
                                                                                     children: product.modelNumber
                                                                                 }, void 0, false, {
                                                                                     fileName: "[project]/src/components/stock/StockManagement.tsx",
-                                                                                    lineNumber: 341,
+                                                                                    lineNumber: 344,
                                                                                     columnNumber: 35
                                                                                 }, ("TURBOPACK compile-time value", void 0))
                                                                             ]
                                                                         }, void 0, true, {
                                                                             fileName: "[project]/src/components/stock/StockManagement.tsx",
-                                                                            lineNumber: 337,
+                                                                            lineNumber: 340,
+                                                                            columnNumber: 33
+                                                                        }, ("TURBOPACK compile-time value", void 0)),
+                                                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                                                            className: "mt-1.5 opacity-80",
+                                                                            style: {
+                                                                                transform: 'scale(0.8)',
+                                                                                transformOrigin: 'left top'
+                                                                            },
+                                                                            children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$react$2d$barcode$2f$lib$2f$react$2d$barcode$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {
+                                                                                value: product.sku,
+                                                                                width: 1.2,
+                                                                                height: 24,
+                                                                                displayValue: false,
+                                                                                margin: 0,
+                                                                                background: "transparent",
+                                                                                lineColor: "#44403c"
+                                                                            }, void 0, false, {
+                                                                                fileName: "[project]/src/components/stock/StockManagement.tsx",
+                                                                                lineNumber: 349,
+                                                                                columnNumber: 35
+                                                                            }, ("TURBOPACK compile-time value", void 0))
+                                                                        }, void 0, false, {
+                                                                            fileName: "[project]/src/components/stock/StockManagement.tsx",
+                                                                            lineNumber: 348,
                                                                             columnNumber: 33
                                                                         }, ("TURBOPACK compile-time value", void 0))
                                                                     ]
                                                                 }, void 0, true, {
                                                                     fileName: "[project]/src/components/stock/StockManagement.tsx",
-                                                                    lineNumber: 335,
+                                                                    lineNumber: 338,
                                                                     columnNumber: 31
                                                                 }, ("TURBOPACK compile-time value", void 0))
                                                             ]
                                                         }, void 0, true, {
                                                             fileName: "[project]/src/components/stock/StockManagement.tsx",
-                                                            lineNumber: 328,
+                                                            lineNumber: 331,
                                                             columnNumber: 29
                                                         }, ("TURBOPACK compile-time value", void 0))
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/components/stock/StockManagement.tsx",
-                                                        lineNumber: 327,
+                                                        lineNumber: 330,
                                                         columnNumber: 27
                                                     }, ("TURBOPACK compile-time value", void 0)),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("td", {
@@ -716,7 +744,7 @@ const StockManagement = ({ onOpenTagModal })=>{
                                                                 children: product.category
                                                             }, void 0, false, {
                                                                 fileName: "[project]/src/components/stock/StockManagement.tsx",
-                                                                lineNumber: 350,
+                                                                lineNumber: 364,
                                                                 columnNumber: 29
                                                             }, ("TURBOPACK compile-time value", void 0)),
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -724,13 +752,13 @@ const StockManagement = ({ onOpenTagModal })=>{
                                                                 children: product.brand
                                                             }, void 0, false, {
                                                                 fileName: "[project]/src/components/stock/StockManagement.tsx",
-                                                                lineNumber: 351,
+                                                                lineNumber: 365,
                                                                 columnNumber: 29
                                                             }, ("TURBOPACK compile-time value", void 0))
                                                         ]
                                                     }, void 0, true, {
                                                         fileName: "[project]/src/components/stock/StockManagement.tsx",
-                                                        lineNumber: 349,
+                                                        lineNumber: 363,
                                                         columnNumber: 27
                                                     }, ("TURBOPACK compile-time value", void 0)),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("td", {
@@ -741,7 +769,7 @@ const StockManagement = ({ onOpenTagModal })=>{
                                                                 children: product.sizeDimensions
                                                             }, void 0, false, {
                                                                 fileName: "[project]/src/components/stock/StockManagement.tsx",
-                                                                lineNumber: 355,
+                                                                lineNumber: 369,
                                                                 columnNumber: 29
                                                             }, ("TURBOPACK compile-time value", void 0)),
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -749,13 +777,13 @@ const StockManagement = ({ onOpenTagModal })=>{
                                                                 children: product.colorFinish
                                                             }, void 0, false, {
                                                                 fileName: "[project]/src/components/stock/StockManagement.tsx",
-                                                                lineNumber: 356,
+                                                                lineNumber: 370,
                                                                 columnNumber: 29
                                                             }, ("TURBOPACK compile-time value", void 0))
                                                         ]
                                                     }, void 0, true, {
                                                         fileName: "[project]/src/components/stock/StockManagement.tsx",
-                                                        lineNumber: 354,
+                                                        lineNumber: 368,
                                                         columnNumber: 27
                                                     }, ("TURBOPACK compile-time value", void 0)),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("td", {
@@ -763,7 +791,7 @@ const StockManagement = ({ onOpenTagModal })=>{
                                                         children: (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$utils$2f$formatters$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["formatCurrency"])(product.purchasePrice)
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/components/stock/StockManagement.tsx",
-                                                        lineNumber: 359,
+                                                        lineNumber: 373,
                                                         columnNumber: 27
                                                     }, ("TURBOPACK compile-time value", void 0)),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("td", {
@@ -774,7 +802,7 @@ const StockManagement = ({ onOpenTagModal })=>{
                                                                 children: (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$utils$2f$formatters$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["formatCurrency"])(product.sellingPrice)
                                                             }, void 0, false, {
                                                                 fileName: "[project]/src/components/stock/StockManagement.tsx",
-                                                                lineNumber: 364,
+                                                                lineNumber: 378,
                                                                 columnNumber: 29
                                                             }, ("TURBOPACK compile-time value", void 0)),
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -785,7 +813,7 @@ const StockManagement = ({ onOpenTagModal })=>{
                                                                 ]
                                                             }, void 0, true, {
                                                                 fileName: "[project]/src/components/stock/StockManagement.tsx",
-                                                                lineNumber: 367,
+                                                                lineNumber: 381,
                                                                 columnNumber: 29
                                                             }, ("TURBOPACK compile-time value", void 0)),
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -797,13 +825,13 @@ const StockManagement = ({ onOpenTagModal })=>{
                                                                 ]
                                                             }, void 0, true, {
                                                                 fileName: "[project]/src/components/stock/StockManagement.tsx",
-                                                                lineNumber: 370,
+                                                                lineNumber: 384,
                                                                 columnNumber: 29
                                                             }, ("TURBOPACK compile-time value", void 0))
                                                         ]
                                                     }, void 0, true, {
                                                         fileName: "[project]/src/components/stock/StockManagement.tsx",
-                                                        lineNumber: 363,
+                                                        lineNumber: 377,
                                                         columnNumber: 27
                                                     }, ("TURBOPACK compile-time value", void 0)),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("td", {
@@ -819,7 +847,7 @@ const StockManagement = ({ onOpenTagModal })=>{
                                                                     ]
                                                                 }, void 0, true, {
                                                                     fileName: "[project]/src/components/stock/StockManagement.tsx",
-                                                                    lineNumber: 383,
+                                                                    lineNumber: 397,
                                                                     columnNumber: 31
                                                                 }, ("TURBOPACK compile-time value", void 0)),
                                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -830,18 +858,18 @@ const StockManagement = ({ onOpenTagModal })=>{
                                                                     ]
                                                                 }, void 0, true, {
                                                                     fileName: "[project]/src/components/stock/StockManagement.tsx",
-                                                                    lineNumber: 384,
+                                                                    lineNumber: 398,
                                                                     columnNumber: 31
                                                                 }, ("TURBOPACK compile-time value", void 0))
                                                             ]
                                                         }, void 0, true, {
                                                             fileName: "[project]/src/components/stock/StockManagement.tsx",
-                                                            lineNumber: 376,
+                                                            lineNumber: 390,
                                                             columnNumber: 29
                                                         }, ("TURBOPACK compile-time value", void 0))
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/components/stock/StockManagement.tsx",
-                                                        lineNumber: 375,
+                                                        lineNumber: 389,
                                                         columnNumber: 27
                                                     }, ("TURBOPACK compile-time value", void 0)),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("td", {
@@ -852,7 +880,7 @@ const StockManagement = ({ onOpenTagModal })=>{
                                                                 children: product.supplierName
                                                             }, void 0, false, {
                                                                 fileName: "[project]/src/components/stock/StockManagement.tsx",
-                                                                lineNumber: 391,
+                                                                lineNumber: 405,
                                                                 columnNumber: 29
                                                             }, ("TURBOPACK compile-time value", void 0)),
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -863,13 +891,13 @@ const StockManagement = ({ onOpenTagModal })=>{
                                                                 ]
                                                             }, void 0, true, {
                                                                 fileName: "[project]/src/components/stock/StockManagement.tsx",
-                                                                lineNumber: 394,
+                                                                lineNumber: 408,
                                                                 columnNumber: 29
                                                             }, ("TURBOPACK compile-time value", void 0))
                                                         ]
                                                     }, void 0, true, {
                                                         fileName: "[project]/src/components/stock/StockManagement.tsx",
-                                                        lineNumber: 390,
+                                                        lineNumber: 404,
                                                         columnNumber: 27
                                                     }, ("TURBOPACK compile-time value", void 0)),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("td", {
@@ -885,12 +913,12 @@ const StockManagement = ({ onOpenTagModal })=>{
                                                                         className: "w-3.5 h-3.5"
                                                                     }, void 0, false, {
                                                                         fileName: "[project]/src/components/stock/StockManagement.tsx",
-                                                                        lineNumber: 407,
+                                                                        lineNumber: 421,
                                                                         columnNumber: 33
                                                                     }, ("TURBOPACK compile-time value", void 0))
                                                                 }, void 0, false, {
                                                                     fileName: "[project]/src/components/stock/StockManagement.tsx",
-                                                                    lineNumber: 402,
+                                                                    lineNumber: 416,
                                                                     columnNumber: 31
                                                                 }, ("TURBOPACK compile-time value", void 0)),
                                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -901,29 +929,45 @@ const StockManagement = ({ onOpenTagModal })=>{
                                                                         className: "w-3.5 h-3.5"
                                                                     }, void 0, false, {
                                                                         fileName: "[project]/src/components/stock/StockManagement.tsx",
-                                                                        lineNumber: 416,
+                                                                        lineNumber: 430,
                                                                         columnNumber: 33
                                                                     }, ("TURBOPACK compile-time value", void 0))
                                                                 }, void 0, false, {
                                                                     fileName: "[project]/src/components/stock/StockManagement.tsx",
-                                                                    lineNumber: 411,
+                                                                    lineNumber: 425,
                                                                     columnNumber: 31
                                                                 }, ("TURBOPACK compile-time value", void 0)),
                                                                 onOpenTagModal && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
                                                                     onClick: ()=>onOpenTagModal(product),
-                                                                    title: "Print MRP & QR Tag",
+                                                                    title: "Print MRP & QR Tag (Showroom)",
                                                                     className: "p-1.5 rounded-md hover:bg-stone-200 text-stone-700 transition-colors",
                                                                     children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$qr$2d$code$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$export__default__as__QrCode$3e$__["QrCode"], {
                                                                         className: "w-3.5 h-3.5"
                                                                     }, void 0, false, {
                                                                         fileName: "[project]/src/components/stock/StockManagement.tsx",
-                                                                        lineNumber: 426,
+                                                                        lineNumber: 440,
                                                                         columnNumber: 35
                                                                     }, ("TURBOPACK compile-time value", void 0))
                                                                 }, void 0, false, {
                                                                     fileName: "[project]/src/components/stock/StockManagement.tsx",
-                                                                    lineNumber: 421,
+                                                                    lineNumber: 435,
                                                                     columnNumber: 33
+                                                                }, ("TURBOPACK compile-time value", void 0)),
+                                                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
+                                                                    onClick: ()=>window.open(`/print/barcode/${product.sku}`, 'printLabel', 'width=400,height=300'),
+                                                                    title: "Print Warehouse Barcode Sticker",
+                                                                    className: "p-1.5 rounded-md hover:bg-stone-200 text-stone-700 transition-colors",
+                                                                    children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$printer$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$export__default__as__Printer$3e$__["Printer"], {
+                                                                        className: "w-3.5 h-3.5"
+                                                                    }, void 0, false, {
+                                                                        fileName: "[project]/src/components/stock/StockManagement.tsx",
+                                                                        lineNumber: 450,
+                                                                        columnNumber: 33
+                                                                    }, ("TURBOPACK compile-time value", void 0))
+                                                                }, void 0, false, {
+                                                                    fileName: "[project]/src/components/stock/StockManagement.tsx",
+                                                                    lineNumber: 445,
+                                                                    columnNumber: 31
                                                                 }, ("TURBOPACK compile-time value", void 0)),
                                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
                                                                     onClick: ()=>{
@@ -936,12 +980,12 @@ const StockManagement = ({ onOpenTagModal })=>{
                                                                         className: "w-3.5 h-3.5"
                                                                     }, void 0, false, {
                                                                         fileName: "[project]/src/components/stock/StockManagement.tsx",
-                                                                        lineNumber: 439,
+                                                                        lineNumber: 462,
                                                                         columnNumber: 33
                                                                     }, ("TURBOPACK compile-time value", void 0))
                                                                 }, void 0, false, {
                                                                     fileName: "[project]/src/components/stock/StockManagement.tsx",
-                                                                    lineNumber: 431,
+                                                                    lineNumber: 454,
                                                                     columnNumber: 31
                                                                 }, ("TURBOPACK compile-time value", void 0)),
                                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -956,57 +1000,57 @@ const StockManagement = ({ onOpenTagModal })=>{
                                                                         className: "w-3.5 h-3.5"
                                                                     }, void 0, false, {
                                                                         fileName: "[project]/src/components/stock/StockManagement.tsx",
-                                                                        lineNumber: 452,
+                                                                        lineNumber: 475,
                                                                         columnNumber: 33
                                                                     }, ("TURBOPACK compile-time value", void 0))
                                                                 }, void 0, false, {
                                                                     fileName: "[project]/src/components/stock/StockManagement.tsx",
-                                                                    lineNumber: 443,
+                                                                    lineNumber: 466,
                                                                     columnNumber: 31
                                                                 }, ("TURBOPACK compile-time value", void 0))
                                                             ]
                                                         }, void 0, true, {
                                                             fileName: "[project]/src/components/stock/StockManagement.tsx",
-                                                            lineNumber: 400,
+                                                            lineNumber: 414,
                                                             columnNumber: 29
                                                         }, ("TURBOPACK compile-time value", void 0))
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/components/stock/StockManagement.tsx",
-                                                        lineNumber: 399,
+                                                        lineNumber: 413,
                                                         columnNumber: 27
                                                     }, ("TURBOPACK compile-time value", void 0))
                                                 ]
                                             }, product.id, true, {
                                                 fileName: "[project]/src/components/stock/StockManagement.tsx",
-                                                lineNumber: 326,
+                                                lineNumber: 329,
                                                 columnNumber: 25
                                             }, ("TURBOPACK compile-time value", void 0));
                                         })
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/stock/StockManagement.tsx",
-                                        lineNumber: 310,
+                                        lineNumber: 313,
                                         columnNumber: 17
                                     }, ("TURBOPACK compile-time value", void 0))
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/components/stock/StockManagement.tsx",
-                                lineNumber: 297,
+                                lineNumber: 300,
                                 columnNumber: 15
                             }, ("TURBOPACK compile-time value", void 0))
                         }, void 0, false, {
                             fileName: "[project]/src/components/stock/StockManagement.tsx",
-                            lineNumber: 296,
+                            lineNumber: 299,
                             columnNumber: 13
                         }, ("TURBOPACK compile-time value", void 0))
                     }, void 0, false, {
                         fileName: "[project]/src/components/stock/StockManagement.tsx",
-                        lineNumber: 295,
+                        lineNumber: 298,
                         columnNumber: 11
                     }, ("TURBOPACK compile-time value", void 0))
                 ]
             }, void 0, true, {
                 fileName: "[project]/src/components/stock/StockManagement.tsx",
-                lineNumber: 237,
+                lineNumber: 240,
                 columnNumber: 9
             }, ("TURBOPACK compile-time value", void 0)),
             activeTab === 'brands' && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1026,7 +1070,7 @@ const StockManagement = ({ onOpenTagModal })=>{
                                                     className: "w-4 h-4 text-amber-700"
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/components/stock/StockManagement.tsx",
-                                                    lineNumber: 478,
+                                                    lineNumber: 501,
                                                     columnNumber: 21
                                                 }, ("TURBOPACK compile-time value", void 0)),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("h3", {
@@ -1034,13 +1078,13 @@ const StockManagement = ({ onOpenTagModal })=>{
                                                     children: b.brand
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/components/stock/StockManagement.tsx",
-                                                    lineNumber: 479,
+                                                    lineNumber: 502,
                                                     columnNumber: 21
                                                 }, ("TURBOPACK compile-time value", void 0))
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/src/components/stock/StockManagement.tsx",
-                                            lineNumber: 477,
+                                            lineNumber: 500,
                                             columnNumber: 19
                                         }, ("TURBOPACK compile-time value", void 0)),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -1051,13 +1095,13 @@ const StockManagement = ({ onOpenTagModal })=>{
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/src/components/stock/StockManagement.tsx",
-                                            lineNumber: 483,
+                                            lineNumber: 506,
                                             columnNumber: 19
                                         }, ("TURBOPACK compile-time value", void 0))
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/src/components/stock/StockManagement.tsx",
-                                    lineNumber: 476,
+                                    lineNumber: 499,
                                     columnNumber: 17
                                 }, ("TURBOPACK compile-time value", void 0)),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1071,7 +1115,7 @@ const StockManagement = ({ onOpenTagModal })=>{
                                                     children: "Current Stock Quantity:"
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/components/stock/StockManagement.tsx",
-                                                    lineNumber: 490,
+                                                    lineNumber: 513,
                                                     columnNumber: 21
                                                 }, ("TURBOPACK compile-time value", void 0)),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -1082,13 +1126,13 @@ const StockManagement = ({ onOpenTagModal })=>{
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "[project]/src/components/stock/StockManagement.tsx",
-                                                    lineNumber: 491,
+                                                    lineNumber: 514,
                                                     columnNumber: 21
                                                 }, ("TURBOPACK compile-time value", void 0))
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/src/components/stock/StockManagement.tsx",
-                                            lineNumber: 489,
+                                            lineNumber: 512,
                                             columnNumber: 19
                                         }, ("TURBOPACK compile-time value", void 0)),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1099,7 +1143,7 @@ const StockManagement = ({ onOpenTagModal })=>{
                                                     children: "Stock Valuation at Cost:"
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/components/stock/StockManagement.tsx",
-                                                    lineNumber: 494,
+                                                    lineNumber: 517,
                                                     columnNumber: 21
                                                 }, ("TURBOPACK compile-time value", void 0)),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -1107,13 +1151,13 @@ const StockManagement = ({ onOpenTagModal })=>{
                                                     children: (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$utils$2f$formatters$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["formatCurrency"])(b.totalCost)
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/components/stock/StockManagement.tsx",
-                                                    lineNumber: 495,
+                                                    lineNumber: 518,
                                                     columnNumber: 21
                                                 }, ("TURBOPACK compile-time value", void 0))
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/src/components/stock/StockManagement.tsx",
-                                            lineNumber: 493,
+                                            lineNumber: 516,
                                             columnNumber: 19
                                         }, ("TURBOPACK compile-time value", void 0)),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1124,7 +1168,7 @@ const StockManagement = ({ onOpenTagModal })=>{
                                                     children: "Retail Revenue Potential:"
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/components/stock/StockManagement.tsx",
-                                                    lineNumber: 500,
+                                                    lineNumber: 523,
                                                     columnNumber: 21
                                                 }, ("TURBOPACK compile-time value", void 0)),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -1132,13 +1176,13 @@ const StockManagement = ({ onOpenTagModal })=>{
                                                     children: (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$utils$2f$formatters$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["formatCurrency"])(b.totalRetail)
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/components/stock/StockManagement.tsx",
-                                                    lineNumber: 501,
+                                                    lineNumber: 524,
                                                     columnNumber: 21
                                                 }, ("TURBOPACK compile-time value", void 0))
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/src/components/stock/StockManagement.tsx",
-                                            lineNumber: 499,
+                                            lineNumber: 522,
                                             columnNumber: 19
                                         }, ("TURBOPACK compile-time value", void 0)),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1149,7 +1193,7 @@ const StockManagement = ({ onOpenTagModal })=>{
                                                     children: "Low Stock Status:"
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/components/stock/StockManagement.tsx",
-                                                    lineNumber: 506,
+                                                    lineNumber: 529,
                                                     columnNumber: 21
                                                 }, ("TURBOPACK compile-time value", void 0)),
                                                 b.lowStockInBrand > 0 ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -1159,7 +1203,7 @@ const StockManagement = ({ onOpenTagModal })=>{
                                                             className: "w-3 h-3"
                                                         }, void 0, false, {
                                                             fileName: "[project]/src/components/stock/StockManagement.tsx",
-                                                            lineNumber: 509,
+                                                            lineNumber: 532,
                                                             columnNumber: 25
                                                         }, ("TURBOPACK compile-time value", void 0)),
                                                         " ",
@@ -1168,26 +1212,26 @@ const StockManagement = ({ onOpenTagModal })=>{
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "[project]/src/components/stock/StockManagement.tsx",
-                                                    lineNumber: 508,
+                                                    lineNumber: 531,
                                                     columnNumber: 23
                                                 }, ("TURBOPACK compile-time value", void 0)) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
                                                     className: "text-emerald-700 font-medium",
                                                     children: "All Healthy"
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/components/stock/StockManagement.tsx",
-                                                    lineNumber: 512,
+                                                    lineNumber: 535,
                                                     columnNumber: 23
                                                 }, ("TURBOPACK compile-time value", void 0))
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/src/components/stock/StockManagement.tsx",
-                                            lineNumber: 505,
+                                            lineNumber: 528,
                                             columnNumber: 19
                                         }, ("TURBOPACK compile-time value", void 0))
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/src/components/stock/StockManagement.tsx",
-                                    lineNumber: 488,
+                                    lineNumber: 511,
                                     columnNumber: 17
                                 }, ("TURBOPACK compile-time value", void 0)),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -1199,23 +1243,23 @@ const StockManagement = ({ onOpenTagModal })=>{
                                     children: "View Brand SKUs & Stock"
                                 }, void 0, false, {
                                     fileName: "[project]/src/components/stock/StockManagement.tsx",
-                                    lineNumber: 517,
+                                    lineNumber: 540,
                                     columnNumber: 17
                                 }, ("TURBOPACK compile-time value", void 0))
                             ]
                         }, b.brand, true, {
                             fileName: "[project]/src/components/stock/StockManagement.tsx",
-                            lineNumber: 472,
+                            lineNumber: 495,
                             columnNumber: 15
                         }, ("TURBOPACK compile-time value", void 0)))
                 }, void 0, false, {
                     fileName: "[project]/src/components/stock/StockManagement.tsx",
-                    lineNumber: 470,
+                    lineNumber: 493,
                     columnNumber: 11
                 }, ("TURBOPACK compile-time value", void 0))
             }, void 0, false, {
                 fileName: "[project]/src/components/stock/StockManagement.tsx",
-                lineNumber: 469,
+                lineNumber: 492,
                 columnNumber: 9
             }, ("TURBOPACK compile-time value", void 0)),
             activeTab === 'movements' && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1229,7 +1273,7 @@ const StockManagement = ({ onOpenTagModal })=>{
                                 children: "Audit Trail: Inbound / Outbound / Adjustments"
                             }, void 0, false, {
                                 fileName: "[project]/src/components/stock/StockManagement.tsx",
-                                lineNumber: 536,
+                                lineNumber: 559,
                                 columnNumber: 13
                             }, ("TURBOPACK compile-time value", void 0)),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -1240,13 +1284,13 @@ const StockManagement = ({ onOpenTagModal })=>{
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/components/stock/StockManagement.tsx",
-                                lineNumber: 539,
+                                lineNumber: 562,
                                 columnNumber: 13
                             }, ("TURBOPACK compile-time value", void 0))
                         ]
                     }, void 0, true, {
                         fileName: "[project]/src/components/stock/StockManagement.tsx",
-                        lineNumber: 535,
+                        lineNumber: 558,
                         columnNumber: 11
                     }, ("TURBOPACK compile-time value", void 0)),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1263,7 +1307,7 @@ const StockManagement = ({ onOpenTagModal })=>{
                                                 children: "Date"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/components/stock/StockManagement.tsx",
-                                                lineNumber: 546,
+                                                lineNumber: 569,
                                                 columnNumber: 19
                                             }, ("TURBOPACK compile-time value", void 0)),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("th", {
@@ -1271,7 +1315,7 @@ const StockManagement = ({ onOpenTagModal })=>{
                                                 children: "Type"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/components/stock/StockManagement.tsx",
-                                                lineNumber: 547,
+                                                lineNumber: 570,
                                                 columnNumber: 19
                                             }, ("TURBOPACK compile-time value", void 0)),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("th", {
@@ -1279,7 +1323,7 @@ const StockManagement = ({ onOpenTagModal })=>{
                                                 children: "SKU & Item Name"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/components/stock/StockManagement.tsx",
-                                                lineNumber: 548,
+                                                lineNumber: 571,
                                                 columnNumber: 19
                                             }, ("TURBOPACK compile-time value", void 0)),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("th", {
@@ -1287,7 +1331,7 @@ const StockManagement = ({ onOpenTagModal })=>{
                                                 children: "Quantity"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/components/stock/StockManagement.tsx",
-                                                lineNumber: 549,
+                                                lineNumber: 572,
                                                 columnNumber: 19
                                             }, ("TURBOPACK compile-time value", void 0)),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("th", {
@@ -1295,7 +1339,7 @@ const StockManagement = ({ onOpenTagModal })=>{
                                                 children: "Reason / Operation"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/components/stock/StockManagement.tsx",
-                                                lineNumber: 550,
+                                                lineNumber: 573,
                                                 columnNumber: 19
                                             }, ("TURBOPACK compile-time value", void 0)),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("th", {
@@ -1303,7 +1347,7 @@ const StockManagement = ({ onOpenTagModal })=>{
                                                 children: "Reference No"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/components/stock/StockManagement.tsx",
-                                                lineNumber: 551,
+                                                lineNumber: 574,
                                                 columnNumber: 19
                                             }, ("TURBOPACK compile-time value", void 0)),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("th", {
@@ -1311,18 +1355,18 @@ const StockManagement = ({ onOpenTagModal })=>{
                                                 children: "Staff Sign-off"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/components/stock/StockManagement.tsx",
-                                                lineNumber: 552,
+                                                lineNumber: 575,
                                                 columnNumber: 19
                                             }, ("TURBOPACK compile-time value", void 0))
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/components/stock/StockManagement.tsx",
-                                        lineNumber: 545,
+                                        lineNumber: 568,
                                         columnNumber: 17
                                     }, ("TURBOPACK compile-time value", void 0))
                                 }, void 0, false, {
                                     fileName: "[project]/src/components/stock/StockManagement.tsx",
-                                    lineNumber: 544,
+                                    lineNumber: 567,
                                     columnNumber: 15
                                 }, ("TURBOPACK compile-time value", void 0)),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("tbody", {
@@ -1335,7 +1379,7 @@ const StockManagement = ({ onOpenTagModal })=>{
                                                     children: (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$utils$2f$formatters$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["formatDate"])(mov.date)
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/components/stock/StockManagement.tsx",
-                                                    lineNumber: 558,
+                                                    lineNumber: 581,
                                                     columnNumber: 21
                                                 }, ("TURBOPACK compile-time value", void 0)),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("td", {
@@ -1345,12 +1389,12 @@ const StockManagement = ({ onOpenTagModal })=>{
                                                         children: mov.type === 'IN' ? '+ INBOUND' : '- DISPATCH'
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/components/stock/StockManagement.tsx",
-                                                        lineNumber: 560,
+                                                        lineNumber: 583,
                                                         columnNumber: 23
                                                     }, ("TURBOPACK compile-time value", void 0))
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/components/stock/StockManagement.tsx",
-                                                    lineNumber: 559,
+                                                    lineNumber: 582,
                                                     columnNumber: 21
                                                 }, ("TURBOPACK compile-time value", void 0)),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("td", {
@@ -1361,7 +1405,7 @@ const StockManagement = ({ onOpenTagModal })=>{
                                                             children: mov.productName
                                                         }, void 0, false, {
                                                             fileName: "[project]/src/components/stock/StockManagement.tsx",
-                                                            lineNumber: 571,
+                                                            lineNumber: 594,
                                                             columnNumber: 23
                                                         }, ("TURBOPACK compile-time value", void 0)),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -1369,13 +1413,13 @@ const StockManagement = ({ onOpenTagModal })=>{
                                                             children: mov.sku
                                                         }, void 0, false, {
                                                             fileName: "[project]/src/components/stock/StockManagement.tsx",
-                                                            lineNumber: 572,
+                                                            lineNumber: 595,
                                                             columnNumber: 23
                                                         }, ("TURBOPACK compile-time value", void 0))
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "[project]/src/components/stock/StockManagement.tsx",
-                                                    lineNumber: 570,
+                                                    lineNumber: 593,
                                                     columnNumber: 21
                                                 }, ("TURBOPACK compile-time value", void 0)),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("td", {
@@ -1383,7 +1427,7 @@ const StockManagement = ({ onOpenTagModal })=>{
                                                     children: mov.type === 'IN' ? `+${mov.quantity}` : `-${mov.quantity}`
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/components/stock/StockManagement.tsx",
-                                                    lineNumber: 574,
+                                                    lineNumber: 597,
                                                     columnNumber: 21
                                                 }, ("TURBOPACK compile-time value", void 0)),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("td", {
@@ -1393,7 +1437,7 @@ const StockManagement = ({ onOpenTagModal })=>{
                                                             children: mov.reason
                                                         }, void 0, false, {
                                                             fileName: "[project]/src/components/stock/StockManagement.tsx",
-                                                            lineNumber: 578,
+                                                            lineNumber: 601,
                                                             columnNumber: 23
                                                         }, ("TURBOPACK compile-time value", void 0)),
                                                         mov.notes && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1401,13 +1445,13 @@ const StockManagement = ({ onOpenTagModal })=>{
                                                             children: mov.notes
                                                         }, void 0, false, {
                                                             fileName: "[project]/src/components/stock/StockManagement.tsx",
-                                                            lineNumber: 579,
+                                                            lineNumber: 602,
                                                             columnNumber: 37
                                                         }, ("TURBOPACK compile-time value", void 0))
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "[project]/src/components/stock/StockManagement.tsx",
-                                                    lineNumber: 577,
+                                                    lineNumber: 600,
                                                     columnNumber: 21
                                                 }, ("TURBOPACK compile-time value", void 0)),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("td", {
@@ -1415,7 +1459,7 @@ const StockManagement = ({ onOpenTagModal })=>{
                                                     children: mov.referenceNo
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/components/stock/StockManagement.tsx",
-                                                    lineNumber: 581,
+                                                    lineNumber: 604,
                                                     columnNumber: 21
                                                 }, ("TURBOPACK compile-time value", void 0)),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("td", {
@@ -1423,35 +1467,35 @@ const StockManagement = ({ onOpenTagModal })=>{
                                                     children: mov.performedBy
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/components/stock/StockManagement.tsx",
-                                                    lineNumber: 582,
+                                                    lineNumber: 605,
                                                     columnNumber: 21
                                                 }, ("TURBOPACK compile-time value", void 0))
                                             ]
                                         }, mov.id, true, {
                                             fileName: "[project]/src/components/stock/StockManagement.tsx",
-                                            lineNumber: 557,
+                                            lineNumber: 580,
                                             columnNumber: 19
                                         }, ("TURBOPACK compile-time value", void 0)))
                                 }, void 0, false, {
                                     fileName: "[project]/src/components/stock/StockManagement.tsx",
-                                    lineNumber: 555,
+                                    lineNumber: 578,
                                     columnNumber: 15
                                 }, ("TURBOPACK compile-time value", void 0))
                             ]
                         }, void 0, true, {
                             fileName: "[project]/src/components/stock/StockManagement.tsx",
-                            lineNumber: 543,
+                            lineNumber: 566,
                             columnNumber: 13
                         }, ("TURBOPACK compile-time value", void 0))
                     }, void 0, false, {
                         fileName: "[project]/src/components/stock/StockManagement.tsx",
-                        lineNumber: 542,
+                        lineNumber: 565,
                         columnNumber: 11
                     }, ("TURBOPACK compile-time value", void 0))
                 ]
             }, void 0, true, {
                 fileName: "[project]/src/components/stock/StockManagement.tsx",
-                lineNumber: 534,
+                lineNumber: 557,
                 columnNumber: 9
             }, ("TURBOPACK compile-time value", void 0)),
             isAddModalOpen && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(ProductFormModal, {
@@ -1472,7 +1516,7 @@ const StockManagement = ({ onOpenTagModal })=>{
                 }
             }, void 0, false, {
                 fileName: "[project]/src/components/stock/StockManagement.tsx",
-                lineNumber: 593,
+                lineNumber: 616,
                 columnNumber: 9
             }, ("TURBOPACK compile-time value", void 0)),
             isMovementModalOpen && movementTargetProduct && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1485,7 +1529,7 @@ const StockManagement = ({ onOpenTagModal })=>{
                             children: "Record Stock Movement"
                         }, void 0, false, {
                             fileName: "[project]/src/components/stock/StockManagement.tsx",
-                            lineNumber: 616,
+                            lineNumber: 639,
                             columnNumber: 13
                         }, ("TURBOPACK compile-time value", void 0)),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -1499,13 +1543,13 @@ const StockManagement = ({ onOpenTagModal })=>{
                                     children: movementTargetProduct.currentStock
                                 }, void 0, false, {
                                     fileName: "[project]/src/components/stock/StockManagement.tsx",
-                                    lineNumber: 620,
+                                    lineNumber: 643,
                                     columnNumber: 91
                                 }, ("TURBOPACK compile-time value", void 0))
                             ]
                         }, void 0, true, {
                             fileName: "[project]/src/components/stock/StockManagement.tsx",
-                            lineNumber: 619,
+                            lineNumber: 642,
                             columnNumber: 13
                         }, ("TURBOPACK compile-time value", void 0)),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("form", {
@@ -1519,7 +1563,7 @@ const StockManagement = ({ onOpenTagModal })=>{
                                             children: "Movement Type"
                                         }, void 0, false, {
                                             fileName: "[project]/src/components/stock/StockManagement.tsx",
-                                            lineNumber: 625,
+                                            lineNumber: 648,
                                             columnNumber: 17
                                         }, ("TURBOPACK compile-time value", void 0)),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1535,7 +1579,7 @@ const StockManagement = ({ onOpenTagModal })=>{
                                                     children: "+ Stock IN (Inbound)"
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/components/stock/StockManagement.tsx",
-                                                    lineNumber: 627,
+                                                    lineNumber: 650,
                                                     columnNumber: 19
                                                 }, ("TURBOPACK compile-time value", void 0)),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -1548,19 +1592,19 @@ const StockManagement = ({ onOpenTagModal })=>{
                                                     children: "- Stock OUT (Dispatch)"
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/components/stock/StockManagement.tsx",
-                                                    lineNumber: 641,
+                                                    lineNumber: 664,
                                                     columnNumber: 19
                                                 }, ("TURBOPACK compile-time value", void 0))
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/src/components/stock/StockManagement.tsx",
-                                            lineNumber: 626,
+                                            lineNumber: 649,
                                             columnNumber: 17
                                         }, ("TURBOPACK compile-time value", void 0))
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/src/components/stock/StockManagement.tsx",
-                                    lineNumber: 624,
+                                    lineNumber: 647,
                                     columnNumber: 15
                                 }, ("TURBOPACK compile-time value", void 0)),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1573,7 +1617,7 @@ const StockManagement = ({ onOpenTagModal })=>{
                                                     children: "Quantity"
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/components/stock/StockManagement.tsx",
-                                                    lineNumber: 660,
+                                                    lineNumber: 683,
                                                     columnNumber: 19
                                                 }, ("TURBOPACK compile-time value", void 0)),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
@@ -1585,13 +1629,13 @@ const StockManagement = ({ onOpenTagModal })=>{
                                                     className: "w-full px-3 py-1.5 border border-stone-300 rounded-lg"
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/components/stock/StockManagement.tsx",
-                                                    lineNumber: 661,
+                                                    lineNumber: 684,
                                                     columnNumber: 19
                                                 }, ("TURBOPACK compile-time value", void 0))
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/src/components/stock/StockManagement.tsx",
-                                            lineNumber: 659,
+                                            lineNumber: 682,
                                             columnNumber: 17
                                         }, ("TURBOPACK compile-time value", void 0)),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1601,7 +1645,7 @@ const StockManagement = ({ onOpenTagModal })=>{
                                                     children: "Reason / Purpose"
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/components/stock/StockManagement.tsx",
-                                                    lineNumber: 672,
+                                                    lineNumber: 695,
                                                     columnNumber: 19
                                                 }, ("TURBOPACK compile-time value", void 0)),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("select", {
@@ -1615,7 +1659,7 @@ const StockManagement = ({ onOpenTagModal })=>{
                                                                 children: "Purchase Receipt"
                                                             }, void 0, false, {
                                                                 fileName: "[project]/src/components/stock/StockManagement.tsx",
-                                                                lineNumber: 680,
+                                                                lineNumber: 703,
                                                                 columnNumber: 25
                                                             }, ("TURBOPACK compile-time value", void 0)),
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("option", {
@@ -1623,7 +1667,7 @@ const StockManagement = ({ onOpenTagModal })=>{
                                                                 children: "Customer Return"
                                                             }, void 0, false, {
                                                                 fileName: "[project]/src/components/stock/StockManagement.tsx",
-                                                                lineNumber: 681,
+                                                                lineNumber: 704,
                                                                 columnNumber: 25
                                                             }, ("TURBOPACK compile-time value", void 0)),
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("option", {
@@ -1631,13 +1675,13 @@ const StockManagement = ({ onOpenTagModal })=>{
                                                                 children: "Sample Returned"
                                                             }, void 0, false, {
                                                                 fileName: "[project]/src/components/stock/StockManagement.tsx",
-                                                                lineNumber: 682,
+                                                                lineNumber: 705,
                                                                 columnNumber: 25
                                                             }, ("TURBOPACK compile-time value", void 0))
                                                         ]
                                                     }, void 0, true, {
                                                         fileName: "[project]/src/components/stock/StockManagement.tsx",
-                                                        lineNumber: 679,
+                                                        lineNumber: 702,
                                                         columnNumber: 23
                                                     }, ("TURBOPACK compile-time value", void 0)) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Fragment"], {
                                                         children: [
@@ -1646,7 +1690,7 @@ const StockManagement = ({ onOpenTagModal })=>{
                                                                 children: "Showroom Sale"
                                                             }, void 0, false, {
                                                                 fileName: "[project]/src/components/stock/StockManagement.tsx",
-                                                                lineNumber: 686,
+                                                                lineNumber: 709,
                                                                 columnNumber: 25
                                                             }, ("TURBOPACK compile-time value", void 0)),
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("option", {
@@ -1654,7 +1698,7 @@ const StockManagement = ({ onOpenTagModal })=>{
                                                                 children: "Project Dispatch"
                                                             }, void 0, false, {
                                                                 fileName: "[project]/src/components/stock/StockManagement.tsx",
-                                                                lineNumber: 687,
+                                                                lineNumber: 710,
                                                                 columnNumber: 25
                                                             }, ("TURBOPACK compile-time value", void 0)),
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("option", {
@@ -1662,7 +1706,7 @@ const StockManagement = ({ onOpenTagModal })=>{
                                                                 children: "Damaged / Scrap"
                                                             }, void 0, false, {
                                                                 fileName: "[project]/src/components/stock/StockManagement.tsx",
-                                                                lineNumber: 688,
+                                                                lineNumber: 711,
                                                                 columnNumber: 25
                                                             }, ("TURBOPACK compile-time value", void 0)),
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("option", {
@@ -1670,30 +1714,30 @@ const StockManagement = ({ onOpenTagModal })=>{
                                                                 children: "Sample Display"
                                                             }, void 0, false, {
                                                                 fileName: "[project]/src/components/stock/StockManagement.tsx",
-                                                                lineNumber: 689,
+                                                                lineNumber: 712,
                                                                 columnNumber: 25
                                                             }, ("TURBOPACK compile-time value", void 0))
                                                         ]
                                                     }, void 0, true, {
                                                         fileName: "[project]/src/components/stock/StockManagement.tsx",
-                                                        lineNumber: 685,
+                                                        lineNumber: 708,
                                                         columnNumber: 23
                                                     }, ("TURBOPACK compile-time value", void 0))
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/components/stock/StockManagement.tsx",
-                                                    lineNumber: 673,
+                                                    lineNumber: 696,
                                                     columnNumber: 19
                                                 }, ("TURBOPACK compile-time value", void 0))
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/src/components/stock/StockManagement.tsx",
-                                            lineNumber: 671,
+                                            lineNumber: 694,
                                             columnNumber: 17
                                         }, ("TURBOPACK compile-time value", void 0))
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/src/components/stock/StockManagement.tsx",
-                                    lineNumber: 658,
+                                    lineNumber: 681,
                                     columnNumber: 15
                                 }, ("TURBOPACK compile-time value", void 0)),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1703,7 +1747,7 @@ const StockManagement = ({ onOpenTagModal })=>{
                                             children: "Reference Number (PO/SO)"
                                         }, void 0, false, {
                                             fileName: "[project]/src/components/stock/StockManagement.tsx",
-                                            lineNumber: 697,
+                                            lineNumber: 720,
                                             columnNumber: 17
                                         }, ("TURBOPACK compile-time value", void 0)),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
@@ -1714,13 +1758,13 @@ const StockManagement = ({ onOpenTagModal })=>{
                                             className: "w-full px-3 py-1.5 border border-stone-300 rounded-lg"
                                         }, void 0, false, {
                                             fileName: "[project]/src/components/stock/StockManagement.tsx",
-                                            lineNumber: 698,
+                                            lineNumber: 721,
                                             columnNumber: 17
                                         }, ("TURBOPACK compile-time value", void 0))
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/src/components/stock/StockManagement.tsx",
-                                    lineNumber: 696,
+                                    lineNumber: 719,
                                     columnNumber: 15
                                 }, ("TURBOPACK compile-time value", void 0)),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1730,7 +1774,7 @@ const StockManagement = ({ onOpenTagModal })=>{
                                             children: "Performed By (Staff)"
                                         }, void 0, false, {
                                             fileName: "[project]/src/components/stock/StockManagement.tsx",
-                                            lineNumber: 708,
+                                            lineNumber: 731,
                                             columnNumber: 17
                                         }, ("TURBOPACK compile-time value", void 0)),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
@@ -1740,13 +1784,13 @@ const StockManagement = ({ onOpenTagModal })=>{
                                             className: "w-full px-3 py-1.5 border border-stone-300 rounded-lg"
                                         }, void 0, false, {
                                             fileName: "[project]/src/components/stock/StockManagement.tsx",
-                                            lineNumber: 709,
+                                            lineNumber: 732,
                                             columnNumber: 17
                                         }, ("TURBOPACK compile-time value", void 0))
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/src/components/stock/StockManagement.tsx",
-                                    lineNumber: 707,
+                                    lineNumber: 730,
                                     columnNumber: 15
                                 }, ("TURBOPACK compile-time value", void 0)),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1756,7 +1800,7 @@ const StockManagement = ({ onOpenTagModal })=>{
                                             children: "Notes / Bay Location"
                                         }, void 0, false, {
                                             fileName: "[project]/src/components/stock/StockManagement.tsx",
-                                            lineNumber: 718,
+                                            lineNumber: 741,
                                             columnNumber: 17
                                         }, ("TURBOPACK compile-time value", void 0)),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("textarea", {
@@ -1767,13 +1811,13 @@ const StockManagement = ({ onOpenTagModal })=>{
                                             className: "w-full px-3 py-1.5 border border-stone-300 rounded-lg"
                                         }, void 0, false, {
                                             fileName: "[project]/src/components/stock/StockManagement.tsx",
-                                            lineNumber: 719,
+                                            lineNumber: 742,
                                             columnNumber: 17
                                         }, ("TURBOPACK compile-time value", void 0))
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/src/components/stock/StockManagement.tsx",
-                                    lineNumber: 717,
+                                    lineNumber: 740,
                                     columnNumber: 15
                                 }, ("TURBOPACK compile-time value", void 0)),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1786,7 +1830,7 @@ const StockManagement = ({ onOpenTagModal })=>{
                                             children: "Cancel"
                                         }, void 0, false, {
                                             fileName: "[project]/src/components/stock/StockManagement.tsx",
-                                            lineNumber: 729,
+                                            lineNumber: 752,
                                             columnNumber: 17
                                         }, ("TURBOPACK compile-time value", void 0)),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -1795,36 +1839,36 @@ const StockManagement = ({ onOpenTagModal })=>{
                                             children: "Confirm Movement"
                                         }, void 0, false, {
                                             fileName: "[project]/src/components/stock/StockManagement.tsx",
-                                            lineNumber: 736,
+                                            lineNumber: 759,
                                             columnNumber: 17
                                         }, ("TURBOPACK compile-time value", void 0))
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/src/components/stock/StockManagement.tsx",
-                                    lineNumber: 728,
+                                    lineNumber: 751,
                                     columnNumber: 15
                                 }, ("TURBOPACK compile-time value", void 0))
                             ]
                         }, void 0, true, {
                             fileName: "[project]/src/components/stock/StockManagement.tsx",
-                            lineNumber: 623,
+                            lineNumber: 646,
                             columnNumber: 13
                         }, ("TURBOPACK compile-time value", void 0))
                     ]
                 }, void 0, true, {
                     fileName: "[project]/src/components/stock/StockManagement.tsx",
-                    lineNumber: 615,
+                    lineNumber: 638,
                     columnNumber: 11
                 }, ("TURBOPACK compile-time value", void 0))
             }, void 0, false, {
                 fileName: "[project]/src/components/stock/StockManagement.tsx",
-                lineNumber: 614,
+                lineNumber: 637,
                 columnNumber: 9
             }, ("TURBOPACK compile-time value", void 0))
         ]
     }, void 0, true, {
         fileName: "[project]/src/components/stock/StockManagement.tsx",
-        lineNumber: 127,
+        lineNumber: 130,
         columnNumber: 5
     }, ("TURBOPACK compile-time value", void 0));
 };
@@ -1891,7 +1935,7 @@ const ProductFormModal = ({ product, suppliers, onClose, onSave })=>{
                     children: product ? 'Edit Luxury Product' : 'Register New Luxury Product & SKU'
                 }, void 0, false, {
                     fileName: "[project]/src/components/stock/StockManagement.tsx",
-                    lineNumber: 816,
+                    lineNumber: 839,
                     columnNumber: 9
                 }, ("TURBOPACK compile-time value", void 0)),
                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -1899,7 +1943,7 @@ const ProductFormModal = ({ product, suppliers, onClose, onSave })=>{
                     children: "Configure dimensions, pricing margins, warranty, and supplier associations."
                 }, void 0, false, {
                     fileName: "[project]/src/components/stock/StockManagement.tsx",
-                    lineNumber: 819,
+                    lineNumber: 842,
                     columnNumber: 9
                 }, ("TURBOPACK compile-time value", void 0)),
                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("form", {
@@ -1916,7 +1960,7 @@ const ProductFormModal = ({ product, suppliers, onClose, onSave })=>{
                                             children: "Product Name"
                                         }, void 0, false, {
                                             fileName: "[project]/src/components/stock/StockManagement.tsx",
-                                            lineNumber: 826,
+                                            lineNumber: 849,
                                             columnNumber: 15
                                         }, ("TURBOPACK compile-time value", void 0)),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
@@ -1931,13 +1975,13 @@ const ProductFormModal = ({ product, suppliers, onClose, onSave })=>{
                                             className: "w-full px-3 py-1.5 border border-stone-300 rounded-lg"
                                         }, void 0, false, {
                                             fileName: "[project]/src/components/stock/StockManagement.tsx",
-                                            lineNumber: 827,
+                                            lineNumber: 850,
                                             columnNumber: 15
                                         }, ("TURBOPACK compile-time value", void 0))
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/src/components/stock/StockManagement.tsx",
-                                    lineNumber: 825,
+                                    lineNumber: 848,
                                     columnNumber: 13
                                 }, ("TURBOPACK compile-time value", void 0)),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1947,7 +1991,7 @@ const ProductFormModal = ({ product, suppliers, onClose, onSave })=>{
                                             children: "Brand"
                                         }, void 0, false, {
                                             fileName: "[project]/src/components/stock/StockManagement.tsx",
-                                            lineNumber: 838,
+                                            lineNumber: 861,
                                             columnNumber: 15
                                         }, ("TURBOPACK compile-time value", void 0)),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
@@ -1960,65 +2004,6 @@ const ProductFormModal = ({ product, suppliers, onClose, onSave })=>{
                                                 }),
                                             placeholder: "e.g. Livo Atelier, Poliform Italy",
                                             className: "w-full px-3 py-1.5 border border-stone-300 rounded-lg"
-                                        }, void 0, false, {
-                                            fileName: "[project]/src/components/stock/StockManagement.tsx",
-                                            lineNumber: 839,
-                                            columnNumber: 15
-                                        }, ("TURBOPACK compile-time value", void 0))
-                                    ]
-                                }, void 0, true, {
-                                    fileName: "[project]/src/components/stock/StockManagement.tsx",
-                                    lineNumber: 837,
-                                    columnNumber: 13
-                                }, ("TURBOPACK compile-time value", void 0)),
-                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                    children: [
-                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("label", {
-                                            className: "block text-stone-700 font-medium mb-1",
-                                            children: "SKU / Product Code"
-                                        }, void 0, false, {
-                                            fileName: "[project]/src/components/stock/StockManagement.tsx",
-                                            lineNumber: 850,
-                                            columnNumber: 15
-                                        }, ("TURBOPACK compile-time value", void 0)),
-                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
-                                            type: "text",
-                                            required: true,
-                                            value: formData.sku,
-                                            onChange: (e)=>setFormData({
-                                                    ...formData,
-                                                    sku: e.target.value
-                                                }),
-                                            className: "w-full px-3 py-1.5 border border-stone-300 rounded-lg font-mono"
-                                        }, void 0, false, {
-                                            fileName: "[project]/src/components/stock/StockManagement.tsx",
-                                            lineNumber: 851,
-                                            columnNumber: 15
-                                        }, ("TURBOPACK compile-time value", void 0))
-                                    ]
-                                }, void 0, true, {
-                                    fileName: "[project]/src/components/stock/StockManagement.tsx",
-                                    lineNumber: 849,
-                                    columnNumber: 13
-                                }, ("TURBOPACK compile-time value", void 0)),
-                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                    children: [
-                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("label", {
-                                            className: "block text-stone-700 font-medium mb-1",
-                                            children: "Model Number"
-                                        }, void 0, false, {
-                                            fileName: "[project]/src/components/stock/StockManagement.tsx",
-                                            lineNumber: 861,
-                                            columnNumber: 15
-                                        }, ("TURBOPACK compile-time value", void 0)),
-                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
-                                            type: "text",
-                                            value: formData.modelNumber,
-                                            onChange: (e)=>setFormData({
-                                                    ...formData,
-                                                    modelNumber: e.target.value
-                                                }),
-                                            className: "w-full px-3 py-1.5 border border-stone-300 rounded-lg font-mono"
                                         }, void 0, false, {
                                             fileName: "[project]/src/components/stock/StockManagement.tsx",
                                             lineNumber: 862,
@@ -2034,10 +2019,69 @@ const ProductFormModal = ({ product, suppliers, onClose, onSave })=>{
                                     children: [
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("label", {
                                             className: "block text-stone-700 font-medium mb-1",
+                                            children: "SKU / Product Code"
+                                        }, void 0, false, {
+                                            fileName: "[project]/src/components/stock/StockManagement.tsx",
+                                            lineNumber: 873,
+                                            columnNumber: 15
+                                        }, ("TURBOPACK compile-time value", void 0)),
+                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
+                                            type: "text",
+                                            required: true,
+                                            value: formData.sku,
+                                            onChange: (e)=>setFormData({
+                                                    ...formData,
+                                                    sku: e.target.value
+                                                }),
+                                            className: "w-full px-3 py-1.5 border border-stone-300 rounded-lg font-mono"
+                                        }, void 0, false, {
+                                            fileName: "[project]/src/components/stock/StockManagement.tsx",
+                                            lineNumber: 874,
+                                            columnNumber: 15
+                                        }, ("TURBOPACK compile-time value", void 0))
+                                    ]
+                                }, void 0, true, {
+                                    fileName: "[project]/src/components/stock/StockManagement.tsx",
+                                    lineNumber: 872,
+                                    columnNumber: 13
+                                }, ("TURBOPACK compile-time value", void 0)),
+                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                    children: [
+                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("label", {
+                                            className: "block text-stone-700 font-medium mb-1",
+                                            children: "Model Number"
+                                        }, void 0, false, {
+                                            fileName: "[project]/src/components/stock/StockManagement.tsx",
+                                            lineNumber: 884,
+                                            columnNumber: 15
+                                        }, ("TURBOPACK compile-time value", void 0)),
+                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
+                                            type: "text",
+                                            value: formData.modelNumber,
+                                            onChange: (e)=>setFormData({
+                                                    ...formData,
+                                                    modelNumber: e.target.value
+                                                }),
+                                            className: "w-full px-3 py-1.5 border border-stone-300 rounded-lg font-mono"
+                                        }, void 0, false, {
+                                            fileName: "[project]/src/components/stock/StockManagement.tsx",
+                                            lineNumber: 885,
+                                            columnNumber: 15
+                                        }, ("TURBOPACK compile-time value", void 0))
+                                    ]
+                                }, void 0, true, {
+                                    fileName: "[project]/src/components/stock/StockManagement.tsx",
+                                    lineNumber: 883,
+                                    columnNumber: 13
+                                }, ("TURBOPACK compile-time value", void 0)),
+                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                    children: [
+                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("label", {
+                                            className: "block text-stone-700 font-medium mb-1",
                                             children: "Catalogue Category"
                                         }, void 0, false, {
                                             fileName: "[project]/src/components/stock/StockManagement.tsx",
-                                            lineNumber: 871,
+                                            lineNumber: 894,
                                             columnNumber: 15
                                         }, ("TURBOPACK compile-time value", void 0)),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("select", {
@@ -2052,18 +2096,18 @@ const ProductFormModal = ({ product, suppliers, onClose, onSave })=>{
                                                     children: c
                                                 }, c, false, {
                                                     fileName: "[project]/src/components/stock/StockManagement.tsx",
-                                                    lineNumber: 880,
+                                                    lineNumber: 903,
                                                     columnNumber: 19
                                                 }, ("TURBOPACK compile-time value", void 0)))
                                         }, void 0, false, {
                                             fileName: "[project]/src/components/stock/StockManagement.tsx",
-                                            lineNumber: 872,
+                                            lineNumber: 895,
                                             columnNumber: 15
                                         }, ("TURBOPACK compile-time value", void 0))
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/src/components/stock/StockManagement.tsx",
-                                    lineNumber: 870,
+                                    lineNumber: 893,
                                     columnNumber: 13
                                 }, ("TURBOPACK compile-time value", void 0)),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2073,7 +2117,7 @@ const ProductFormModal = ({ product, suppliers, onClose, onSave })=>{
                                             children: "Supplier"
                                         }, void 0, false, {
                                             fileName: "[project]/src/components/stock/StockManagement.tsx",
-                                            lineNumber: 888,
+                                            lineNumber: 911,
                                             columnNumber: 15
                                         }, ("TURBOPACK compile-time value", void 0)),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("select", {
@@ -2097,24 +2141,24 @@ const ProductFormModal = ({ product, suppliers, onClose, onSave })=>{
                                                     ]
                                                 }, s.id, true, {
                                                     fileName: "[project]/src/components/stock/StockManagement.tsx",
-                                                    lineNumber: 902,
+                                                    lineNumber: 925,
                                                     columnNumber: 19
                                                 }, ("TURBOPACK compile-time value", void 0)))
                                         }, void 0, false, {
                                             fileName: "[project]/src/components/stock/StockManagement.tsx",
-                                            lineNumber: 889,
+                                            lineNumber: 912,
                                             columnNumber: 15
                                         }, ("TURBOPACK compile-time value", void 0))
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/src/components/stock/StockManagement.tsx",
-                                    lineNumber: 887,
+                                    lineNumber: 910,
                                     columnNumber: 13
                                 }, ("TURBOPACK compile-time value", void 0))
                             ]
                         }, void 0, true, {
                             fileName: "[project]/src/components/stock/StockManagement.tsx",
-                            lineNumber: 824,
+                            lineNumber: 847,
                             columnNumber: 11
                         }, ("TURBOPACK compile-time value", void 0)),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2127,7 +2171,7 @@ const ProductFormModal = ({ product, suppliers, onClose, onSave })=>{
                                             children: "Size / Dimensions"
                                         }, void 0, false, {
                                             fileName: "[project]/src/components/stock/StockManagement.tsx",
-                                            lineNumber: 912,
+                                            lineNumber: 935,
                                             columnNumber: 15
                                         }, ("TURBOPACK compile-time value", void 0)),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
@@ -2141,13 +2185,13 @@ const ProductFormModal = ({ product, suppliers, onClose, onSave })=>{
                                             className: "w-full px-3 py-1.5 border border-stone-300 rounded-lg"
                                         }, void 0, false, {
                                             fileName: "[project]/src/components/stock/StockManagement.tsx",
-                                            lineNumber: 913,
+                                            lineNumber: 936,
                                             columnNumber: 15
                                         }, ("TURBOPACK compile-time value", void 0))
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/src/components/stock/StockManagement.tsx",
-                                    lineNumber: 911,
+                                    lineNumber: 934,
                                     columnNumber: 13
                                 }, ("TURBOPACK compile-time value", void 0)),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2157,7 +2201,7 @@ const ProductFormModal = ({ product, suppliers, onClose, onSave })=>{
                                             children: "Colour / Finish"
                                         }, void 0, false, {
                                             fileName: "[project]/src/components/stock/StockManagement.tsx",
-                                            lineNumber: 923,
+                                            lineNumber: 946,
                                             columnNumber: 15
                                         }, ("TURBOPACK compile-time value", void 0)),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
@@ -2171,19 +2215,19 @@ const ProductFormModal = ({ product, suppliers, onClose, onSave })=>{
                                             className: "w-full px-3 py-1.5 border border-stone-300 rounded-lg"
                                         }, void 0, false, {
                                             fileName: "[project]/src/components/stock/StockManagement.tsx",
-                                            lineNumber: 924,
+                                            lineNumber: 947,
                                             columnNumber: 15
                                         }, ("TURBOPACK compile-time value", void 0))
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/src/components/stock/StockManagement.tsx",
-                                    lineNumber: 922,
+                                    lineNumber: 945,
                                     columnNumber: 13
                                 }, ("TURBOPACK compile-time value", void 0))
                             ]
                         }, void 0, true, {
                             fileName: "[project]/src/components/stock/StockManagement.tsx",
-                            lineNumber: 910,
+                            lineNumber: 933,
                             columnNumber: 11
                         }, ("TURBOPACK compile-time value", void 0)),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2194,7 +2238,7 @@ const ProductFormModal = ({ product, suppliers, onClose, onSave })=>{
                                     children: "Pricing Structure & Margin"
                                 }, void 0, false, {
                                     fileName: "[project]/src/components/stock/StockManagement.tsx",
-                                    lineNumber: 936,
+                                    lineNumber: 959,
                                     columnNumber: 13
                                 }, ("TURBOPACK compile-time value", void 0)),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2207,7 +2251,7 @@ const ProductFormModal = ({ product, suppliers, onClose, onSave })=>{
                                                     children: "Purchase Price"
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/components/stock/StockManagement.tsx",
-                                                    lineNumber: 941,
+                                                    lineNumber: 964,
                                                     columnNumber: 17
                                                 }, ("TURBOPACK compile-time value", void 0)),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
@@ -2221,13 +2265,13 @@ const ProductFormModal = ({ product, suppliers, onClose, onSave })=>{
                                                     className: "w-full px-2.5 py-1.5 border border-stone-300 rounded bg-white font-mono"
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/components/stock/StockManagement.tsx",
-                                                    lineNumber: 942,
+                                                    lineNumber: 965,
                                                     columnNumber: 17
                                                 }, ("TURBOPACK compile-time value", void 0))
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/src/components/stock/StockManagement.tsx",
-                                            lineNumber: 940,
+                                            lineNumber: 963,
                                             columnNumber: 15
                                         }, ("TURBOPACK compile-time value", void 0)),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2237,7 +2281,7 @@ const ProductFormModal = ({ product, suppliers, onClose, onSave })=>{
                                                     children: "Dealer / Dist. Rate"
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/components/stock/StockManagement.tsx",
-                                                    lineNumber: 952,
+                                                    lineNumber: 975,
                                                     columnNumber: 17
                                                 }, ("TURBOPACK compile-time value", void 0)),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
@@ -2250,13 +2294,13 @@ const ProductFormModal = ({ product, suppliers, onClose, onSave })=>{
                                                     className: "w-full px-2.5 py-1.5 border border-stone-300 rounded bg-white font-mono"
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/components/stock/StockManagement.tsx",
-                                                    lineNumber: 953,
+                                                    lineNumber: 976,
                                                     columnNumber: 17
                                                 }, ("TURBOPACK compile-time value", void 0))
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/src/components/stock/StockManagement.tsx",
-                                            lineNumber: 951,
+                                            lineNumber: 974,
                                             columnNumber: 15
                                         }, ("TURBOPACK compile-time value", void 0)),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2266,7 +2310,7 @@ const ProductFormModal = ({ product, suppliers, onClose, onSave })=>{
                                                     children: "Selling Price"
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/components/stock/StockManagement.tsx",
-                                                    lineNumber: 962,
+                                                    lineNumber: 985,
                                                     columnNumber: 17
                                                 }, ("TURBOPACK compile-time value", void 0)),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
@@ -2280,13 +2324,13 @@ const ProductFormModal = ({ product, suppliers, onClose, onSave })=>{
                                                     className: "w-full px-2.5 py-1.5 border border-stone-300 rounded bg-white font-mono font-bold"
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/components/stock/StockManagement.tsx",
-                                                    lineNumber: 963,
+                                                    lineNumber: 986,
                                                     columnNumber: 17
                                                 }, ("TURBOPACK compile-time value", void 0))
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/src/components/stock/StockManagement.tsx",
-                                            lineNumber: 961,
+                                            lineNumber: 984,
                                             columnNumber: 15
                                         }, ("TURBOPACK compile-time value", void 0)),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2296,7 +2340,7 @@ const ProductFormModal = ({ product, suppliers, onClose, onSave })=>{
                                                     children: "MRP Tag Price"
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/components/stock/StockManagement.tsx",
-                                                    lineNumber: 973,
+                                                    lineNumber: 996,
                                                     columnNumber: 17
                                                 }, ("TURBOPACK compile-time value", void 0)),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
@@ -2310,25 +2354,25 @@ const ProductFormModal = ({ product, suppliers, onClose, onSave })=>{
                                                     className: "w-full px-2.5 py-1.5 border border-stone-300 rounded bg-white font-mono"
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/components/stock/StockManagement.tsx",
-                                                    lineNumber: 974,
+                                                    lineNumber: 997,
                                                     columnNumber: 17
                                                 }, ("TURBOPACK compile-time value", void 0))
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/src/components/stock/StockManagement.tsx",
-                                            lineNumber: 972,
+                                            lineNumber: 995,
                                             columnNumber: 15
                                         }, ("TURBOPACK compile-time value", void 0))
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/src/components/stock/StockManagement.tsx",
-                                    lineNumber: 939,
+                                    lineNumber: 962,
                                     columnNumber: 13
                                 }, ("TURBOPACK compile-time value", void 0))
                             ]
                         }, void 0, true, {
                             fileName: "[project]/src/components/stock/StockManagement.tsx",
-                            lineNumber: 935,
+                            lineNumber: 958,
                             columnNumber: 11
                         }, ("TURBOPACK compile-time value", void 0)),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2341,7 +2385,7 @@ const ProductFormModal = ({ product, suppliers, onClose, onSave })=>{
                                             children: "Initial Stock Count"
                                         }, void 0, false, {
                                             fileName: "[project]/src/components/stock/StockManagement.tsx",
-                                            lineNumber: 988,
+                                            lineNumber: 1011,
                                             columnNumber: 15
                                         }, ("TURBOPACK compile-time value", void 0)),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
@@ -2355,13 +2399,13 @@ const ProductFormModal = ({ product, suppliers, onClose, onSave })=>{
                                             className: "w-full px-3 py-1.5 border border-stone-300 rounded-lg"
                                         }, void 0, false, {
                                             fileName: "[project]/src/components/stock/StockManagement.tsx",
-                                            lineNumber: 989,
+                                            lineNumber: 1012,
                                             columnNumber: 15
                                         }, ("TURBOPACK compile-time value", void 0))
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/src/components/stock/StockManagement.tsx",
-                                    lineNumber: 987,
+                                    lineNumber: 1010,
                                     columnNumber: 13
                                 }, ("TURBOPACK compile-time value", void 0)),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2371,7 +2415,7 @@ const ProductFormModal = ({ product, suppliers, onClose, onSave })=>{
                                             children: "Low-Stock Alert Qty"
                                         }, void 0, false, {
                                             fileName: "[project]/src/components/stock/StockManagement.tsx",
-                                            lineNumber: 999,
+                                            lineNumber: 1022,
                                             columnNumber: 15
                                         }, ("TURBOPACK compile-time value", void 0)),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
@@ -2385,13 +2429,13 @@ const ProductFormModal = ({ product, suppliers, onClose, onSave })=>{
                                             className: "w-full px-3 py-1.5 border border-stone-300 rounded-lg"
                                         }, void 0, false, {
                                             fileName: "[project]/src/components/stock/StockManagement.tsx",
-                                            lineNumber: 1000,
+                                            lineNumber: 1023,
                                             columnNumber: 15
                                         }, ("TURBOPACK compile-time value", void 0))
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/src/components/stock/StockManagement.tsx",
-                                    lineNumber: 998,
+                                    lineNumber: 1021,
                                     columnNumber: 13
                                 }, ("TURBOPACK compile-time value", void 0)),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2401,7 +2445,7 @@ const ProductFormModal = ({ product, suppliers, onClose, onSave })=>{
                                             children: "Warranty (Years)"
                                         }, void 0, false, {
                                             fileName: "[project]/src/components/stock/StockManagement.tsx",
-                                            lineNumber: 1010,
+                                            lineNumber: 1033,
                                             columnNumber: 15
                                         }, ("TURBOPACK compile-time value", void 0)),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
@@ -2415,19 +2459,19 @@ const ProductFormModal = ({ product, suppliers, onClose, onSave })=>{
                                             className: "w-full px-3 py-1.5 border border-stone-300 rounded-lg"
                                         }, void 0, false, {
                                             fileName: "[project]/src/components/stock/StockManagement.tsx",
-                                            lineNumber: 1011,
+                                            lineNumber: 1034,
                                             columnNumber: 15
                                         }, ("TURBOPACK compile-time value", void 0))
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/src/components/stock/StockManagement.tsx",
-                                    lineNumber: 1009,
+                                    lineNumber: 1032,
                                     columnNumber: 13
                                 }, ("TURBOPACK compile-time value", void 0))
                             ]
                         }, void 0, true, {
                             fileName: "[project]/src/components/stock/StockManagement.tsx",
-                            lineNumber: 986,
+                            lineNumber: 1009,
                             columnNumber: 11
                         }, ("TURBOPACK compile-time value", void 0)),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2437,7 +2481,7 @@ const ProductFormModal = ({ product, suppliers, onClose, onSave })=>{
                                     children: "Image URL"
                                 }, void 0, false, {
                                     fileName: "[project]/src/components/stock/StockManagement.tsx",
-                                    lineNumber: 1022,
+                                    lineNumber: 1045,
                                     columnNumber: 13
                                 }, ("TURBOPACK compile-time value", void 0)),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
@@ -2451,13 +2495,13 @@ const ProductFormModal = ({ product, suppliers, onClose, onSave })=>{
                                     className: "w-full px-3 py-1.5 border border-stone-300 rounded-lg"
                                 }, void 0, false, {
                                     fileName: "[project]/src/components/stock/StockManagement.tsx",
-                                    lineNumber: 1023,
+                                    lineNumber: 1046,
                                     columnNumber: 13
                                 }, ("TURBOPACK compile-time value", void 0))
                             ]
                         }, void 0, true, {
                             fileName: "[project]/src/components/stock/StockManagement.tsx",
-                            lineNumber: 1021,
+                            lineNumber: 1044,
                             columnNumber: 11
                         }, ("TURBOPACK compile-time value", void 0)),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2467,7 +2511,7 @@ const ProductFormModal = ({ product, suppliers, onClose, onSave })=>{
                                     children: "Product Description"
                                 }, void 0, false, {
                                     fileName: "[project]/src/components/stock/StockManagement.tsx",
-                                    lineNumber: 1033,
+                                    lineNumber: 1056,
                                     columnNumber: 13
                                 }, ("TURBOPACK compile-time value", void 0)),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("textarea", {
@@ -2480,13 +2524,13 @@ const ProductFormModal = ({ product, suppliers, onClose, onSave })=>{
                                     className: "w-full px-3 py-1.5 border border-stone-300 rounded-lg"
                                 }, void 0, false, {
                                     fileName: "[project]/src/components/stock/StockManagement.tsx",
-                                    lineNumber: 1034,
+                                    lineNumber: 1057,
                                     columnNumber: 13
                                 }, ("TURBOPACK compile-time value", void 0))
                             ]
                         }, void 0, true, {
                             fileName: "[project]/src/components/stock/StockManagement.tsx",
-                            lineNumber: 1032,
+                            lineNumber: 1055,
                             columnNumber: 11
                         }, ("TURBOPACK compile-time value", void 0)),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2499,7 +2543,7 @@ const ProductFormModal = ({ product, suppliers, onClose, onSave })=>{
                                     children: "Cancel"
                                 }, void 0, false, {
                                     fileName: "[project]/src/components/stock/StockManagement.tsx",
-                                    lineNumber: 1043,
+                                    lineNumber: 1066,
                                     columnNumber: 13
                                 }, ("TURBOPACK compile-time value", void 0)),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -2508,30 +2552,30 @@ const ProductFormModal = ({ product, suppliers, onClose, onSave })=>{
                                     children: product ? 'Save Changes' : 'Register Product'
                                 }, void 0, false, {
                                     fileName: "[project]/src/components/stock/StockManagement.tsx",
-                                    lineNumber: 1050,
+                                    lineNumber: 1073,
                                     columnNumber: 13
                                 }, ("TURBOPACK compile-time value", void 0))
                             ]
                         }, void 0, true, {
                             fileName: "[project]/src/components/stock/StockManagement.tsx",
-                            lineNumber: 1042,
+                            lineNumber: 1065,
                             columnNumber: 11
                         }, ("TURBOPACK compile-time value", void 0))
                     ]
                 }, void 0, true, {
                     fileName: "[project]/src/components/stock/StockManagement.tsx",
-                    lineNumber: 823,
+                    lineNumber: 846,
                     columnNumber: 9
                 }, ("TURBOPACK compile-time value", void 0))
             ]
         }, void 0, true, {
             fileName: "[project]/src/components/stock/StockManagement.tsx",
-            lineNumber: 815,
+            lineNumber: 838,
             columnNumber: 7
         }, ("TURBOPACK compile-time value", void 0))
     }, void 0, false, {
         fileName: "[project]/src/components/stock/StockManagement.tsx",
-        lineNumber: 814,
+        lineNumber: 837,
         columnNumber: 5
     }, ("TURBOPACK compile-time value", void 0));
 };

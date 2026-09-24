@@ -23,7 +23,9 @@ var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$re
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$check$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__Check$3e$__ = __turbopack_context__.i("[project]/node_modules/lucide-react/dist/esm/icons/check.js [app-ssr] (ecmascript) <export default as Check>");
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$sparkles$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__Sparkles$3e$__ = __turbopack_context__.i("[project]/node_modules/lucide-react/dist/esm/icons/sparkles.js [app-ssr] (ecmascript) <export default as Sparkles>");
 var __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$context$2f$ERPContext$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/src/context/ERPContext.tsx [app-ssr] (ecmascript)");
+var __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$hooks$2f$useGlobalScanner$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/src/hooks/useGlobalScanner.ts [app-ssr] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$utils$2f$formatters$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/src/utils/formatters.ts [app-ssr] (ecmascript)");
+;
 ;
 ;
 ;
@@ -42,6 +44,7 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
     const [posCustomerId, setPosCustomerId] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(customers[0]?.id || '');
     const [posPaymentMethod, setPosPaymentMethod] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])('Credit Card');
     const [recentPosReceipt, setRecentPosReceipt] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(null);
+    const [scanError, setScanError] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(null);
     // ==========================================
     // Quotation State & Modal
     // ==========================================
@@ -118,6 +121,21 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
             ];
         });
     };
+    // Hardware Scanner Integration for POS
+    (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$hooks$2f$useGlobalScanner$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useGlobalScanner"])({
+        isActive: activeTab === 'pos',
+        onScan: (scannedCode)=>{
+            const foundProduct = products.find((p)=>p.sku.toLowerCase() === scannedCode.toLowerCase() || p.barcode === scannedCode);
+            if (foundProduct) {
+                addToCart(foundProduct);
+                setScanError(null);
+            } else {
+                console.warn(`Scanner: Product not found for code [${scannedCode}]`);
+                setScanError(`No product found for scanned code: "${scannedCode}"`);
+                setTimeout(()=>setScanError(null), 3000);
+            }
+        }
+    });
     const updateCartQty = (productId, delta)=>{
         setPosCart((prev)=>prev.map((item)=>{
                 if (item.product.id === productId) {
@@ -134,14 +152,14 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
         const discounted = item.product.sellingPrice * (1 - item.discount / 100);
         return sum + discounted * item.quantity;
     }, 0);
-    const cartVat = Number((cartSubtotal * 0.05).toFixed(2));
+    const cartVat = Number((cartSubtotal * 0.05).toFixed(2)); // Nepal VAT 5%
     const cartGrandTotal = cartSubtotal + cartVat;
     const handleCompletePosSale = ()=>{
         if (posCart.length === 0) return;
         const cust = customers.find((c)=>c.id === posCustomerId) || customers[0];
         const newInvItems = posCart.map((item)=>{
             const taxable = item.product.sellingPrice * item.quantity * (1 - item.discount / 100);
-            const vat = Number((taxable * 0.05).toFixed(2));
+            const vat = Number((taxable * 0.05).toFixed(2)); // Nepal VAT 5%
             return {
                 productId: item.product.id,
                 sku: item.product.sku,
@@ -161,9 +179,9 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
         const generatedInv = {
             id: `inv-${Date.now()}`,
             invoiceNumber: invNumber,
-            customerId: cust.id,
-            customerName: cust.name,
-            customerAddress: cust.address || 'Dubai Showroom Walk-in',
+            customerId: cust?.id || 'walk-in-001',
+            customerName: cust?.name || 'Walk-in Customer',
+            customerAddress: cust?.address || 'Dubai Showroom Walk-in',
             date: today,
             dueDate: today,
             items: newInvItems,
@@ -178,6 +196,10 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
         addInvoice(generatedInv);
         setRecentPosReceipt(generatedInv);
         setPosCart([]);
+        // Auto-trigger the A4 normal printer invoice formatting!
+        if (onPrintInvoice) {
+            onPrintInvoice(generatedInv);
+        }
     };
     // ==========================================
     // Quotation Handlers
@@ -201,7 +223,7 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
             };
         });
         const subtotal = items.reduce((sum, it)=>sum + it.total, 0);
-        const vatAmount = Number((subtotal * 0.05).toFixed(2));
+        const vatAmount = Number((subtotal * 0.05).toFixed(2)); // Nepal VAT 5%
         const grandTotal = subtotal + vatAmount;
         const today = new Date();
         const validDate = new Date();
@@ -292,7 +314,7 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                         children: "Module 4"
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                        lineNumber: 341,
+                                        lineNumber: 366,
                                         columnNumber: 13
                                     }, ("TURBOPACK compile-time value", void 0)),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("h1", {
@@ -300,13 +322,13 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                         children: "Billing & Payroll"
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                        lineNumber: 344,
+                                        lineNumber: 369,
                                         columnNumber: 13
                                     }, ("TURBOPACK compile-time value", void 0))
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                lineNumber: 340,
+                                lineNumber: 365,
                                 columnNumber: 11
                             }, ("TURBOPACK compile-time value", void 0)),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -314,13 +336,13 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                 children: "Showroom POS, Quotations, Invoices, Customer Database, Attendance, Payroll, and Sales Commissions."
                             }, void 0, false, {
                                 fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                lineNumber: 346,
+                                lineNumber: 371,
                                 columnNumber: 11
                             }, ("TURBOPACK compile-time value", void 0))
                         ]
                     }, void 0, true, {
                         fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                        lineNumber: 339,
+                        lineNumber: 364,
                         columnNumber: 9
                     }, ("TURBOPACK compile-time value", void 0)),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -335,20 +357,20 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                         className: "w-4 h-4"
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                        lineNumber: 358,
+                                        lineNumber: 383,
                                         columnNumber: 13
                                     }, ("TURBOPACK compile-time value", void 0)),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
                                         children: "New Quotation"
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                        lineNumber: 359,
+                                        lineNumber: 384,
                                         columnNumber: 13
                                     }, ("TURBOPACK compile-time value", void 0))
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                lineNumber: 353,
+                                lineNumber: 378,
                                 columnNumber: 11
                             }, ("TURBOPACK compile-time value", void 0)),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -360,32 +382,32 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                         className: "w-4 h-4"
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                        lineNumber: 366,
+                                        lineNumber: 391,
                                         columnNumber: 13
                                     }, ("TURBOPACK compile-time value", void 0)),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
                                         children: "Add Customer"
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                        lineNumber: 367,
+                                        lineNumber: 392,
                                         columnNumber: 13
                                     }, ("TURBOPACK compile-time value", void 0))
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                lineNumber: 361,
+                                lineNumber: 386,
                                 columnNumber: 11
                             }, ("TURBOPACK compile-time value", void 0))
                         ]
                     }, void 0, true, {
                         fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                        lineNumber: 352,
+                        lineNumber: 377,
                         columnNumber: 9
                     }, ("TURBOPACK compile-time value", void 0))
                 ]
             }, void 0, true, {
                 fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                lineNumber: 338,
+                lineNumber: 363,
                 columnNumber: 7
             }, ("TURBOPACK compile-time value", void 0)),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -443,14 +465,14 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                 className: "w-3.5 h-3.5"
                             }, void 0, false, {
                                 fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                lineNumber: 395,
+                                lineNumber: 420,
                                 columnNumber: 15
                             }, ("TURBOPACK compile-time value", void 0)),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
                                 children: tab.label
                             }, void 0, false, {
                                 fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                lineNumber: 396,
+                                lineNumber: 421,
                                 columnNumber: 15
                             }, ("TURBOPACK compile-time value", void 0)),
                             tab.badge !== undefined && tab.badge !== null && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -458,19 +480,19 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                 children: tab.badge
                             }, void 0, false, {
                                 fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                lineNumber: 398,
+                                lineNumber: 423,
                                 columnNumber: 17
                             }, ("TURBOPACK compile-time value", void 0))
                         ]
                     }, tab.id, true, {
                         fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                        lineNumber: 385,
+                        lineNumber: 410,
                         columnNumber: 13
                     }, ("TURBOPACK compile-time value", void 0));
                 })
             }, void 0, false, {
                 fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                lineNumber: 373,
+                lineNumber: 398,
                 columnNumber: 7
             }, ("TURBOPACK compile-time value", void 0)),
             activeTab === 'pos' && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -491,7 +513,7 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                                     className: "w-4 h-4 text-stone-400 absolute left-3 top-2.5"
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                                    lineNumber: 424,
+                                                    lineNumber: 449,
                                                     columnNumber: 19
                                                 }, ("TURBOPACK compile-time value", void 0)),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
@@ -503,13 +525,13 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                                     className: "w-full pl-9 pr-3 py-2 bg-stone-50 border border-stone-200 rounded-lg text-xs font-medium text-stone-900 focus:outline-none focus:ring-1 focus:ring-stone-900"
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                                    lineNumber: 425,
+                                                    lineNumber: 450,
                                                     columnNumber: 19
                                                 }, ("TURBOPACK compile-time value", void 0))
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                            lineNumber: 423,
+                                            lineNumber: 448,
                                             columnNumber: 17
                                         }, ("TURBOPACK compile-time value", void 0)),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("select", {
@@ -523,7 +545,7 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                                     children: "All Categories"
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                                    lineNumber: 440,
+                                                    lineNumber: 465,
                                                     columnNumber: 19
                                                 }, ("TURBOPACK compile-time value", void 0)),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("option", {
@@ -531,7 +553,7 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                                     children: "Sofa"
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                                    lineNumber: 441,
+                                                    lineNumber: 466,
                                                     columnNumber: 19
                                                 }, ("TURBOPACK compile-time value", void 0)),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("option", {
@@ -539,7 +561,7 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                                     children: "Bed"
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                                    lineNumber: 442,
+                                                    lineNumber: 467,
                                                     columnNumber: 19
                                                 }, ("TURBOPACK compile-time value", void 0)),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("option", {
@@ -547,7 +569,7 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                                     children: "Wardrobe"
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                                    lineNumber: 443,
+                                                    lineNumber: 468,
                                                     columnNumber: 19
                                                 }, ("TURBOPACK compile-time value", void 0)),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("option", {
@@ -555,7 +577,7 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                                     children: "Dining"
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                                    lineNumber: 444,
+                                                    lineNumber: 469,
                                                     columnNumber: 19
                                                 }, ("TURBOPACK compile-time value", void 0)),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("option", {
@@ -563,7 +585,7 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                                     children: "Kitchen"
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                                    lineNumber: 445,
+                                                    lineNumber: 470,
                                                     columnNumber: 19
                                                 }, ("TURBOPACK compile-time value", void 0)),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("option", {
@@ -571,7 +593,7 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                                     children: "Curtains/Parda"
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                                    lineNumber: 446,
+                                                    lineNumber: 471,
                                                     columnNumber: 19
                                                 }, ("TURBOPACK compile-time value", void 0)),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("option", {
@@ -579,7 +601,7 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                                     children: "Carpet"
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                                    lineNumber: 447,
+                                                    lineNumber: 472,
                                                     columnNumber: 19
                                                 }, ("TURBOPACK compile-time value", void 0)),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("option", {
@@ -587,20 +609,43 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                                     children: "Home décor"
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                                    lineNumber: 448,
+                                                    lineNumber: 473,
                                                     columnNumber: 19
                                                 }, ("TURBOPACK compile-time value", void 0))
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                            lineNumber: 434,
+                                            lineNumber: 459,
                                             columnNumber: 17
                                         }, ("TURBOPACK compile-time value", void 0))
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                    lineNumber: 422,
+                                    lineNumber: 447,
                                     columnNumber: 15
+                                }, ("TURBOPACK compile-time value", void 0)),
+                                scanError && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                    className: "flex items-center gap-2 px-3 py-2 bg-rose-50 border border-rose-200 rounded-lg text-xs text-rose-700 font-semibold",
+                                    children: [
+                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
+                                            children: "⚠️"
+                                        }, void 0, false, {
+                                            fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
+                                            lineNumber: 479,
+                                            columnNumber: 19
+                                        }, ("TURBOPACK compile-time value", void 0)),
+                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
+                                            children: scanError
+                                        }, void 0, false, {
+                                            fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
+                                            lineNumber: 480,
+                                            columnNumber: 19
+                                        }, ("TURBOPACK compile-time value", void 0))
+                                    ]
+                                }, void 0, true, {
+                                    fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
+                                    lineNumber: 478,
+                                    columnNumber: 17
                                 }, ("TURBOPACK compile-time value", void 0)),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                     className: "grid grid-cols-2 sm:grid-cols-3 gap-3 max-h-[520px] overflow-y-auto p-1",
@@ -618,7 +663,7 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                                             className: "w-full h-full object-cover group-hover:scale-105 transition-transform"
                                                         }, void 0, false, {
                                                             fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                                            lineNumber: 462,
+                                                            lineNumber: 493,
                                                             columnNumber: 23
                                                         }, ("TURBOPACK compile-time value", void 0)),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -629,13 +674,13 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                                             ]
                                                         }, void 0, true, {
                                                             fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                                            lineNumber: 467,
+                                                            lineNumber: 498,
                                                             columnNumber: 23
                                                         }, ("TURBOPACK compile-time value", void 0))
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                                    lineNumber: 461,
+                                                    lineNumber: 492,
                                                     columnNumber: 21
                                                 }, ("TURBOPACK compile-time value", void 0)),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -645,7 +690,7 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                                             children: product.sku
                                                         }, void 0, false, {
                                                             fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                                            lineNumber: 472,
+                                                            lineNumber: 503,
                                                             columnNumber: 23
                                                         }, ("TURBOPACK compile-time value", void 0)),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("h4", {
@@ -653,13 +698,13 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                                             children: product.name
                                                         }, void 0, false, {
                                                             fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                                            lineNumber: 473,
+                                                            lineNumber: 504,
                                                             columnNumber: 23
                                                         }, ("TURBOPACK compile-time value", void 0))
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                                    lineNumber: 471,
+                                                    lineNumber: 502,
                                                     columnNumber: 21
                                                 }, ("TURBOPACK compile-time value", void 0)),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -670,7 +715,7 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                                             children: (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$utils$2f$formatters$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["formatCurrency"])(product.sellingPrice)
                                                         }, void 0, false, {
                                                             fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                                            lineNumber: 478,
+                                                            lineNumber: 509,
                                                             columnNumber: 23
                                                         }, ("TURBOPACK compile-time value", void 0)),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -678,35 +723,35 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                                             children: "+ Add"
                                                         }, void 0, false, {
                                                             fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                                            lineNumber: 479,
+                                                            lineNumber: 510,
                                                             columnNumber: 23
                                                         }, ("TURBOPACK compile-time value", void 0))
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                                    lineNumber: 477,
+                                                    lineNumber: 508,
                                                     columnNumber: 21
                                                 }, ("TURBOPACK compile-time value", void 0))
                                             ]
                                         }, product.id, true, {
                                             fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                            lineNumber: 455,
+                                            lineNumber: 486,
                                             columnNumber: 19
                                         }, ("TURBOPACK compile-time value", void 0)))
                                 }, void 0, false, {
                                     fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                    lineNumber: 453,
+                                    lineNumber: 484,
                                     columnNumber: 15
                                 }, ("TURBOPACK compile-time value", void 0))
                             ]
                         }, void 0, true, {
                             fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                            lineNumber: 420,
+                            lineNumber: 445,
                             columnNumber: 13
                         }, ("TURBOPACK compile-time value", void 0))
                     }, void 0, false, {
                         fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                        lineNumber: 419,
+                        lineNumber: 444,
                         columnNumber: 11
                     }, ("TURBOPACK compile-time value", void 0)),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -724,7 +769,7 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                                     className: "w-4 h-4 text-stone-700"
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                                    lineNumber: 494,
+                                                    lineNumber: 525,
                                                     columnNumber: 19
                                                 }, ("TURBOPACK compile-time value", void 0)),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("h3", {
@@ -732,13 +777,13 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                                     children: "Showroom Checkout Counter"
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                                    lineNumber: 495,
+                                                    lineNumber: 526,
                                                     columnNumber: 19
                                                 }, ("TURBOPACK compile-time value", void 0))
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                            lineNumber: 493,
+                                            lineNumber: 524,
                                             columnNumber: 17
                                         }, ("TURBOPACK compile-time value", void 0)),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -749,13 +794,13 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                            lineNumber: 497,
+                                            lineNumber: 528,
                                             columnNumber: 17
                                         }, ("TURBOPACK compile-time value", void 0))
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                    lineNumber: 492,
+                                    lineNumber: 523,
                                     columnNumber: 15
                                 }, ("TURBOPACK compile-time value", void 0)),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -766,7 +811,7 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                             children: "Billed To Client:"
                                         }, void 0, false, {
                                             fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                            lineNumber: 502,
+                                            lineNumber: 533,
                                             columnNumber: 17
                                         }, ("TURBOPACK compile-time value", void 0)),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("select", {
@@ -774,29 +819,39 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                             value: posCustomerId,
                                             onChange: (e)=>setPosCustomerId(e.target.value),
                                             className: "w-full px-2.5 py-1.5 bg-stone-50 border border-stone-300 rounded text-xs font-medium text-stone-800",
-                                            children: customers.map((c)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("option", {
-                                                    value: c.id,
-                                                    children: [
-                                                        c.name,
-                                                        " ",
-                                                        c.companyName ? `(${c.companyName})` : '',
-                                                        " - ",
-                                                        c.phone
-                                                    ]
-                                                }, c.id, true, {
+                                            children: [
+                                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("option", {
+                                                    value: "walk-in-001",
+                                                    children: "Walk-in Customer (Default)"
+                                                }, void 0, false, {
                                                     fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                                    lineNumber: 512,
-                                                    columnNumber: 21
-                                                }, ("TURBOPACK compile-time value", void 0)))
-                                        }, void 0, false, {
+                                                    lineNumber: 542,
+                                                    columnNumber: 19
+                                                }, ("TURBOPACK compile-time value", void 0)),
+                                                customers.map((c)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("option", {
+                                                        value: c.id,
+                                                        children: [
+                                                            c.name,
+                                                            " ",
+                                                            c.companyName ? `(${c.companyName})` : '',
+                                                            " - ",
+                                                            c.phone
+                                                        ]
+                                                    }, c.id, true, {
+                                                        fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
+                                                        lineNumber: 544,
+                                                        columnNumber: 21
+                                                    }, ("TURBOPACK compile-time value", void 0)))
+                                            ]
+                                        }, void 0, true, {
                                             fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                            lineNumber: 505,
+                                            lineNumber: 536,
                                             columnNumber: 17
                                         }, ("TURBOPACK compile-time value", void 0))
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                    lineNumber: 501,
+                                    lineNumber: 532,
                                     columnNumber: 15
                                 }, ("TURBOPACK compile-time value", void 0)),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -812,7 +867,7 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                                             children: item.product.name
                                                         }, void 0, false, {
                                                             fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                                            lineNumber: 525,
+                                                            lineNumber: 557,
                                                             columnNumber: 25
                                                         }, ("TURBOPACK compile-time value", void 0)),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -823,13 +878,13 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                                             ]
                                                         }, void 0, true, {
                                                             fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                                            lineNumber: 526,
+                                                            lineNumber: 558,
                                                             columnNumber: 25
                                                         }, ("TURBOPACK compile-time value", void 0))
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                                    lineNumber: 524,
+                                                    lineNumber: 556,
                                                     columnNumber: 23
                                                 }, ("TURBOPACK compile-time value", void 0)),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -841,7 +896,7 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                                             children: "-"
                                                         }, void 0, false, {
                                                             fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                                            lineNumber: 533,
+                                                            lineNumber: 565,
                                                             columnNumber: 25
                                                         }, ("TURBOPACK compile-time value", void 0)),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -849,7 +904,7 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                                             children: item.quantity
                                                         }, void 0, false, {
                                                             fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                                            lineNumber: 539,
+                                                            lineNumber: 571,
                                                             columnNumber: 25
                                                         }, ("TURBOPACK compile-time value", void 0)),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -858,13 +913,13 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                                             children: "+"
                                                         }, void 0, false, {
                                                             fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                                            lineNumber: 540,
+                                                            lineNumber: 572,
                                                             columnNumber: 25
                                                         }, ("TURBOPACK compile-time value", void 0))
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                                    lineNumber: 532,
+                                                    lineNumber: 564,
                                                     columnNumber: 23
                                                 }, ("TURBOPACK compile-time value", void 0)),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -872,7 +927,7 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                                     children: (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$utils$2f$formatters$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["formatCurrency"])(item.product.sellingPrice * item.quantity)
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                                    lineNumber: 548,
+                                                    lineNumber: 580,
                                                     columnNumber: 23
                                                 }, ("TURBOPACK compile-time value", void 0)),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -882,30 +937,30 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                                         className: "w-3.5 h-3.5"
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                                        lineNumber: 556,
+                                                        lineNumber: 588,
                                                         columnNumber: 25
                                                     }, ("TURBOPACK compile-time value", void 0))
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                                    lineNumber: 552,
+                                                    lineNumber: 584,
                                                     columnNumber: 23
                                                 }, ("TURBOPACK compile-time value", void 0))
                                             ]
                                         }, item.product.id, true, {
                                             fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                            lineNumber: 523,
+                                            lineNumber: 555,
                                             columnNumber: 21
                                         }, ("TURBOPACK compile-time value", void 0))) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                         className: "py-12 text-center text-stone-400 text-xs",
                                         children: "Cart is empty. Select products from the catalogue to start billing."
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                        lineNumber: 561,
+                                        lineNumber: 593,
                                         columnNumber: 19
                                     }, ("TURBOPACK compile-time value", void 0))
                                 }, void 0, false, {
                                     fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                    lineNumber: 520,
+                                    lineNumber: 552,
                                     columnNumber: 15
                                 }, ("TURBOPACK compile-time value", void 0)),
                                 posCart.length > 0 && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -921,7 +976,7 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                                             children: "Subtotal"
                                                         }, void 0, false, {
                                                             fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                                            lineNumber: 572,
+                                                            lineNumber: 604,
                                                             columnNumber: 23
                                                         }, ("TURBOPACK compile-time value", void 0)),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -929,23 +984,23 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                                             children: (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$utils$2f$formatters$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["formatCurrency"])(cartSubtotal)
                                                         }, void 0, false, {
                                                             fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                                            lineNumber: 573,
+                                                            lineNumber: 605,
                                                             columnNumber: 23
                                                         }, ("TURBOPACK compile-time value", void 0))
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                                    lineNumber: 571,
+                                                    lineNumber: 603,
                                                     columnNumber: 21
                                                 }, ("TURBOPACK compile-time value", void 0)),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                                     className: "flex justify-between",
                                                     children: [
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
-                                                            children: "UAE VAT (5%)"
+                                                            children: "VAT (5%)"
                                                         }, void 0, false, {
                                                             fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                                            lineNumber: 576,
+                                                            lineNumber: 608,
                                                             columnNumber: 23
                                                         }, ("TURBOPACK compile-time value", void 0)),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -953,13 +1008,13 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                                             children: (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$utils$2f$formatters$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["formatCurrency"])(cartVat)
                                                         }, void 0, false, {
                                                             fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                                            lineNumber: 577,
+                                                            lineNumber: 609,
                                                             columnNumber: 23
                                                         }, ("TURBOPACK compile-time value", void 0))
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                                    lineNumber: 575,
+                                                    lineNumber: 607,
                                                     columnNumber: 21
                                                 }, ("TURBOPACK compile-time value", void 0)),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -969,26 +1024,26 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                                             children: "Grand Total"
                                                         }, void 0, false, {
                                                             fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                                            lineNumber: 580,
+                                                            lineNumber: 612,
                                                             columnNumber: 23
                                                         }, ("TURBOPACK compile-time value", void 0)),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
                                                             children: (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$utils$2f$formatters$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["formatCurrency"])(cartGrandTotal)
                                                         }, void 0, false, {
                                                             fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                                            lineNumber: 581,
+                                                            lineNumber: 613,
                                                             columnNumber: 23
                                                         }, ("TURBOPACK compile-time value", void 0))
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                                    lineNumber: 579,
+                                                    lineNumber: 611,
                                                     columnNumber: 21
                                                 }, ("TURBOPACK compile-time value", void 0))
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                            lineNumber: 570,
+                                            lineNumber: 602,
                                             columnNumber: 19
                                         }, ("TURBOPACK compile-time value", void 0)),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -998,7 +1053,7 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                                     children: "Payment Mode"
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                                    lineNumber: 587,
+                                                    lineNumber: 619,
                                                     columnNumber: 21
                                                 }, ("TURBOPACK compile-time value", void 0)),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1014,18 +1069,18 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                                             children: mode
                                                         }, mode, false, {
                                                             fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                                            lineNumber: 590,
+                                                            lineNumber: 622,
                                                             columnNumber: 25
                                                         }, ("TURBOPACK compile-time value", void 0)))
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                                    lineNumber: 588,
+                                                    lineNumber: 620,
                                                     columnNumber: 21
                                                 }, ("TURBOPACK compile-time value", void 0))
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                            lineNumber: 586,
+                                            lineNumber: 618,
                                             columnNumber: 19
                                         }, ("TURBOPACK compile-time value", void 0)),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -1037,7 +1092,7 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                                     className: "w-4 h-4"
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                                    lineNumber: 611,
+                                                    lineNumber: 643,
                                                     columnNumber: 21
                                                 }, ("TURBOPACK compile-time value", void 0)),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -1048,36 +1103,36 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                                    lineNumber: 612,
+                                                    lineNumber: 644,
                                                     columnNumber: 21
                                                 }, ("TURBOPACK compile-time value", void 0))
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                            lineNumber: 606,
+                                            lineNumber: 638,
                                             columnNumber: 19
                                         }, ("TURBOPACK compile-time value", void 0))
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                    lineNumber: 569,
+                                    lineNumber: 601,
                                     columnNumber: 17
                                 }, ("TURBOPACK compile-time value", void 0))
                             ]
                         }, void 0, true, {
                             fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                            lineNumber: 491,
+                            lineNumber: 522,
                             columnNumber: 13
                         }, ("TURBOPACK compile-time value", void 0))
                     }, void 0, false, {
                         fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                        lineNumber: 490,
+                        lineNumber: 521,
                         columnNumber: 11
                     }, ("TURBOPACK compile-time value", void 0))
                 ]
             }, void 0, true, {
                 fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                lineNumber: 417,
+                lineNumber: 442,
                 columnNumber: 9
             }, ("TURBOPACK compile-time value", void 0)),
             activeTab === 'quotation' && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1094,7 +1149,7 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                         children: "Total Quotations"
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                        lineNumber: 629,
+                                        lineNumber: 661,
                                         columnNumber: 15
                                     }, ("TURBOPACK compile-time value", void 0)),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1102,7 +1157,7 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                         children: quotations.length
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                        lineNumber: 630,
+                                        lineNumber: 662,
                                         columnNumber: 15
                                     }, ("TURBOPACK compile-time value", void 0)),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -1110,13 +1165,13 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                         children: "Active client proposals"
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                        lineNumber: 631,
+                                        lineNumber: 663,
                                         columnNumber: 15
                                     }, ("TURBOPACK compile-time value", void 0))
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                lineNumber: 628,
+                                lineNumber: 660,
                                 columnNumber: 13
                             }, ("TURBOPACK compile-time value", void 0)),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1127,7 +1182,7 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                         children: "Quoted Pipeline Value"
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                        lineNumber: 634,
+                                        lineNumber: 666,
                                         columnNumber: 15
                                     }, ("TURBOPACK compile-time value", void 0)),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1135,7 +1190,7 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                         children: (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$utils$2f$formatters$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["formatCurrency"])(quotations.reduce((acc, q)=>acc + q.grandTotal, 0))
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                        lineNumber: 635,
+                                        lineNumber: 667,
                                         columnNumber: 15
                                     }, ("TURBOPACK compile-time value", void 0)),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -1143,13 +1198,13 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                         children: "Total prospective revenue"
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                        lineNumber: 638,
+                                        lineNumber: 670,
                                         columnNumber: 15
                                     }, ("TURBOPACK compile-time value", void 0))
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                lineNumber: 633,
+                                lineNumber: 665,
                                 columnNumber: 13
                             }, ("TURBOPACK compile-time value", void 0)),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1160,7 +1215,7 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                         children: "Approved Quotes"
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                        lineNumber: 641,
+                                        lineNumber: 673,
                                         columnNumber: 15
                                     }, ("TURBOPACK compile-time value", void 0)),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1168,7 +1223,7 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                         children: quotations.filter((q)=>q.status === 'Approved' || q.status === 'Converted to Order').length
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                        lineNumber: 642,
+                                        lineNumber: 674,
                                         columnNumber: 15
                                     }, ("TURBOPACK compile-time value", void 0)),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -1176,13 +1231,13 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                         children: "Ready for production"
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                        lineNumber: 645,
+                                        lineNumber: 677,
                                         columnNumber: 15
                                     }, ("TURBOPACK compile-time value", void 0))
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                lineNumber: 640,
+                                lineNumber: 672,
                                 columnNumber: 13
                             }, ("TURBOPACK compile-time value", void 0)),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1195,7 +1250,7 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                                 children: "Draft Proposal"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                                lineNumber: 649,
+                                                lineNumber: 681,
                                                 columnNumber: 17
                                             }, ("TURBOPACK compile-time value", void 0)),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1203,13 +1258,13 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                                 children: "Create Luxury Quote"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                                lineNumber: 650,
+                                                lineNumber: 682,
                                                 columnNumber: 17
                                             }, ("TURBOPACK compile-time value", void 0))
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                        lineNumber: 648,
+                                        lineNumber: 680,
                                         columnNumber: 15
                                     }, ("TURBOPACK compile-time value", void 0)),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -1218,19 +1273,19 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                         children: "+ Create"
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                        lineNumber: 652,
+                                        lineNumber: 684,
                                         columnNumber: 15
                                     }, ("TURBOPACK compile-time value", void 0))
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                lineNumber: 647,
+                                lineNumber: 679,
                                 columnNumber: 13
                             }, ("TURBOPACK compile-time value", void 0))
                         ]
                     }, void 0, true, {
                         fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                        lineNumber: 627,
+                        lineNumber: 659,
                         columnNumber: 11
                     }, ("TURBOPACK compile-time value", void 0)),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1244,7 +1299,7 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                         children: "Bespoke Interior Quotations"
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                        lineNumber: 664,
+                                        lineNumber: 696,
                                         columnNumber: 15
                                     }, ("TURBOPACK compile-time value", void 0)),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -1255,26 +1310,26 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                                 className: "w-3.5 h-3.5"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                                lineNumber: 669,
+                                                lineNumber: 701,
                                                 columnNumber: 17
                                             }, ("TURBOPACK compile-time value", void 0)),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
                                                 children: "New Quotation"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                                lineNumber: 670,
+                                                lineNumber: 702,
                                                 columnNumber: 17
                                             }, ("TURBOPACK compile-time value", void 0))
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                        lineNumber: 665,
+                                        lineNumber: 697,
                                         columnNumber: 15
                                     }, ("TURBOPACK compile-time value", void 0))
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                lineNumber: 663,
+                                lineNumber: 695,
                                 columnNumber: 13
                             }, ("TURBOPACK compile-time value", void 0)),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1291,7 +1346,7 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                                         children: "Quote #"
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                                        lineNumber: 678,
+                                                        lineNumber: 710,
                                                         columnNumber: 21
                                                     }, ("TURBOPACK compile-time value", void 0)),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("th", {
@@ -1299,7 +1354,7 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                                         children: "Customer"
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                                        lineNumber: 679,
+                                                        lineNumber: 711,
                                                         columnNumber: 21
                                                     }, ("TURBOPACK compile-time value", void 0)),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("th", {
@@ -1307,7 +1362,7 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                                         children: "Project Title"
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                                        lineNumber: 680,
+                                                        lineNumber: 712,
                                                         columnNumber: 21
                                                     }, ("TURBOPACK compile-time value", void 0)),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("th", {
@@ -1315,7 +1370,7 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                                         children: "Date"
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                                        lineNumber: 681,
+                                                        lineNumber: 713,
                                                         columnNumber: 21
                                                     }, ("TURBOPACK compile-time value", void 0)),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("th", {
@@ -1323,7 +1378,7 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                                         children: "Valid Until"
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                                        lineNumber: 682,
+                                                        lineNumber: 714,
                                                         columnNumber: 21
                                                     }, ("TURBOPACK compile-time value", void 0)),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("th", {
@@ -1331,7 +1386,7 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                                         children: "Items"
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                                        lineNumber: 683,
+                                                        lineNumber: 715,
                                                         columnNumber: 21
                                                     }, ("TURBOPACK compile-time value", void 0)),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("th", {
@@ -1339,7 +1394,7 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                                         children: "Grand Total"
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                                        lineNumber: 684,
+                                                        lineNumber: 716,
                                                         columnNumber: 21
                                                     }, ("TURBOPACK compile-time value", void 0)),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("th", {
@@ -1347,7 +1402,7 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                                         children: "Status"
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                                        lineNumber: 685,
+                                                        lineNumber: 717,
                                                         columnNumber: 21
                                                     }, ("TURBOPACK compile-time value", void 0)),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("th", {
@@ -1355,18 +1410,18 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                                         children: "Actions"
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                                        lineNumber: 686,
+                                                        lineNumber: 718,
                                                         columnNumber: 21
                                                     }, ("TURBOPACK compile-time value", void 0))
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                                lineNumber: 677,
+                                                lineNumber: 709,
                                                 columnNumber: 19
                                             }, ("TURBOPACK compile-time value", void 0))
                                         }, void 0, false, {
                                             fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                            lineNumber: 676,
+                                            lineNumber: 708,
                                             columnNumber: 17
                                         }, ("TURBOPACK compile-time value", void 0)),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("tbody", {
@@ -1379,7 +1434,7 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                                             children: q.quoteNumber
                                                         }, void 0, false, {
                                                             fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                                            lineNumber: 692,
+                                                            lineNumber: 724,
                                                             columnNumber: 23
                                                         }, ("TURBOPACK compile-time value", void 0)),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("td", {
@@ -1387,7 +1442,7 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                                             children: q.customerName
                                                         }, void 0, false, {
                                                             fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                                            lineNumber: 693,
+                                                            lineNumber: 725,
                                                             columnNumber: 23
                                                         }, ("TURBOPACK compile-time value", void 0)),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("td", {
@@ -1395,7 +1450,7 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                                             children: q.projectTitle
                                                         }, void 0, false, {
                                                             fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                                            lineNumber: 694,
+                                                            lineNumber: 726,
                                                             columnNumber: 23
                                                         }, ("TURBOPACK compile-time value", void 0)),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("td", {
@@ -1403,7 +1458,7 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                                             children: (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$utils$2f$formatters$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["formatDate"])(q.date)
                                                         }, void 0, false, {
                                                             fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                                            lineNumber: 695,
+                                                            lineNumber: 727,
                                                             columnNumber: 23
                                                         }, ("TURBOPACK compile-time value", void 0)),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("td", {
@@ -1411,7 +1466,7 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                                             children: (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$utils$2f$formatters$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["formatDate"])(q.validUntil)
                                                         }, void 0, false, {
                                                             fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                                            lineNumber: 696,
+                                                            lineNumber: 728,
                                                             columnNumber: 23
                                                         }, ("TURBOPACK compile-time value", void 0)),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("td", {
@@ -1419,7 +1474,7 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                                             children: q.items.length
                                                         }, void 0, false, {
                                                             fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                                            lineNumber: 697,
+                                                            lineNumber: 729,
                                                             columnNumber: 23
                                                         }, ("TURBOPACK compile-time value", void 0)),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("td", {
@@ -1427,7 +1482,7 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                                             children: (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$utils$2f$formatters$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["formatCurrency"])(q.grandTotal)
                                                         }, void 0, false, {
                                                             fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                                            lineNumber: 698,
+                                                            lineNumber: 730,
                                                             columnNumber: 23
                                                         }, ("TURBOPACK compile-time value", void 0)),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("td", {
@@ -1437,12 +1492,12 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                                                 children: q.status
                                                             }, void 0, false, {
                                                                 fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                                                lineNumber: 700,
+                                                                lineNumber: 732,
                                                                 columnNumber: 25
                                                             }, ("TURBOPACK compile-time value", void 0))
                                                         }, void 0, false, {
                                                             fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                                            lineNumber: 699,
+                                                            lineNumber: 731,
                                                             columnNumber: 23
                                                         }, ("TURBOPACK compile-time value", void 0)),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("td", {
@@ -1460,7 +1515,7 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                                                         children: "Print"
                                                                     }, void 0, false, {
                                                                         fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                                                        lineNumber: 706,
+                                                                        lineNumber: 738,
                                                                         columnNumber: 27
                                                                     }, ("TURBOPACK compile-time value", void 0)),
                                                                     q.status !== 'Converted to Order' && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -1470,52 +1525,52 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                                                         children: "Convert to Order"
                                                                     }, void 0, false, {
                                                                         fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                                                        lineNumber: 717,
+                                                                        lineNumber: 749,
                                                                         columnNumber: 29
                                                                     }, ("TURBOPACK compile-time value", void 0))
                                                                 ]
                                                             }, void 0, true, {
                                                                 fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                                                lineNumber: 705,
+                                                                lineNumber: 737,
                                                                 columnNumber: 25
                                                             }, ("TURBOPACK compile-time value", void 0))
                                                         }, void 0, false, {
                                                             fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                                            lineNumber: 704,
+                                                            lineNumber: 736,
                                                             columnNumber: 23
                                                         }, ("TURBOPACK compile-time value", void 0))
                                                     ]
                                                 }, q.id, true, {
                                                     fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                                    lineNumber: 691,
+                                                    lineNumber: 723,
                                                     columnNumber: 21
                                                 }, ("TURBOPACK compile-time value", void 0)))
                                         }, void 0, false, {
                                             fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                            lineNumber: 689,
+                                            lineNumber: 721,
                                             columnNumber: 17
                                         }, ("TURBOPACK compile-time value", void 0))
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                    lineNumber: 675,
+                                    lineNumber: 707,
                                     columnNumber: 15
                                 }, ("TURBOPACK compile-time value", void 0))
                             }, void 0, false, {
                                 fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                lineNumber: 674,
+                                lineNumber: 706,
                                 columnNumber: 13
                             }, ("TURBOPACK compile-time value", void 0))
                         ]
                     }, void 0, true, {
                         fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                        lineNumber: 662,
+                        lineNumber: 694,
                         columnNumber: 11
                     }, ("TURBOPACK compile-time value", void 0))
                 ]
             }, void 0, true, {
                 fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                lineNumber: 625,
+                lineNumber: 657,
                 columnNumber: 9
             }, ("TURBOPACK compile-time value", void 0)),
             activeTab === 'invoice' && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1532,7 +1587,7 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                         children: "Total Invoiced"
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                        lineNumber: 743,
+                                        lineNumber: 775,
                                         columnNumber: 15
                                     }, ("TURBOPACK compile-time value", void 0)),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1540,7 +1595,7 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                         children: (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$utils$2f$formatters$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["formatCurrency"])(invoices.reduce((a, b)=>a + b.grandTotal, 0))
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                        lineNumber: 744,
+                                        lineNumber: 776,
                                         columnNumber: 15
                                     }, ("TURBOPACK compile-time value", void 0)),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -1551,13 +1606,13 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                        lineNumber: 747,
+                                        lineNumber: 779,
                                         columnNumber: 15
                                     }, ("TURBOPACK compile-time value", void 0))
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                lineNumber: 742,
+                                lineNumber: 774,
                                 columnNumber: 13
                             }, ("TURBOPACK compile-time value", void 0)),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1568,7 +1623,7 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                         children: "Total Collected"
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                        lineNumber: 750,
+                                        lineNumber: 782,
                                         columnNumber: 15
                                     }, ("TURBOPACK compile-time value", void 0)),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1576,7 +1631,7 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                         children: (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$utils$2f$formatters$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["formatCurrency"])(invoices.reduce((a, b)=>a + b.amountPaid, 0))
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                        lineNumber: 751,
+                                        lineNumber: 783,
                                         columnNumber: 15
                                     }, ("TURBOPACK compile-time value", void 0)),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -1584,13 +1639,13 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                         children: "Settled payments"
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                        lineNumber: 754,
+                                        lineNumber: 786,
                                         columnNumber: 15
                                     }, ("TURBOPACK compile-time value", void 0))
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                lineNumber: 749,
+                                lineNumber: 781,
                                 columnNumber: 13
                             }, ("TURBOPACK compile-time value", void 0)),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1601,7 +1656,7 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                         children: "Outstanding Due"
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                        lineNumber: 757,
+                                        lineNumber: 789,
                                         columnNumber: 15
                                     }, ("TURBOPACK compile-time value", void 0)),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1609,7 +1664,7 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                         children: (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$utils$2f$formatters$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["formatCurrency"])(invoices.reduce((a, b)=>a + (b.grandTotal - b.amountPaid), 0))
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                        lineNumber: 758,
+                                        lineNumber: 790,
                                         columnNumber: 15
                                     }, ("TURBOPACK compile-time value", void 0)),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -1617,13 +1672,13 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                         children: "Pending collection"
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                        lineNumber: 761,
+                                        lineNumber: 793,
                                         columnNumber: 15
                                     }, ("TURBOPACK compile-time value", void 0))
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                lineNumber: 756,
+                                lineNumber: 788,
                                 columnNumber: 13
                             }, ("TURBOPACK compile-time value", void 0)),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1634,7 +1689,7 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                         children: "Unpaid Invoices"
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                        lineNumber: 764,
+                                        lineNumber: 796,
                                         columnNumber: 15
                                     }, ("TURBOPACK compile-time value", void 0)),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1642,7 +1697,7 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                         children: invoices.filter((i)=>i.paymentStatus === 'Unpaid').length
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                        lineNumber: 765,
+                                        lineNumber: 797,
                                         columnNumber: 15
                                     }, ("TURBOPACK compile-time value", void 0)),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -1650,19 +1705,19 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                         children: "Requires follow up"
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                        lineNumber: 768,
+                                        lineNumber: 800,
                                         columnNumber: 15
                                     }, ("TURBOPACK compile-time value", void 0))
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                lineNumber: 763,
+                                lineNumber: 795,
                                 columnNumber: 13
                             }, ("TURBOPACK compile-time value", void 0))
                         ]
                     }, void 0, true, {
                         fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                        lineNumber: 741,
+                        lineNumber: 773,
                         columnNumber: 11
                     }, ("TURBOPACK compile-time value", void 0)),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1676,7 +1731,7 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                         children: "Tax Invoices Register"
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                        lineNumber: 775,
+                                        lineNumber: 807,
                                         columnNumber: 15
                                     }, ("TURBOPACK compile-time value", void 0)),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -1687,13 +1742,13 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                        lineNumber: 776,
+                                        lineNumber: 808,
                                         columnNumber: 15
                                     }, ("TURBOPACK compile-time value", void 0))
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                lineNumber: 774,
+                                lineNumber: 806,
                                 columnNumber: 13
                             }, ("TURBOPACK compile-time value", void 0)),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1710,7 +1765,7 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                                         children: "Invoice #"
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                                        lineNumber: 783,
+                                                        lineNumber: 815,
                                                         columnNumber: 21
                                                     }, ("TURBOPACK compile-time value", void 0)),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("th", {
@@ -1718,7 +1773,7 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                                         children: "Customer"
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                                        lineNumber: 784,
+                                                        lineNumber: 816,
                                                         columnNumber: 21
                                                     }, ("TURBOPACK compile-time value", void 0)),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("th", {
@@ -1726,7 +1781,7 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                                         children: "Date"
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                                        lineNumber: 785,
+                                                        lineNumber: 817,
                                                         columnNumber: 21
                                                     }, ("TURBOPACK compile-time value", void 0)),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("th", {
@@ -1734,7 +1789,7 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                                         children: "Due Date"
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                                        lineNumber: 786,
+                                                        lineNumber: 818,
                                                         columnNumber: 21
                                                     }, ("TURBOPACK compile-time value", void 0)),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("th", {
@@ -1742,7 +1797,7 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                                         children: "Subtotal"
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                                        lineNumber: 787,
+                                                        lineNumber: 819,
                                                         columnNumber: 21
                                                     }, ("TURBOPACK compile-time value", void 0)),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("th", {
@@ -1750,7 +1805,7 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                                         children: "Grand Total"
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                                        lineNumber: 788,
+                                                        lineNumber: 820,
                                                         columnNumber: 21
                                                     }, ("TURBOPACK compile-time value", void 0)),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("th", {
@@ -1758,7 +1813,7 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                                         children: "Paid"
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                                        lineNumber: 789,
+                                                        lineNumber: 821,
                                                         columnNumber: 21
                                                     }, ("TURBOPACK compile-time value", void 0)),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("th", {
@@ -1766,7 +1821,7 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                                         children: "Balance"
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                                        lineNumber: 790,
+                                                        lineNumber: 822,
                                                         columnNumber: 21
                                                     }, ("TURBOPACK compile-time value", void 0)),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("th", {
@@ -1774,7 +1829,7 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                                         children: "Status"
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                                        lineNumber: 791,
+                                                        lineNumber: 823,
                                                         columnNumber: 21
                                                     }, ("TURBOPACK compile-time value", void 0)),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("th", {
@@ -1782,18 +1837,18 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                                         children: "Actions"
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                                        lineNumber: 792,
+                                                        lineNumber: 824,
                                                         columnNumber: 21
                                                     }, ("TURBOPACK compile-time value", void 0))
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                                lineNumber: 782,
+                                                lineNumber: 814,
                                                 columnNumber: 19
                                             }, ("TURBOPACK compile-time value", void 0))
                                         }, void 0, false, {
                                             fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                            lineNumber: 781,
+                                            lineNumber: 813,
                                             columnNumber: 17
                                         }, ("TURBOPACK compile-time value", void 0)),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("tbody", {
@@ -1808,7 +1863,7 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                                             children: inv.invoiceNumber
                                                         }, void 0, false, {
                                                             fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                                            lineNumber: 800,
+                                                            lineNumber: 832,
                                                             columnNumber: 25
                                                         }, ("TURBOPACK compile-time value", void 0)),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("td", {
@@ -1816,7 +1871,7 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                                             children: inv.customerName
                                                         }, void 0, false, {
                                                             fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                                            lineNumber: 801,
+                                                            lineNumber: 833,
                                                             columnNumber: 25
                                                         }, ("TURBOPACK compile-time value", void 0)),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("td", {
@@ -1824,7 +1879,7 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                                             children: (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$utils$2f$formatters$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["formatDate"])(inv.date)
                                                         }, void 0, false, {
                                                             fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                                            lineNumber: 802,
+                                                            lineNumber: 834,
                                                             columnNumber: 25
                                                         }, ("TURBOPACK compile-time value", void 0)),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("td", {
@@ -1832,7 +1887,7 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                                             children: (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$utils$2f$formatters$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["formatDate"])(inv.dueDate)
                                                         }, void 0, false, {
                                                             fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                                            lineNumber: 803,
+                                                            lineNumber: 835,
                                                             columnNumber: 25
                                                         }, ("TURBOPACK compile-time value", void 0)),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("td", {
@@ -1840,7 +1895,7 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                                             children: (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$utils$2f$formatters$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["formatCurrency"])(inv.subtotal)
                                                         }, void 0, false, {
                                                             fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                                            lineNumber: 804,
+                                                            lineNumber: 836,
                                                             columnNumber: 25
                                                         }, ("TURBOPACK compile-time value", void 0)),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("td", {
@@ -1848,7 +1903,7 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                                             children: (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$utils$2f$formatters$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["formatCurrency"])(inv.grandTotal)
                                                         }, void 0, false, {
                                                             fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                                            lineNumber: 805,
+                                                            lineNumber: 837,
                                                             columnNumber: 25
                                                         }, ("TURBOPACK compile-time value", void 0)),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("td", {
@@ -1856,7 +1911,7 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                                             children: (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$utils$2f$formatters$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["formatCurrency"])(inv.amountPaid)
                                                         }, void 0, false, {
                                                             fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                                            lineNumber: 806,
+                                                            lineNumber: 838,
                                                             columnNumber: 25
                                                         }, ("TURBOPACK compile-time value", void 0)),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("td", {
@@ -1866,19 +1921,19 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                                                 children: (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$utils$2f$formatters$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["formatCurrency"])(balance)
                                                             }, void 0, false, {
                                                                 fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                                                lineNumber: 809,
+                                                                lineNumber: 841,
                                                                 columnNumber: 29
                                                             }, ("TURBOPACK compile-time value", void 0)) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
                                                                 className: "text-stone-400",
                                                                 children: "$0.00"
                                                             }, void 0, false, {
                                                                 fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                                                lineNumber: 811,
+                                                                lineNumber: 843,
                                                                 columnNumber: 29
                                                             }, ("TURBOPACK compile-time value", void 0))
                                                         }, void 0, false, {
                                                             fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                                            lineNumber: 807,
+                                                            lineNumber: 839,
                                                             columnNumber: 25
                                                         }, ("TURBOPACK compile-time value", void 0)),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("td", {
@@ -1888,12 +1943,12 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                                                 children: inv.paymentStatus
                                                             }, void 0, false, {
                                                                 fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                                                lineNumber: 815,
+                                                                lineNumber: 847,
                                                                 columnNumber: 27
                                                             }, ("TURBOPACK compile-time value", void 0))
                                                         }, void 0, false, {
                                                             fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                                            lineNumber: 814,
+                                                            lineNumber: 846,
                                                             columnNumber: 25
                                                         }, ("TURBOPACK compile-time value", void 0)),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("td", {
@@ -1911,7 +1966,7 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                                                         children: "Print"
                                                                     }, void 0, false, {
                                                                         fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                                                        lineNumber: 821,
+                                                                        lineNumber: 853,
                                                                         columnNumber: 29
                                                                     }, ("TURBOPACK compile-time value", void 0)),
                                                                     balance > 0 && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -1924,53 +1979,53 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                                                         children: "Record Pay"
                                                                     }, void 0, false, {
                                                                         fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                                                        lineNumber: 832,
+                                                                        lineNumber: 864,
                                                                         columnNumber: 31
                                                                     }, ("TURBOPACK compile-time value", void 0))
                                                                 ]
                                                             }, void 0, true, {
                                                                 fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                                                lineNumber: 820,
+                                                                lineNumber: 852,
                                                                 columnNumber: 27
                                                             }, ("TURBOPACK compile-time value", void 0))
                                                         }, void 0, false, {
                                                             fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                                            lineNumber: 819,
+                                                            lineNumber: 851,
                                                             columnNumber: 25
                                                         }, ("TURBOPACK compile-time value", void 0))
                                                     ]
                                                 }, inv.id, true, {
                                                     fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                                    lineNumber: 799,
+                                                    lineNumber: 831,
                                                     columnNumber: 23
                                                 }, ("TURBOPACK compile-time value", void 0));
                                             })
                                         }, void 0, false, {
                                             fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                            lineNumber: 795,
+                                            lineNumber: 827,
                                             columnNumber: 17
                                         }, ("TURBOPACK compile-time value", void 0))
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                    lineNumber: 780,
+                                    lineNumber: 812,
                                     columnNumber: 15
                                 }, ("TURBOPACK compile-time value", void 0))
                             }, void 0, false, {
                                 fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                lineNumber: 779,
+                                lineNumber: 811,
                                 columnNumber: 13
                             }, ("TURBOPACK compile-time value", void 0))
                         ]
                     }, void 0, true, {
                         fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                        lineNumber: 773,
+                        lineNumber: 805,
                         columnNumber: 11
                     }, ("TURBOPACK compile-time value", void 0))
                 ]
             }, void 0, true, {
                 fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                lineNumber: 740,
+                lineNumber: 772,
                 columnNumber: 9
             }, ("TURBOPACK compile-time value", void 0)),
             activeTab === 'customers' && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1986,7 +2041,7 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                         className: "w-4 h-4 text-stone-400 absolute left-3 top-2.5"
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                        lineNumber: 862,
+                                        lineNumber: 894,
                                         columnNumber: 15
                                     }, ("TURBOPACK compile-time value", void 0)),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
@@ -1997,13 +2052,13 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                         className: "w-full pl-9 pr-3 py-2 bg-stone-50 border border-stone-200 rounded-lg text-xs font-medium text-stone-900 focus:outline-none focus:ring-1 focus:ring-stone-900"
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                        lineNumber: 863,
+                                        lineNumber: 895,
                                         columnNumber: 15
                                     }, ("TURBOPACK compile-time value", void 0))
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                lineNumber: 861,
+                                lineNumber: 893,
                                 columnNumber: 13
                             }, ("TURBOPACK compile-time value", void 0)),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -2014,26 +2069,26 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                         className: "w-4 h-4"
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                        lineNumber: 875,
+                                        lineNumber: 907,
                                         columnNumber: 15
                                     }, ("TURBOPACK compile-time value", void 0)),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
                                         children: "Add Customer"
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                        lineNumber: 876,
+                                        lineNumber: 908,
                                         columnNumber: 15
                                     }, ("TURBOPACK compile-time value", void 0))
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                lineNumber: 871,
+                                lineNumber: 903,
                                 columnNumber: 13
                             }, ("TURBOPACK compile-time value", void 0))
                         ]
                     }, void 0, true, {
                         fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                        lineNumber: 860,
+                        lineNumber: 892,
                         columnNumber: 11
                     }, ("TURBOPACK compile-time value", void 0)),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2052,7 +2107,7 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                                     children: "Client Name"
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                                    lineNumber: 886,
+                                                    lineNumber: 918,
                                                     columnNumber: 21
                                                 }, ("TURBOPACK compile-time value", void 0)),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("th", {
@@ -2060,7 +2115,7 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                                     children: "Company / Entity"
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                                    lineNumber: 887,
+                                                    lineNumber: 919,
                                                     columnNumber: 21
                                                 }, ("TURBOPACK compile-time value", void 0)),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("th", {
@@ -2068,7 +2123,7 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                                     children: "Category"
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                                    lineNumber: 888,
+                                                    lineNumber: 920,
                                                     columnNumber: 21
                                                 }, ("TURBOPACK compile-time value", void 0)),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("th", {
@@ -2076,7 +2131,7 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                                     children: "Contact Phone"
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                                    lineNumber: 889,
+                                                    lineNumber: 921,
                                                     columnNumber: 21
                                                 }, ("TURBOPACK compile-time value", void 0)),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("th", {
@@ -2084,7 +2139,7 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                                     children: "Email"
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                                    lineNumber: 890,
+                                                    lineNumber: 922,
                                                     columnNumber: 21
                                                 }, ("TURBOPACK compile-time value", void 0)),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("th", {
@@ -2092,7 +2147,7 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                                     children: "City / Area"
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                                    lineNumber: 891,
+                                                    lineNumber: 923,
                                                     columnNumber: 21
                                                 }, ("TURBOPACK compile-time value", void 0)),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("th", {
@@ -2100,7 +2155,7 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                                     children: "Lifetime Spend"
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                                    lineNumber: 892,
+                                                    lineNumber: 924,
                                                     columnNumber: 21
                                                 }, ("TURBOPACK compile-time value", void 0)),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("th", {
@@ -2108,18 +2163,18 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                                     children: "Balance Due"
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                                    lineNumber: 893,
+                                                    lineNumber: 925,
                                                     columnNumber: 21
                                                 }, ("TURBOPACK compile-time value", void 0))
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                            lineNumber: 885,
+                                            lineNumber: 917,
                                             columnNumber: 19
                                         }, ("TURBOPACK compile-time value", void 0))
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                        lineNumber: 884,
+                                        lineNumber: 916,
                                         columnNumber: 17
                                     }, ("TURBOPACK compile-time value", void 0)),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("tbody", {
@@ -2132,7 +2187,7 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                                         children: cust.name
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                                        lineNumber: 906,
+                                                        lineNumber: 938,
                                                         columnNumber: 25
                                                     }, ("TURBOPACK compile-time value", void 0)),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("td", {
@@ -2140,7 +2195,7 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                                         children: cust.companyName || '-'
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                                        lineNumber: 907,
+                                                        lineNumber: 939,
                                                         columnNumber: 25
                                                     }, ("TURBOPACK compile-time value", void 0)),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("td", {
@@ -2150,12 +2205,12 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                                             children: cust.type
                                                         }, void 0, false, {
                                                             fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                                            lineNumber: 909,
+                                                            lineNumber: 941,
                                                             columnNumber: 27
                                                         }, ("TURBOPACK compile-time value", void 0))
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                                        lineNumber: 908,
+                                                        lineNumber: 940,
                                                         columnNumber: 25
                                                     }, ("TURBOPACK compile-time value", void 0)),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("td", {
@@ -2163,7 +2218,7 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                                         children: cust.phone
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                                        lineNumber: 913,
+                                                        lineNumber: 945,
                                                         columnNumber: 25
                                                     }, ("TURBOPACK compile-time value", void 0)),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("td", {
@@ -2171,7 +2226,7 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                                         children: cust.email
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                                        lineNumber: 914,
+                                                        lineNumber: 946,
                                                         columnNumber: 25
                                                     }, ("TURBOPACK compile-time value", void 0)),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("td", {
@@ -2179,7 +2234,7 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                                         children: cust.city
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                                        lineNumber: 915,
+                                                        lineNumber: 947,
                                                         columnNumber: 25
                                                     }, ("TURBOPACK compile-time value", void 0)),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("td", {
@@ -2187,7 +2242,7 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                                         children: (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$utils$2f$formatters$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["formatCurrency"])(cust.totalSpent)
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                                        lineNumber: 916,
+                                                        lineNumber: 948,
                                                         columnNumber: 25
                                                     }, ("TURBOPACK compile-time value", void 0)),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("td", {
@@ -2197,52 +2252,52 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                                             children: (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$utils$2f$formatters$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["formatCurrency"])(cust.outstandingBalance)
                                                         }, void 0, false, {
                                                             fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                                            lineNumber: 919,
+                                                            lineNumber: 951,
                                                             columnNumber: 29
                                                         }, ("TURBOPACK compile-time value", void 0)) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
                                                             className: "text-stone-400",
                                                             children: "$0.00"
                                                         }, void 0, false, {
                                                             fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                                            lineNumber: 921,
+                                                            lineNumber: 953,
                                                             columnNumber: 29
                                                         }, ("TURBOPACK compile-time value", void 0))
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                                        lineNumber: 917,
+                                                        lineNumber: 949,
                                                         columnNumber: 25
                                                     }, ("TURBOPACK compile-time value", void 0))
                                                 ]
                                             }, cust.id, true, {
                                                 fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                                lineNumber: 905,
+                                                lineNumber: 937,
                                                 columnNumber: 23
                                             }, ("TURBOPACK compile-time value", void 0)))
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                        lineNumber: 896,
+                                        lineNumber: 928,
                                         columnNumber: 17
                                     }, ("TURBOPACK compile-time value", void 0))
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                lineNumber: 883,
+                                lineNumber: 915,
                                 columnNumber: 15
                             }, ("TURBOPACK compile-time value", void 0))
                         }, void 0, false, {
                             fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                            lineNumber: 882,
+                            lineNumber: 914,
                             columnNumber: 13
                         }, ("TURBOPACK compile-time value", void 0))
                     }, void 0, false, {
                         fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                        lineNumber: 881,
+                        lineNumber: 913,
                         columnNumber: 11
                     }, ("TURBOPACK compile-time value", void 0))
                 ]
             }, void 0, true, {
                 fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                lineNumber: 859,
+                lineNumber: 891,
                 columnNumber: 9
             }, ("TURBOPACK compile-time value", void 0)),
             activeTab === 'attendance' && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2259,7 +2314,7 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                         children: "Attendance Date:"
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                        lineNumber: 940,
+                                        lineNumber: 972,
                                         columnNumber: 15
                                     }, ("TURBOPACK compile-time value", void 0)),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
@@ -2269,13 +2324,13 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                         className: "px-3 py-1.5 border border-stone-300 rounded-lg text-xs font-semibold text-stone-800"
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                        lineNumber: 941,
+                                        lineNumber: 973,
                                         columnNumber: 15
                                     }, ("TURBOPACK compile-time value", void 0))
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                lineNumber: 939,
+                                lineNumber: 971,
                                 columnNumber: 13
                             }, ("TURBOPACK compile-time value", void 0)),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -2286,26 +2341,26 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                         className: "w-4 h-4"
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                        lineNumber: 952,
+                                        lineNumber: 984,
                                         columnNumber: 15
                                     }, ("TURBOPACK compile-time value", void 0)),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
                                         children: "Mark Staff Attendance"
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                        lineNumber: 953,
+                                        lineNumber: 985,
                                         columnNumber: 15
                                     }, ("TURBOPACK compile-time value", void 0))
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                lineNumber: 948,
+                                lineNumber: 980,
                                 columnNumber: 13
                             }, ("TURBOPACK compile-time value", void 0))
                         ]
                     }, void 0, true, {
                         fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                        lineNumber: 938,
+                        lineNumber: 970,
                         columnNumber: 11
                     }, ("TURBOPACK compile-time value", void 0)),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2319,7 +2374,7 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                         children: "Present in Showroom"
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                        lineNumber: 960,
+                                        lineNumber: 992,
                                         columnNumber: 15
                                     }, ("TURBOPACK compile-time value", void 0)),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2327,13 +2382,13 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                         children: attendance.filter((a)=>a.status === 'Present').length
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                        lineNumber: 961,
+                                        lineNumber: 993,
                                         columnNumber: 15
                                     }, ("TURBOPACK compile-time value", void 0))
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                lineNumber: 959,
+                                lineNumber: 991,
                                 columnNumber: 13
                             }, ("TURBOPACK compile-time value", void 0)),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2344,7 +2399,7 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                         children: "On-Site Client Visits"
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                        lineNumber: 966,
+                                        lineNumber: 998,
                                         columnNumber: 15
                                     }, ("TURBOPACK compile-time value", void 0)),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2352,13 +2407,13 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                         children: attendance.filter((a)=>a.status === 'On-Site').length
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                        lineNumber: 967,
+                                        lineNumber: 999,
                                         columnNumber: 15
                                     }, ("TURBOPACK compile-time value", void 0))
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                lineNumber: 965,
+                                lineNumber: 997,
                                 columnNumber: 13
                             }, ("TURBOPACK compile-time value", void 0)),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2369,7 +2424,7 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                         children: "On Leave / Half Day"
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                        lineNumber: 972,
+                                        lineNumber: 1004,
                                         columnNumber: 15
                                     }, ("TURBOPACK compile-time value", void 0)),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2377,13 +2432,13 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                         children: attendance.filter((a)=>a.status === 'Leave' || a.status === 'Half Day').length
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                        lineNumber: 973,
+                                        lineNumber: 1005,
                                         columnNumber: 15
                                     }, ("TURBOPACK compile-time value", void 0))
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                lineNumber: 971,
+                                lineNumber: 1003,
                                 columnNumber: 13
                             }, ("TURBOPACK compile-time value", void 0)),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2394,7 +2449,7 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                         children: "Total Logged Overtime"
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                        lineNumber: 978,
+                                        lineNumber: 1010,
                                         columnNumber: 15
                                     }, ("TURBOPACK compile-time value", void 0)),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2405,19 +2460,19 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                        lineNumber: 979,
+                                        lineNumber: 1011,
                                         columnNumber: 15
                                     }, ("TURBOPACK compile-time value", void 0))
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                lineNumber: 977,
+                                lineNumber: 1009,
                                 columnNumber: 13
                             }, ("TURBOPACK compile-time value", void 0))
                         ]
                     }, void 0, true, {
                         fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                        lineNumber: 958,
+                        lineNumber: 990,
                         columnNumber: 11
                     }, ("TURBOPACK compile-time value", void 0)),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2430,12 +2485,12 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                     children: "Attendance Register"
                                 }, void 0, false, {
                                     fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                    lineNumber: 988,
+                                    lineNumber: 1020,
                                     columnNumber: 15
                                 }, ("TURBOPACK compile-time value", void 0))
                             }, void 0, false, {
                                 fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                lineNumber: 987,
+                                lineNumber: 1019,
                                 columnNumber: 13
                             }, ("TURBOPACK compile-time value", void 0)),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2452,7 +2507,7 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                                         children: "Employee"
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                                        lineNumber: 994,
+                                                        lineNumber: 1026,
                                                         columnNumber: 21
                                                     }, ("TURBOPACK compile-time value", void 0)),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("th", {
@@ -2460,7 +2515,7 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                                         children: "Date"
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                                        lineNumber: 995,
+                                                        lineNumber: 1027,
                                                         columnNumber: 21
                                                     }, ("TURBOPACK compile-time value", void 0)),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("th", {
@@ -2468,7 +2523,7 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                                         children: "Check-In"
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                                        lineNumber: 996,
+                                                        lineNumber: 1028,
                                                         columnNumber: 21
                                                     }, ("TURBOPACK compile-time value", void 0)),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("th", {
@@ -2476,7 +2531,7 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                                         children: "Check-Out"
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                                        lineNumber: 997,
+                                                        lineNumber: 1029,
                                                         columnNumber: 21
                                                     }, ("TURBOPACK compile-time value", void 0)),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("th", {
@@ -2484,7 +2539,7 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                                         children: "Overtime Hours"
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                                        lineNumber: 998,
+                                                        lineNumber: 1030,
                                                         columnNumber: 21
                                                     }, ("TURBOPACK compile-time value", void 0)),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("th", {
@@ -2492,7 +2547,7 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                                         children: "Status"
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                                        lineNumber: 999,
+                                                        lineNumber: 1031,
                                                         columnNumber: 21
                                                     }, ("TURBOPACK compile-time value", void 0)),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("th", {
@@ -2500,18 +2555,18 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                                         children: "Notes / Location"
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                                        lineNumber: 1000,
+                                                        lineNumber: 1032,
                                                         columnNumber: 21
                                                     }, ("TURBOPACK compile-time value", void 0))
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                                lineNumber: 993,
+                                                lineNumber: 1025,
                                                 columnNumber: 19
                                             }, ("TURBOPACK compile-time value", void 0))
                                         }, void 0, false, {
                                             fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                            lineNumber: 992,
+                                            lineNumber: 1024,
                                             columnNumber: 17
                                         }, ("TURBOPACK compile-time value", void 0)),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("tbody", {
@@ -2524,7 +2579,7 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                                             children: rec.employeeName
                                                         }, void 0, false, {
                                                             fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                                            lineNumber: 1006,
+                                                            lineNumber: 1038,
                                                             columnNumber: 23
                                                         }, ("TURBOPACK compile-time value", void 0)),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("td", {
@@ -2532,7 +2587,7 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                                             children: (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$utils$2f$formatters$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["formatDate"])(rec.date)
                                                         }, void 0, false, {
                                                             fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                                            lineNumber: 1007,
+                                                            lineNumber: 1039,
                                                             columnNumber: 23
                                                         }, ("TURBOPACK compile-time value", void 0)),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("td", {
@@ -2540,7 +2595,7 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                                             children: rec.checkIn
                                                         }, void 0, false, {
                                                             fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                                            lineNumber: 1008,
+                                                            lineNumber: 1040,
                                                             columnNumber: 23
                                                         }, ("TURBOPACK compile-time value", void 0)),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("td", {
@@ -2548,7 +2603,7 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                                             children: rec.checkOut
                                                         }, void 0, false, {
                                                             fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                                            lineNumber: 1009,
+                                                            lineNumber: 1041,
                                                             columnNumber: 23
                                                         }, ("TURBOPACK compile-time value", void 0)),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("td", {
@@ -2559,7 +2614,7 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                                             ]
                                                         }, void 0, true, {
                                                             fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                                            lineNumber: 1010,
+                                                            lineNumber: 1042,
                                                             columnNumber: 23
                                                         }, ("TURBOPACK compile-time value", void 0)),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("td", {
@@ -2569,12 +2624,12 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                                                 children: rec.status
                                                             }, void 0, false, {
                                                                 fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                                                lineNumber: 1012,
+                                                                lineNumber: 1044,
                                                                 columnNumber: 25
                                                             }, ("TURBOPACK compile-time value", void 0))
                                                         }, void 0, false, {
                                                             fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                                            lineNumber: 1011,
+                                                            lineNumber: 1043,
                                                             columnNumber: 23
                                                         }, ("TURBOPACK compile-time value", void 0)),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("td", {
@@ -2582,41 +2637,41 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                                             children: rec.notes || 'Normal Showroom Shift'
                                                         }, void 0, false, {
                                                             fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                                            lineNumber: 1020,
+                                                            lineNumber: 1052,
                                                             columnNumber: 23
                                                         }, ("TURBOPACK compile-time value", void 0))
                                                     ]
                                                 }, rec.id, true, {
                                                     fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                                    lineNumber: 1005,
+                                                    lineNumber: 1037,
                                                     columnNumber: 21
                                                 }, ("TURBOPACK compile-time value", void 0)))
                                         }, void 0, false, {
                                             fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                            lineNumber: 1003,
+                                            lineNumber: 1035,
                                             columnNumber: 17
                                         }, ("TURBOPACK compile-time value", void 0))
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                    lineNumber: 991,
+                                    lineNumber: 1023,
                                     columnNumber: 15
                                 }, ("TURBOPACK compile-time value", void 0))
                             }, void 0, false, {
                                 fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                lineNumber: 990,
+                                lineNumber: 1022,
                                 columnNumber: 13
                             }, ("TURBOPACK compile-time value", void 0))
                         ]
                     }, void 0, true, {
                         fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                        lineNumber: 986,
+                        lineNumber: 1018,
                         columnNumber: 11
                     }, ("TURBOPACK compile-time value", void 0))
                 ]
             }, void 0, true, {
                 fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                lineNumber: 937,
+                lineNumber: 969,
                 columnNumber: 9
             }, ("TURBOPACK compile-time value", void 0)),
             activeTab === 'payroll' && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2633,7 +2688,7 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                         children: "Payroll Month:"
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                        lineNumber: 1037,
+                                        lineNumber: 1069,
                                         columnNumber: 15
                                     }, ("TURBOPACK compile-time value", void 0)),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("select", {
@@ -2646,7 +2701,7 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                                 children: "September 2026"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                                lineNumber: 1043,
+                                                lineNumber: 1075,
                                                 columnNumber: 17
                                             }, ("TURBOPACK compile-time value", void 0)),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("option", {
@@ -2654,7 +2709,7 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                                 children: "August 2026"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                                lineNumber: 1044,
+                                                lineNumber: 1076,
                                                 columnNumber: 17
                                             }, ("TURBOPACK compile-time value", void 0)),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("option", {
@@ -2662,19 +2717,19 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                                 children: "July 2026"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                                lineNumber: 1045,
+                                                lineNumber: 1077,
                                                 columnNumber: 17
                                             }, ("TURBOPACK compile-time value", void 0))
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                        lineNumber: 1038,
+                                        lineNumber: 1070,
                                         columnNumber: 15
                                     }, ("TURBOPACK compile-time value", void 0))
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                lineNumber: 1036,
+                                lineNumber: 1068,
                                 columnNumber: 13
                             }, ("TURBOPACK compile-time value", void 0)),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -2685,26 +2740,26 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                         className: "w-4 h-4"
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                        lineNumber: 1052,
+                                        lineNumber: 1084,
                                         columnNumber: 15
                                     }, ("TURBOPACK compile-time value", void 0)),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
                                         children: "Process Monthly Payroll"
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                        lineNumber: 1053,
+                                        lineNumber: 1085,
                                         columnNumber: 15
                                     }, ("TURBOPACK compile-time value", void 0))
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                lineNumber: 1048,
+                                lineNumber: 1080,
                                 columnNumber: 13
                             }, ("TURBOPACK compile-time value", void 0))
                         ]
                     }, void 0, true, {
                         fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                        lineNumber: 1035,
+                        lineNumber: 1067,
                         columnNumber: 11
                     }, ("TURBOPACK compile-time value", void 0)),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2718,7 +2773,7 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                         children: "Total Net Payroll"
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                        lineNumber: 1060,
+                                        lineNumber: 1092,
                                         columnNumber: 15
                                     }, ("TURBOPACK compile-time value", void 0)),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2726,7 +2781,7 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                         children: (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$utils$2f$formatters$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["formatCurrency"])(totalPayrollAmount)
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                        lineNumber: 1061,
+                                        lineNumber: 1093,
                                         columnNumber: 15
                                     }, ("TURBOPACK compile-time value", void 0)),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -2734,13 +2789,13 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                         children: "Disbursed to staff bank accounts"
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                        lineNumber: 1062,
+                                        lineNumber: 1094,
                                         columnNumber: 15
                                     }, ("TURBOPACK compile-time value", void 0))
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                lineNumber: 1059,
+                                lineNumber: 1091,
                                 columnNumber: 13
                             }, ("TURBOPACK compile-time value", void 0)),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2751,7 +2806,7 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                         children: "Base Salary Total"
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                        lineNumber: 1065,
+                                        lineNumber: 1097,
                                         columnNumber: 15
                                     }, ("TURBOPACK compile-time value", void 0)),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2759,13 +2814,13 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                         children: (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$utils$2f$formatters$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["formatCurrency"])(payroll.reduce((a, b)=>a + b.baseSalary, 0))
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                        lineNumber: 1066,
+                                        lineNumber: 1098,
                                         columnNumber: 15
                                     }, ("TURBOPACK compile-time value", void 0))
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                lineNumber: 1064,
+                                lineNumber: 1096,
                                 columnNumber: 13
                             }, ("TURBOPACK compile-time value", void 0)),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2776,7 +2831,7 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                         children: "Sales Commissions"
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                        lineNumber: 1071,
+                                        lineNumber: 1103,
                                         columnNumber: 15
                                     }, ("TURBOPACK compile-time value", void 0)),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2784,13 +2839,13 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                         children: (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$utils$2f$formatters$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["formatCurrency"])(payroll.reduce((a, b)=>a + (b.salesCommission || 0), 0))
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                        lineNumber: 1072,
+                                        lineNumber: 1104,
                                         columnNumber: 15
                                     }, ("TURBOPACK compile-time value", void 0))
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                lineNumber: 1070,
+                                lineNumber: 1102,
                                 columnNumber: 13
                             }, ("TURBOPACK compile-time value", void 0)),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2801,7 +2856,7 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                         children: "Employees on Payroll"
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                        lineNumber: 1077,
+                                        lineNumber: 1109,
                                         columnNumber: 15
                                     }, ("TURBOPACK compile-time value", void 0)),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2812,19 +2867,19 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                        lineNumber: 1078,
+                                        lineNumber: 1110,
                                         columnNumber: 15
                                     }, ("TURBOPACK compile-time value", void 0))
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                lineNumber: 1076,
+                                lineNumber: 1108,
                                 columnNumber: 13
                             }, ("TURBOPACK compile-time value", void 0))
                         ]
                     }, void 0, true, {
                         fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                        lineNumber: 1058,
+                        lineNumber: 1090,
                         columnNumber: 11
                     }, ("TURBOPACK compile-time value", void 0)),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2841,7 +2896,7 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                        lineNumber: 1085,
+                                        lineNumber: 1117,
                                         columnNumber: 15
                                     }, ("TURBOPACK compile-time value", void 0)),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -2852,26 +2907,26 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                                 className: "w-3.5 h-3.5"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                                lineNumber: 1090,
+                                                lineNumber: 1122,
                                                 columnNumber: 17
                                             }, ("TURBOPACK compile-time value", void 0)),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
                                                 children: "Export Payslips"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                                lineNumber: 1091,
+                                                lineNumber: 1123,
                                                 columnNumber: 17
                                             }, ("TURBOPACK compile-time value", void 0))
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                        lineNumber: 1086,
+                                        lineNumber: 1118,
                                         columnNumber: 15
                                     }, ("TURBOPACK compile-time value", void 0))
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                lineNumber: 1084,
+                                lineNumber: 1116,
                                 columnNumber: 13
                             }, ("TURBOPACK compile-time value", void 0)),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2888,7 +2943,7 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                                         children: "Employee"
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                                        lineNumber: 1099,
+                                                        lineNumber: 1131,
                                                         columnNumber: 21
                                                     }, ("TURBOPACK compile-time value", void 0)),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("th", {
@@ -2896,7 +2951,7 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                                         children: "Designation"
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                                        lineNumber: 1100,
+                                                        lineNumber: 1132,
                                                         columnNumber: 21
                                                     }, ("TURBOPACK compile-time value", void 0)),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("th", {
@@ -2904,7 +2959,7 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                                         children: "Base Salary"
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                                        lineNumber: 1101,
+                                                        lineNumber: 1133,
                                                         columnNumber: 21
                                                     }, ("TURBOPACK compile-time value", void 0)),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("th", {
@@ -2912,7 +2967,7 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                                         children: "Allowances"
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                                        lineNumber: 1102,
+                                                        lineNumber: 1134,
                                                         columnNumber: 21
                                                     }, ("TURBOPACK compile-time value", void 0)),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("th", {
@@ -2920,7 +2975,7 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                                         children: "Overtime"
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                                        lineNumber: 1103,
+                                                        lineNumber: 1135,
                                                         columnNumber: 21
                                                     }, ("TURBOPACK compile-time value", void 0)),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("th", {
@@ -2928,7 +2983,7 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                                         children: "Commission"
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                                        lineNumber: 1104,
+                                                        lineNumber: 1136,
                                                         columnNumber: 21
                                                     }, ("TURBOPACK compile-time value", void 0)),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("th", {
@@ -2936,7 +2991,7 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                                         children: "Deductions"
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                                        lineNumber: 1105,
+                                                        lineNumber: 1137,
                                                         columnNumber: 21
                                                     }, ("TURBOPACK compile-time value", void 0)),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("th", {
@@ -2944,7 +2999,7 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                                         children: "Net Pay"
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                                        lineNumber: 1106,
+                                                        lineNumber: 1138,
                                                         columnNumber: 21
                                                     }, ("TURBOPACK compile-time value", void 0)),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("th", {
@@ -2952,18 +3007,18 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                                         children: "Status"
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                                        lineNumber: 1107,
+                                                        lineNumber: 1139,
                                                         columnNumber: 21
                                                     }, ("TURBOPACK compile-time value", void 0))
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                                lineNumber: 1098,
+                                                lineNumber: 1130,
                                                 columnNumber: 19
                                             }, ("TURBOPACK compile-time value", void 0))
                                         }, void 0, false, {
                                             fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                            lineNumber: 1097,
+                                            lineNumber: 1129,
                                             columnNumber: 17
                                         }, ("TURBOPACK compile-time value", void 0)),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("tbody", {
@@ -2976,7 +3031,7 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                                             children: pay.employeeName
                                                         }, void 0, false, {
                                                             fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                                            lineNumber: 1113,
+                                                            lineNumber: 1145,
                                                             columnNumber: 23
                                                         }, ("TURBOPACK compile-time value", void 0)),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("td", {
@@ -2984,7 +3039,7 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                                             children: pay.designation
                                                         }, void 0, false, {
                                                             fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                                            lineNumber: 1114,
+                                                            lineNumber: 1146,
                                                             columnNumber: 23
                                                         }, ("TURBOPACK compile-time value", void 0)),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("td", {
@@ -2992,7 +3047,7 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                                             children: (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$utils$2f$formatters$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["formatCurrency"])(pay.baseSalary)
                                                         }, void 0, false, {
                                                             fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                                            lineNumber: 1115,
+                                                            lineNumber: 1147,
                                                             columnNumber: 23
                                                         }, ("TURBOPACK compile-time value", void 0)),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("td", {
@@ -3000,7 +3055,7 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                                             children: (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$utils$2f$formatters$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["formatCurrency"])(pay.allowances)
                                                         }, void 0, false, {
                                                             fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                                            lineNumber: 1116,
+                                                            lineNumber: 1148,
                                                             columnNumber: 23
                                                         }, ("TURBOPACK compile-time value", void 0)),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("td", {
@@ -3008,7 +3063,7 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                                             children: (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$utils$2f$formatters$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["formatCurrency"])(pay.overtimePay)
                                                         }, void 0, false, {
                                                             fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                                            lineNumber: 1117,
+                                                            lineNumber: 1149,
                                                             columnNumber: 23
                                                         }, ("TURBOPACK compile-time value", void 0)),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("td", {
@@ -3016,7 +3071,7 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                                             children: (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$utils$2f$formatters$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["formatCurrency"])(pay.salesCommission)
                                                         }, void 0, false, {
                                                             fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                                            lineNumber: 1118,
+                                                            lineNumber: 1150,
                                                             columnNumber: 23
                                                         }, ("TURBOPACK compile-time value", void 0)),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("td", {
@@ -3028,7 +3083,7 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                                             ]
                                                         }, void 0, true, {
                                                             fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                                            lineNumber: 1119,
+                                                            lineNumber: 1151,
                                                             columnNumber: 23
                                                         }, ("TURBOPACK compile-time value", void 0)),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("td", {
@@ -3036,7 +3091,7 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                                             children: (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$utils$2f$formatters$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["formatCurrency"])(pay.netPay)
                                                         }, void 0, false, {
                                                             fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                                            lineNumber: 1120,
+                                                            lineNumber: 1152,
                                                             columnNumber: 23
                                                         }, ("TURBOPACK compile-time value", void 0)),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("td", {
@@ -3046,46 +3101,46 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                                                 children: pay.status
                                                             }, void 0, false, {
                                                                 fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                                                lineNumber: 1122,
+                                                                lineNumber: 1154,
                                                                 columnNumber: 25
                                                             }, ("TURBOPACK compile-time value", void 0))
                                                         }, void 0, false, {
                                                             fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                                            lineNumber: 1121,
+                                                            lineNumber: 1153,
                                                             columnNumber: 23
                                                         }, ("TURBOPACK compile-time value", void 0))
                                                     ]
                                                 }, pay.id, true, {
                                                     fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                                    lineNumber: 1112,
+                                                    lineNumber: 1144,
                                                     columnNumber: 21
                                                 }, ("TURBOPACK compile-time value", void 0)))
                                         }, void 0, false, {
                                             fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                            lineNumber: 1110,
+                                            lineNumber: 1142,
                                             columnNumber: 17
                                         }, ("TURBOPACK compile-time value", void 0))
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                    lineNumber: 1096,
+                                    lineNumber: 1128,
                                     columnNumber: 15
                                 }, ("TURBOPACK compile-time value", void 0))
                             }, void 0, false, {
                                 fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                lineNumber: 1095,
+                                lineNumber: 1127,
                                 columnNumber: 13
                             }, ("TURBOPACK compile-time value", void 0))
                         ]
                     }, void 0, true, {
                         fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                        lineNumber: 1083,
+                        lineNumber: 1115,
                         columnNumber: 11
                     }, ("TURBOPACK compile-time value", void 0))
                 ]
             }, void 0, true, {
                 fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                lineNumber: 1034,
+                lineNumber: 1066,
                 columnNumber: 9
             }, ("TURBOPACK compile-time value", void 0)),
             activeTab === 'commission' && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -3102,7 +3157,7 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                         children: "Total Incentive Pool"
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                        lineNumber: 1143,
+                                        lineNumber: 1175,
                                         columnNumber: 15
                                     }, ("TURBOPACK compile-time value", void 0)),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -3110,7 +3165,7 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                         children: (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$utils$2f$formatters$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["formatCurrency"])(totalCommissionPool)
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                        lineNumber: 1144,
+                                        lineNumber: 1176,
                                         columnNumber: 15
                                     }, ("TURBOPACK compile-time value", void 0)),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -3118,13 +3173,13 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                         children: "Earned this cycle"
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                        lineNumber: 1145,
+                                        lineNumber: 1177,
                                         columnNumber: 15
                                     }, ("TURBOPACK compile-time value", void 0))
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                lineNumber: 1142,
+                                lineNumber: 1174,
                                 columnNumber: 13
                             }, ("TURBOPACK compile-time value", void 0)),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -3135,7 +3190,7 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                         children: "Top Performer"
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                        lineNumber: 1148,
+                                        lineNumber: 1180,
                                         columnNumber: 15
                                     }, ("TURBOPACK compile-time value", void 0)),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -3143,7 +3198,7 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                         children: "Elena Rostova"
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                        lineNumber: 1149,
+                                        lineNumber: 1181,
                                         columnNumber: 15
                                     }, ("TURBOPACK compile-time value", void 0)),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -3151,13 +3206,13 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                         children: "140% Quota Attainment"
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                        lineNumber: 1150,
+                                        lineNumber: 1182,
                                         columnNumber: 15
                                     }, ("TURBOPACK compile-time value", void 0))
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                lineNumber: 1147,
+                                lineNumber: 1179,
                                 columnNumber: 13
                             }, ("TURBOPACK compile-time value", void 0)),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -3168,7 +3223,7 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                         children: "Average Target Attainment"
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                        lineNumber: 1153,
+                                        lineNumber: 1185,
                                         columnNumber: 15
                                     }, ("TURBOPACK compile-time value", void 0)),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -3176,7 +3231,7 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                         children: "124%"
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                        lineNumber: 1154,
+                                        lineNumber: 1186,
                                         columnNumber: 15
                                     }, ("TURBOPACK compile-time value", void 0)),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -3184,13 +3239,13 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                         children: "Across design & sales consultants"
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                        lineNumber: 1155,
+                                        lineNumber: 1187,
                                         columnNumber: 15
                                     }, ("TURBOPACK compile-time value", void 0))
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                lineNumber: 1152,
+                                lineNumber: 1184,
                                 columnNumber: 13
                             }, ("TURBOPACK compile-time value", void 0)),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -3201,7 +3256,7 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                         children: "Commission Model"
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                        lineNumber: 1158,
+                                        lineNumber: 1190,
                                         columnNumber: 15
                                     }, ("TURBOPACK compile-time value", void 0)),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -3209,7 +3264,7 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                         children: "2.0% - 2.5%"
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                        lineNumber: 1159,
+                                        lineNumber: 1191,
                                         columnNumber: 15
                                     }, ("TURBOPACK compile-time value", void 0)),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -3217,19 +3272,19 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                         children: "+ Milestone completion bonuses"
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                        lineNumber: 1160,
+                                        lineNumber: 1192,
                                         columnNumber: 15
                                     }, ("TURBOPACK compile-time value", void 0))
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                lineNumber: 1157,
+                                lineNumber: 1189,
                                 columnNumber: 13
                             }, ("TURBOPACK compile-time value", void 0))
                         ]
                     }, void 0, true, {
                         fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                        lineNumber: 1141,
+                        lineNumber: 1173,
                         columnNumber: 11
                     }, ("TURBOPACK compile-time value", void 0)),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -3244,7 +3299,7 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                             children: "Sales Consultant & Designer Incentive Roster"
                                         }, void 0, false, {
                                             fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                            lineNumber: 1168,
+                                            lineNumber: 1200,
                                             columnNumber: 17
                                         }, ("TURBOPACK compile-time value", void 0)),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -3252,18 +3307,18 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                             children: "Transparent performance commission tracking and payout approvals"
                                         }, void 0, false, {
                                             fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                            lineNumber: 1169,
+                                            lineNumber: 1201,
                                             columnNumber: 17
                                         }, ("TURBOPACK compile-time value", void 0))
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                    lineNumber: 1167,
+                                    lineNumber: 1199,
                                     columnNumber: 15
                                 }, ("TURBOPACK compile-time value", void 0))
                             }, void 0, false, {
                                 fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                lineNumber: 1166,
+                                lineNumber: 1198,
                                 columnNumber: 13
                             }, ("TURBOPACK compile-time value", void 0)),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -3280,7 +3335,7 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                                         children: "Consultant / Designer"
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                                        lineNumber: 1177,
+                                                        lineNumber: 1209,
                                                         columnNumber: 21
                                                     }, ("TURBOPACK compile-time value", void 0)),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("th", {
@@ -3288,7 +3343,7 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                                         children: "Role"
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                                        lineNumber: 1178,
+                                                        lineNumber: 1210,
                                                         columnNumber: 21
                                                     }, ("TURBOPACK compile-time value", void 0)),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("th", {
@@ -3296,7 +3351,7 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                                         children: "Sales Target"
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                                        lineNumber: 1179,
+                                                        lineNumber: 1211,
                                                         columnNumber: 21
                                                     }, ("TURBOPACK compile-time value", void 0)),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("th", {
@@ -3304,7 +3359,7 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                                         children: "Achieved Sales"
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                                        lineNumber: 1180,
+                                                        lineNumber: 1212,
                                                         columnNumber: 21
                                                     }, ("TURBOPACK compile-time value", void 0)),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("th", {
@@ -3312,7 +3367,7 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                                         children: "Attainment"
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                                        lineNumber: 1181,
+                                                        lineNumber: 1213,
                                                         columnNumber: 21
                                                     }, ("TURBOPACK compile-time value", void 0)),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("th", {
@@ -3320,7 +3375,7 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                                         children: "Commission Rate"
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                                        lineNumber: 1182,
+                                                        lineNumber: 1214,
                                                         columnNumber: 21
                                                     }, ("TURBOPACK compile-time value", void 0)),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("th", {
@@ -3328,7 +3383,7 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                                         children: "Incentive ($)"
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                                        lineNumber: 1183,
+                                                        lineNumber: 1215,
                                                         columnNumber: 21
                                                     }, ("TURBOPACK compile-time value", void 0)),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("th", {
@@ -3336,7 +3391,7 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                                         children: "Bonus ($)"
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                                        lineNumber: 1184,
+                                                        lineNumber: 1216,
                                                         columnNumber: 21
                                                     }, ("TURBOPACK compile-time value", void 0)),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("th", {
@@ -3344,7 +3399,7 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                                         children: "Total Payout"
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                                        lineNumber: 1185,
+                                                        lineNumber: 1217,
                                                         columnNumber: 21
                                                     }, ("TURBOPACK compile-time value", void 0)),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("th", {
@@ -3352,7 +3407,7 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                                         children: "Status"
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                                        lineNumber: 1186,
+                                                        lineNumber: 1218,
                                                         columnNumber: 21
                                                     }, ("TURBOPACK compile-time value", void 0)),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("th", {
@@ -3360,18 +3415,18 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                                         children: "Action"
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                                        lineNumber: 1187,
+                                                        lineNumber: 1219,
                                                         columnNumber: 21
                                                     }, ("TURBOPACK compile-time value", void 0))
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                                lineNumber: 1176,
+                                                lineNumber: 1208,
                                                 columnNumber: 19
                                             }, ("TURBOPACK compile-time value", void 0))
                                         }, void 0, false, {
                                             fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                            lineNumber: 1175,
+                                            lineNumber: 1207,
                                             columnNumber: 17
                                         }, ("TURBOPACK compile-time value", void 0)),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("tbody", {
@@ -3384,7 +3439,7 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                                             children: c.employeeName
                                                         }, void 0, false, {
                                                             fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                                            lineNumber: 1193,
+                                                            lineNumber: 1225,
                                                             columnNumber: 23
                                                         }, ("TURBOPACK compile-time value", void 0)),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("td", {
@@ -3392,7 +3447,7 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                                             children: c.role
                                                         }, void 0, false, {
                                                             fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                                            lineNumber: 1194,
+                                                            lineNumber: 1226,
                                                             columnNumber: 23
                                                         }, ("TURBOPACK compile-time value", void 0)),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("td", {
@@ -3400,7 +3455,7 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                                             children: (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$utils$2f$formatters$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["formatCurrency"])(c.salesTarget)
                                                         }, void 0, false, {
                                                             fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                                            lineNumber: 1195,
+                                                            lineNumber: 1227,
                                                             columnNumber: 23
                                                         }, ("TURBOPACK compile-time value", void 0)),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("td", {
@@ -3408,7 +3463,7 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                                             children: (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$utils$2f$formatters$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["formatCurrency"])(c.achievedSales)
                                                         }, void 0, false, {
                                                             fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                                            lineNumber: 1196,
+                                                            lineNumber: 1228,
                                                             columnNumber: 23
                                                         }, ("TURBOPACK compile-time value", void 0)),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("td", {
@@ -3421,12 +3476,12 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                                                 ]
                                                             }, void 0, true, {
                                                                 fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                                                lineNumber: 1198,
+                                                                lineNumber: 1230,
                                                                 columnNumber: 25
                                                             }, ("TURBOPACK compile-time value", void 0))
                                                         }, void 0, false, {
                                                             fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                                            lineNumber: 1197,
+                                                            lineNumber: 1229,
                                                             columnNumber: 23
                                                         }, ("TURBOPACK compile-time value", void 0)),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("td", {
@@ -3437,7 +3492,7 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                                             ]
                                                         }, void 0, true, {
                                                             fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                                            lineNumber: 1204,
+                                                            lineNumber: 1236,
                                                             columnNumber: 23
                                                         }, ("TURBOPACK compile-time value", void 0)),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("td", {
@@ -3445,7 +3500,7 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                                             children: (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$utils$2f$formatters$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["formatCurrency"])(c.incentiveAmount)
                                                         }, void 0, false, {
                                                             fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                                            lineNumber: 1205,
+                                                            lineNumber: 1237,
                                                             columnNumber: 23
                                                         }, ("TURBOPACK compile-time value", void 0)),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("td", {
@@ -3456,7 +3511,7 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                                             ]
                                                         }, void 0, true, {
                                                             fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                                            lineNumber: 1206,
+                                                            lineNumber: 1238,
                                                             columnNumber: 23
                                                         }, ("TURBOPACK compile-time value", void 0)),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("td", {
@@ -3464,7 +3519,7 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                                             children: (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$utils$2f$formatters$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["formatCurrency"])(c.totalCommission)
                                                         }, void 0, false, {
                                                             fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                                            lineNumber: 1207,
+                                                            lineNumber: 1239,
                                                             columnNumber: 23
                                                         }, ("TURBOPACK compile-time value", void 0)),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("td", {
@@ -3474,12 +3529,12 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                                                 children: c.status
                                                             }, void 0, false, {
                                                                 fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                                                lineNumber: 1209,
+                                                                lineNumber: 1241,
                                                                 columnNumber: 25
                                                             }, ("TURBOPACK compile-time value", void 0))
                                                         }, void 0, false, {
                                                             fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                                            lineNumber: 1208,
+                                                            lineNumber: 1240,
                                                             columnNumber: 23
                                                         }, ("TURBOPACK compile-time value", void 0)),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("td", {
@@ -3491,7 +3546,7 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                                                 children: "Approve"
                                                             }, void 0, false, {
                                                                 fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                                                lineNumber: 1218,
+                                                                lineNumber: 1250,
                                                                 columnNumber: 27
                                                             }, ("TURBOPACK compile-time value", void 0)) : c.status === 'Approved' ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
                                                                 id: `pay-comm-${c.id}`,
@@ -3500,7 +3555,7 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                                                 children: "Mark Paid"
                                                             }, void 0, false, {
                                                                 fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                                                lineNumber: 1226,
+                                                                lineNumber: 1258,
                                                                 columnNumber: 27
                                                             }, ("TURBOPACK compile-time value", void 0)) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
                                                                 className: "text-[11px] text-emerald-600 flex items-center justify-center gap-1",
@@ -3509,53 +3564,53 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                                                         className: "w-3 h-3"
                                                                     }, void 0, false, {
                                                                         fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                                                        lineNumber: 1235,
+                                                                        lineNumber: 1267,
                                                                         columnNumber: 29
                                                                     }, ("TURBOPACK compile-time value", void 0)),
                                                                     " Disbursed"
                                                                 ]
                                                             }, void 0, true, {
                                                                 fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                                                lineNumber: 1234,
+                                                                lineNumber: 1266,
                                                                 columnNumber: 27
                                                             }, ("TURBOPACK compile-time value", void 0))
                                                         }, void 0, false, {
                                                             fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                                            lineNumber: 1216,
+                                                            lineNumber: 1248,
                                                             columnNumber: 23
                                                         }, ("TURBOPACK compile-time value", void 0))
                                                     ]
                                                 }, c.id, true, {
                                                     fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                                    lineNumber: 1192,
+                                                    lineNumber: 1224,
                                                     columnNumber: 21
                                                 }, ("TURBOPACK compile-time value", void 0)))
                                         }, void 0, false, {
                                             fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                            lineNumber: 1190,
+                                            lineNumber: 1222,
                                             columnNumber: 17
                                         }, ("TURBOPACK compile-time value", void 0))
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                    lineNumber: 1174,
+                                    lineNumber: 1206,
                                     columnNumber: 15
                                 }, ("TURBOPACK compile-time value", void 0))
                             }, void 0, false, {
                                 fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                lineNumber: 1173,
+                                lineNumber: 1205,
                                 columnNumber: 13
                             }, ("TURBOPACK compile-time value", void 0))
                         ]
                     }, void 0, true, {
                         fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                        lineNumber: 1165,
+                        lineNumber: 1197,
                         columnNumber: 11
                     }, ("TURBOPACK compile-time value", void 0))
                 ]
             }, void 0, true, {
                 fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                lineNumber: 1139,
+                lineNumber: 1171,
                 columnNumber: 9
             }, ("TURBOPACK compile-time value", void 0)),
             isQuoteModalOpen && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -3573,7 +3628,7 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                             children: "Create Bespoke Quotation"
                                         }, void 0, false, {
                                             fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                            lineNumber: 1256,
+                                            lineNumber: 1288,
                                             columnNumber: 17
                                         }, ("TURBOPACK compile-time value", void 0)),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -3581,13 +3636,13 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                             children: "Draft luxury furniture proposal with custom items and specs"
                                         }, void 0, false, {
                                             fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                            lineNumber: 1257,
+                                            lineNumber: 1289,
                                             columnNumber: 17
                                         }, ("TURBOPACK compile-time value", void 0))
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                    lineNumber: 1255,
+                                    lineNumber: 1287,
                                     columnNumber: 15
                                 }, ("TURBOPACK compile-time value", void 0)),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -3596,13 +3651,13 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                     children: "✕"
                                 }, void 0, false, {
                                     fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                    lineNumber: 1259,
+                                    lineNumber: 1291,
                                     columnNumber: 15
                                 }, ("TURBOPACK compile-time value", void 0))
                             ]
                         }, void 0, true, {
                             fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                            lineNumber: 1254,
+                            lineNumber: 1286,
                             columnNumber: 13
                         }, ("TURBOPACK compile-time value", void 0)),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("form", {
@@ -3619,7 +3674,7 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                                     children: "Customer"
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                                    lineNumber: 1267,
+                                                    lineNumber: 1299,
                                                     columnNumber: 19
                                                 }, ("TURBOPACK compile-time value", void 0)),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("select", {
@@ -3637,18 +3692,18 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                                             ]
                                                         }, c.id, true, {
                                                             fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                                            lineNumber: 1275,
+                                                            lineNumber: 1307,
                                                             columnNumber: 23
                                                         }, ("TURBOPACK compile-time value", void 0)))
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                                    lineNumber: 1268,
+                                                    lineNumber: 1300,
                                                     columnNumber: 19
                                                 }, ("TURBOPACK compile-time value", void 0))
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                            lineNumber: 1266,
+                                            lineNumber: 1298,
                                             columnNumber: 17
                                         }, ("TURBOPACK compile-time value", void 0)),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -3658,7 +3713,7 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                                     children: "Project / Quote Title"
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                                    lineNumber: 1282,
+                                                    lineNumber: 1314,
                                                     columnNumber: 19
                                                 }, ("TURBOPACK compile-time value", void 0)),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
@@ -3670,19 +3725,19 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                                     required: true
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                                    lineNumber: 1283,
+                                                    lineNumber: 1315,
                                                     columnNumber: 19
                                                 }, ("TURBOPACK compile-time value", void 0))
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                            lineNumber: 1281,
+                                            lineNumber: 1313,
                                             columnNumber: 17
                                         }, ("TURBOPACK compile-time value", void 0))
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                    lineNumber: 1265,
+                                    lineNumber: 1297,
                                     columnNumber: 15
                                 }, ("TURBOPACK compile-time value", void 0)),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -3692,7 +3747,7 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                             children: "Project Site Address"
                                         }, void 0, false, {
                                             fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                            lineNumber: 1295,
+                                            lineNumber: 1327,
                                             columnNumber: 17
                                         }, ("TURBOPACK compile-time value", void 0)),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
@@ -3703,13 +3758,13 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                             className: "w-full px-3 py-2 border border-stone-300 rounded-lg text-xs"
                                         }, void 0, false, {
                                             fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                            lineNumber: 1296,
+                                            lineNumber: 1328,
                                             columnNumber: 17
                                         }, ("TURBOPACK compile-time value", void 0))
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                    lineNumber: 1294,
+                                    lineNumber: 1326,
                                     columnNumber: 15
                                 }, ("TURBOPACK compile-time value", void 0)),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -3723,7 +3778,7 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                                     children: "Quotation Items"
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                                    lineNumber: 1308,
+                                                    lineNumber: 1340,
                                                     columnNumber: 19
                                                 }, ("TURBOPACK compile-time value", void 0)),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -3741,13 +3796,13 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                                     children: "+ Add Product"
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                                    lineNumber: 1309,
+                                                    lineNumber: 1341,
                                                     columnNumber: 19
                                                 }, ("TURBOPACK compile-time value", void 0))
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                            lineNumber: 1307,
+                                            lineNumber: 1339,
                                             columnNumber: 17
                                         }, ("TURBOPACK compile-time value", void 0)),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -3780,17 +3835,17 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                                                             ]
                                                                         }, p.id, true, {
                                                                             fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                                                            lineNumber: 1341,
+                                                                            lineNumber: 1373,
                                                                             columnNumber: 29
                                                                         }, ("TURBOPACK compile-time value", void 0)))
                                                                 }, void 0, false, {
                                                                     fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                                                    lineNumber: 1327,
+                                                                    lineNumber: 1359,
                                                                     columnNumber: 25
                                                                 }, ("TURBOPACK compile-time value", void 0))
                                                             }, void 0, false, {
                                                                 fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                                                lineNumber: 1326,
+                                                                lineNumber: 1358,
                                                                 columnNumber: 23
                                                             }, ("TURBOPACK compile-time value", void 0)),
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -3810,12 +3865,12 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                                                     className: "w-full px-2 py-1.5 bg-white border border-stone-300 rounded text-xs text-center"
                                                                 }, void 0, false, {
                                                                     fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                                                    lineNumber: 1348,
+                                                                    lineNumber: 1380,
                                                                     columnNumber: 25
                                                                 }, ("TURBOPACK compile-time value", void 0))
                                                             }, void 0, false, {
                                                                 fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                                                lineNumber: 1347,
+                                                                lineNumber: 1379,
                                                                 columnNumber: 23
                                                             }, ("TURBOPACK compile-time value", void 0)),
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -3834,12 +3889,12 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                                                     className: "w-full px-2 py-1.5 bg-white border border-stone-300 rounded text-xs text-right font-mono"
                                                                 }, void 0, false, {
                                                                     fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                                                    lineNumber: 1361,
+                                                                    lineNumber: 1393,
                                                                     columnNumber: 25
                                                                 }, ("TURBOPACK compile-time value", void 0))
                                                             }, void 0, false, {
                                                                 fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                                                lineNumber: 1360,
+                                                                lineNumber: 1392,
                                                                 columnNumber: 23
                                                             }, ("TURBOPACK compile-time value", void 0)),
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -3851,18 +3906,18 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                                                     children: "✕"
                                                                 }, void 0, false, {
                                                                     fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                                                    lineNumber: 1373,
+                                                                    lineNumber: 1405,
                                                                     columnNumber: 25
                                                                 }, ("TURBOPACK compile-time value", void 0))
                                                             }, void 0, false, {
                                                                 fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                                                lineNumber: 1372,
+                                                                lineNumber: 1404,
                                                                 columnNumber: 23
                                                             }, ("TURBOPACK compile-time value", void 0))
                                                         ]
                                                     }, idx, true, {
                                                         fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                                        lineNumber: 1325,
+                                                        lineNumber: 1357,
                                                         columnNumber: 21
                                                     }, ("TURBOPACK compile-time value", void 0))),
                                                 quoteItems.length === 0 && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -3870,19 +3925,19 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                                     children: 'Click "+ Add Product" to add items to this quotation.'
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                                    lineNumber: 1384,
+                                                    lineNumber: 1416,
                                                     columnNumber: 21
                                                 }, ("TURBOPACK compile-time value", void 0))
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                            lineNumber: 1323,
+                                            lineNumber: 1355,
                                             columnNumber: 17
                                         }, ("TURBOPACK compile-time value", void 0))
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                    lineNumber: 1306,
+                                    lineNumber: 1338,
                                     columnNumber: 15
                                 }, ("TURBOPACK compile-time value", void 0)),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -3895,7 +3950,7 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                             children: "Cancel"
                                         }, void 0, false, {
                                             fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                            lineNumber: 1392,
+                                            lineNumber: 1424,
                                             columnNumber: 17
                                         }, ("TURBOPACK compile-time value", void 0)),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -3905,30 +3960,30 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                             children: "Generate Quotation"
                                         }, void 0, false, {
                                             fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                            lineNumber: 1399,
+                                            lineNumber: 1431,
                                             columnNumber: 17
                                         }, ("TURBOPACK compile-time value", void 0))
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                    lineNumber: 1391,
+                                    lineNumber: 1423,
                                     columnNumber: 15
                                 }, ("TURBOPACK compile-time value", void 0))
                             ]
                         }, void 0, true, {
                             fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                            lineNumber: 1264,
+                            lineNumber: 1296,
                             columnNumber: 13
                         }, ("TURBOPACK compile-time value", void 0))
                     ]
                 }, void 0, true, {
                     fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                    lineNumber: 1253,
+                    lineNumber: 1285,
                     columnNumber: 11
                 }, ("TURBOPACK compile-time value", void 0))
             }, void 0, false, {
                 fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                lineNumber: 1252,
+                lineNumber: 1284,
                 columnNumber: 9
             }, ("TURBOPACK compile-time value", void 0)),
             settleInvoiceModal && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -3946,7 +4001,7 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                             children: "Record Invoice Payment"
                                         }, void 0, false, {
                                             fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                            lineNumber: 1420,
+                                            lineNumber: 1452,
                                             columnNumber: 17
                                         }, ("TURBOPACK compile-time value", void 0)),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -3958,13 +4013,13 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                            lineNumber: 1421,
+                                            lineNumber: 1453,
                                             columnNumber: 17
                                         }, ("TURBOPACK compile-time value", void 0))
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                    lineNumber: 1419,
+                                    lineNumber: 1451,
                                     columnNumber: 15
                                 }, ("TURBOPACK compile-time value", void 0)),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -3973,13 +4028,13 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                     children: "✕"
                                 }, void 0, false, {
                                     fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                    lineNumber: 1423,
+                                    lineNumber: 1455,
                                     columnNumber: 15
                                 }, ("TURBOPACK compile-time value", void 0))
                             ]
                         }, void 0, true, {
                             fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                            lineNumber: 1418,
+                            lineNumber: 1450,
                             columnNumber: 13
                         }, ("TURBOPACK compile-time value", void 0)),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("form", {
@@ -3997,7 +4052,7 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                                     children: "Invoice Total:"
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                                    lineNumber: 1431,
+                                                    lineNumber: 1463,
                                                     columnNumber: 19
                                                 }, ("TURBOPACK compile-time value", void 0)),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -4005,13 +4060,13 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                                     children: (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$utils$2f$formatters$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["formatCurrency"])(settleInvoiceModal.grandTotal)
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                                    lineNumber: 1432,
+                                                    lineNumber: 1464,
                                                     columnNumber: 19
                                                 }, ("TURBOPACK compile-time value", void 0))
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                            lineNumber: 1430,
+                                            lineNumber: 1462,
                                             columnNumber: 17
                                         }, ("TURBOPACK compile-time value", void 0)),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -4022,7 +4077,7 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                                     children: "Already Received:"
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                                    lineNumber: 1435,
+                                                    lineNumber: 1467,
                                                     columnNumber: 19
                                                 }, ("TURBOPACK compile-time value", void 0)),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -4030,13 +4085,13 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                                     children: (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$utils$2f$formatters$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["formatCurrency"])(settleInvoiceModal.amountPaid)
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                                    lineNumber: 1436,
+                                                    lineNumber: 1468,
                                                     columnNumber: 19
                                                 }, ("TURBOPACK compile-time value", void 0))
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                            lineNumber: 1434,
+                                            lineNumber: 1466,
                                             columnNumber: 17
                                         }, ("TURBOPACK compile-time value", void 0)),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -4047,7 +4102,7 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                                     children: "Remaining Due:"
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                                    lineNumber: 1439,
+                                                    lineNumber: 1471,
                                                     columnNumber: 19
                                                 }, ("TURBOPACK compile-time value", void 0)),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -4055,19 +4110,19 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                                     children: (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$utils$2f$formatters$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["formatCurrency"])(settleInvoiceModal.grandTotal - settleInvoiceModal.amountPaid)
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                                    lineNumber: 1440,
+                                                    lineNumber: 1472,
                                                     columnNumber: 19
                                                 }, ("TURBOPACK compile-time value", void 0))
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                            lineNumber: 1438,
+                                            lineNumber: 1470,
                                             columnNumber: 17
                                         }, ("TURBOPACK compile-time value", void 0))
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                    lineNumber: 1429,
+                                    lineNumber: 1461,
                                     columnNumber: 15
                                 }, ("TURBOPACK compile-time value", void 0)),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -4077,7 +4132,7 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                             children: "Receipt Amount ($)"
                                         }, void 0, false, {
                                             fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                            lineNumber: 1447,
+                                            lineNumber: 1479,
                                             columnNumber: 17
                                         }, ("TURBOPACK compile-time value", void 0)),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
@@ -4090,13 +4145,13 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                             required: true
                                         }, void 0, false, {
                                             fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                            lineNumber: 1448,
+                                            lineNumber: 1480,
                                             columnNumber: 17
                                         }, ("TURBOPACK compile-time value", void 0))
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                    lineNumber: 1446,
+                                    lineNumber: 1478,
                                     columnNumber: 15
                                 }, ("TURBOPACK compile-time value", void 0)),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -4106,7 +4161,7 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                             children: "Payment Method"
                                         }, void 0, false, {
                                             fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                            lineNumber: 1460,
+                                            lineNumber: 1492,
                                             columnNumber: 17
                                         }, ("TURBOPACK compile-time value", void 0)),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("select", {
@@ -4119,7 +4174,7 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                                     children: "Credit Card (POS Terminal)"
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                                    lineNumber: 1466,
+                                                    lineNumber: 1498,
                                                     columnNumber: 19
                                                 }, ("TURBOPACK compile-time value", void 0)),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("option", {
@@ -4127,7 +4182,7 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                                     children: "Bank Wire / Swift"
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                                    lineNumber: 1467,
+                                                    lineNumber: 1499,
                                                     columnNumber: 19
                                                 }, ("TURBOPACK compile-time value", void 0)),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("option", {
@@ -4135,7 +4190,7 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                                     children: "Cash (Showroom Vault)"
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                                    lineNumber: 1468,
+                                                    lineNumber: 1500,
                                                     columnNumber: 19
                                                 }, ("TURBOPACK compile-time value", void 0)),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("option", {
@@ -4143,19 +4198,19 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                                     children: "Corporate Cheque"
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                                    lineNumber: 1469,
+                                                    lineNumber: 1501,
                                                     columnNumber: 19
                                                 }, ("TURBOPACK compile-time value", void 0))
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                            lineNumber: 1461,
+                                            lineNumber: 1493,
                                             columnNumber: 17
                                         }, ("TURBOPACK compile-time value", void 0))
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                    lineNumber: 1459,
+                                    lineNumber: 1491,
                                     columnNumber: 15
                                 }, ("TURBOPACK compile-time value", void 0)),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -4168,7 +4223,7 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                             children: "Cancel"
                                         }, void 0, false, {
                                             fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                            lineNumber: 1474,
+                                            lineNumber: 1506,
                                             columnNumber: 17
                                         }, ("TURBOPACK compile-time value", void 0)),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -4177,30 +4232,30 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                             children: "Confirm Receipt"
                                         }, void 0, false, {
                                             fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                            lineNumber: 1481,
+                                            lineNumber: 1513,
                                             columnNumber: 17
                                         }, ("TURBOPACK compile-time value", void 0))
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                    lineNumber: 1473,
+                                    lineNumber: 1505,
                                     columnNumber: 15
                                 }, ("TURBOPACK compile-time value", void 0))
                             ]
                         }, void 0, true, {
                             fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                            lineNumber: 1428,
+                            lineNumber: 1460,
                             columnNumber: 13
                         }, ("TURBOPACK compile-time value", void 0))
                     ]
                 }, void 0, true, {
                     fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                    lineNumber: 1417,
+                    lineNumber: 1449,
                     columnNumber: 11
                 }, ("TURBOPACK compile-time value", void 0))
             }, void 0, false, {
                 fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                lineNumber: 1416,
+                lineNumber: 1448,
                 columnNumber: 9
             }, ("TURBOPACK compile-time value", void 0)),
             isCustomerModalOpen && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -4218,7 +4273,7 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                             children: "Add New Customer"
                                         }, void 0, false, {
                                             fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                            lineNumber: 1501,
+                                            lineNumber: 1533,
                                             columnNumber: 17
                                         }, ("TURBOPACK compile-time value", void 0)),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -4226,13 +4281,13 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                             children: "Register residential client or corporate partner"
                                         }, void 0, false, {
                                             fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                            lineNumber: 1502,
+                                            lineNumber: 1534,
                                             columnNumber: 17
                                         }, ("TURBOPACK compile-time value", void 0))
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                    lineNumber: 1500,
+                                    lineNumber: 1532,
                                     columnNumber: 15
                                 }, ("TURBOPACK compile-time value", void 0)),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -4241,13 +4296,13 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                     children: "✕"
                                 }, void 0, false, {
                                     fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                    lineNumber: 1504,
+                                    lineNumber: 1536,
                                     columnNumber: 15
                                 }, ("TURBOPACK compile-time value", void 0))
                             ]
                         }, void 0, true, {
                             fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                            lineNumber: 1499,
+                            lineNumber: 1531,
                             columnNumber: 13
                         }, ("TURBOPACK compile-time value", void 0)),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("form", {
@@ -4264,7 +4319,7 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                                     children: "Full Name"
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                                    lineNumber: 1512,
+                                                    lineNumber: 1544,
                                                     columnNumber: 19
                                                 }, ("TURBOPACK compile-time value", void 0)),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
@@ -4278,13 +4333,13 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                                     required: true
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                                    lineNumber: 1513,
+                                                    lineNumber: 1545,
                                                     columnNumber: 19
                                                 }, ("TURBOPACK compile-time value", void 0))
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                            lineNumber: 1511,
+                                            lineNumber: 1543,
                                             columnNumber: 17
                                         }, ("TURBOPACK compile-time value", void 0)),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -4294,7 +4349,7 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                                     children: "Company (Optional)"
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                                    lineNumber: 1522,
+                                                    lineNumber: 1554,
                                                     columnNumber: 19
                                                 }, ("TURBOPACK compile-time value", void 0)),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
@@ -4307,19 +4362,19 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                                     className: "w-full px-3 py-2 border border-stone-300 rounded-lg text-xs"
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                                    lineNumber: 1523,
+                                                    lineNumber: 1555,
                                                     columnNumber: 19
                                                 }, ("TURBOPACK compile-time value", void 0))
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                            lineNumber: 1521,
+                                            lineNumber: 1553,
                                             columnNumber: 17
                                         }, ("TURBOPACK compile-time value", void 0))
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                    lineNumber: 1510,
+                                    lineNumber: 1542,
                                     columnNumber: 15
                                 }, ("TURBOPACK compile-time value", void 0)),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -4332,7 +4387,7 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                                     children: "Customer Category"
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                                    lineNumber: 1534,
+                                                    lineNumber: 1566,
                                                     columnNumber: 19
                                                 }, ("TURBOPACK compile-time value", void 0)),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("select", {
@@ -4348,7 +4403,7 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                                             children: "Residential Client"
                                                         }, void 0, false, {
                                                             fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                                            lineNumber: 1540,
+                                                            lineNumber: 1572,
                                                             columnNumber: 21
                                                         }, ("TURBOPACK compile-time value", void 0)),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("option", {
@@ -4356,7 +4411,7 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                                             children: "Commercial / Corporate"
                                                         }, void 0, false, {
                                                             fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                                            lineNumber: 1541,
+                                                            lineNumber: 1573,
                                                             columnNumber: 21
                                                         }, ("TURBOPACK compile-time value", void 0)),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("option", {
@@ -4364,7 +4419,7 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                                             children: "Architect / Interior Designer"
                                                         }, void 0, false, {
                                                             fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                                            lineNumber: 1542,
+                                                            lineNumber: 1574,
                                                             columnNumber: 21
                                                         }, ("TURBOPACK compile-time value", void 0)),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("option", {
@@ -4372,19 +4427,19 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                                             children: "Retail Walk-in"
                                                         }, void 0, false, {
                                                             fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                                            lineNumber: 1543,
+                                                            lineNumber: 1575,
                                                             columnNumber: 21
                                                         }, ("TURBOPACK compile-time value", void 0))
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                                    lineNumber: 1535,
+                                                    lineNumber: 1567,
                                                     columnNumber: 19
                                                 }, ("TURBOPACK compile-time value", void 0))
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                            lineNumber: 1533,
+                                            lineNumber: 1565,
                                             columnNumber: 17
                                         }, ("TURBOPACK compile-time value", void 0)),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -4394,7 +4449,7 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                                     children: "Phone Number"
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                                    lineNumber: 1547,
+                                                    lineNumber: 1579,
                                                     columnNumber: 19
                                                 }, ("TURBOPACK compile-time value", void 0)),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
@@ -4408,19 +4463,19 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                                     required: true
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                                    lineNumber: 1548,
+                                                    lineNumber: 1580,
                                                     columnNumber: 19
                                                 }, ("TURBOPACK compile-time value", void 0))
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                            lineNumber: 1546,
+                                            lineNumber: 1578,
                                             columnNumber: 17
                                         }, ("TURBOPACK compile-time value", void 0))
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                    lineNumber: 1532,
+                                    lineNumber: 1564,
                                     columnNumber: 15
                                 }, ("TURBOPACK compile-time value", void 0)),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -4433,7 +4488,7 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                                     children: "Email"
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                                    lineNumber: 1560,
+                                                    lineNumber: 1592,
                                                     columnNumber: 19
                                                 }, ("TURBOPACK compile-time value", void 0)),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
@@ -4446,13 +4501,13 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                                     className: "w-full px-3 py-2 border border-stone-300 rounded-lg text-xs"
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                                    lineNumber: 1561,
+                                                    lineNumber: 1593,
                                                     columnNumber: 19
                                                 }, ("TURBOPACK compile-time value", void 0))
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                            lineNumber: 1559,
+                                            lineNumber: 1591,
                                             columnNumber: 17
                                         }, ("TURBOPACK compile-time value", void 0)),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -4462,7 +4517,7 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                                     children: "City / Emirate"
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                                    lineNumber: 1569,
+                                                    lineNumber: 1601,
                                                     columnNumber: 19
                                                 }, ("TURBOPACK compile-time value", void 0)),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
@@ -4475,19 +4530,19 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                                     className: "w-full px-3 py-2 border border-stone-300 rounded-lg text-xs"
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                                    lineNumber: 1570,
+                                                    lineNumber: 1602,
                                                     columnNumber: 19
                                                 }, ("TURBOPACK compile-time value", void 0))
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                            lineNumber: 1568,
+                                            lineNumber: 1600,
                                             columnNumber: 17
                                         }, ("TURBOPACK compile-time value", void 0))
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                    lineNumber: 1558,
+                                    lineNumber: 1590,
                                     columnNumber: 15
                                 }, ("TURBOPACK compile-time value", void 0)),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -4497,7 +4552,7 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                             children: "Address"
                                         }, void 0, false, {
                                             fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                            lineNumber: 1580,
+                                            lineNumber: 1612,
                                             columnNumber: 17
                                         }, ("TURBOPACK compile-time value", void 0)),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
@@ -4510,13 +4565,13 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                             className: "w-full px-3 py-2 border border-stone-300 rounded-lg text-xs"
                                         }, void 0, false, {
                                             fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                            lineNumber: 1581,
+                                            lineNumber: 1613,
                                             columnNumber: 17
                                         }, ("TURBOPACK compile-time value", void 0))
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                    lineNumber: 1579,
+                                    lineNumber: 1611,
                                     columnNumber: 15
                                 }, ("TURBOPACK compile-time value", void 0)),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -4529,7 +4584,7 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                             children: "Cancel"
                                         }, void 0, false, {
                                             fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                            lineNumber: 1590,
+                                            lineNumber: 1622,
                                             columnNumber: 17
                                         }, ("TURBOPACK compile-time value", void 0)),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -4538,30 +4593,30 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                             children: "Save Customer"
                                         }, void 0, false, {
                                             fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                            lineNumber: 1597,
+                                            lineNumber: 1629,
                                             columnNumber: 17
                                         }, ("TURBOPACK compile-time value", void 0))
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                    lineNumber: 1589,
+                                    lineNumber: 1621,
                                     columnNumber: 15
                                 }, ("TURBOPACK compile-time value", void 0))
                             ]
                         }, void 0, true, {
                             fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                            lineNumber: 1509,
+                            lineNumber: 1541,
                             columnNumber: 13
                         }, ("TURBOPACK compile-time value", void 0))
                     ]
                 }, void 0, true, {
                     fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                    lineNumber: 1498,
+                    lineNumber: 1530,
                     columnNumber: 11
                 }, ("TURBOPACK compile-time value", void 0))
             }, void 0, false, {
                 fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                lineNumber: 1497,
+                lineNumber: 1529,
                 columnNumber: 9
             }, ("TURBOPACK compile-time value", void 0)),
             isAttendanceModalOpen && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -4579,7 +4634,7 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                             children: "Mark Staff Attendance"
                                         }, void 0, false, {
                                             fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                            lineNumber: 1617,
+                                            lineNumber: 1649,
                                             columnNumber: 17
                                         }, ("TURBOPACK compile-time value", void 0)),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -4587,13 +4642,13 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                             children: "Log daily check-in, check-out or on-site status"
                                         }, void 0, false, {
                                             fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                            lineNumber: 1618,
+                                            lineNumber: 1650,
                                             columnNumber: 17
                                         }, ("TURBOPACK compile-time value", void 0))
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                    lineNumber: 1616,
+                                    lineNumber: 1648,
                                     columnNumber: 15
                                 }, ("TURBOPACK compile-time value", void 0)),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -4602,13 +4657,13 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                     children: "✕"
                                 }, void 0, false, {
                                     fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                    lineNumber: 1620,
+                                    lineNumber: 1652,
                                     columnNumber: 15
                                 }, ("TURBOPACK compile-time value", void 0))
                             ]
                         }, void 0, true, {
                             fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                            lineNumber: 1615,
+                            lineNumber: 1647,
                             columnNumber: 13
                         }, ("TURBOPACK compile-time value", void 0)),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("form", {
@@ -4622,7 +4677,7 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                             children: "Staff Member"
                                         }, void 0, false, {
                                             fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                            lineNumber: 1627,
+                                            lineNumber: 1659,
                                             columnNumber: 17
                                         }, ("TURBOPACK compile-time value", void 0)),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("select", {
@@ -4642,18 +4697,18 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                                     ]
                                                 }, emp.id, true, {
                                                     fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                                    lineNumber: 1634,
+                                                    lineNumber: 1666,
                                                     columnNumber: 21
                                                 }, ("TURBOPACK compile-time value", void 0)))
                                         }, void 0, false, {
                                             fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                            lineNumber: 1628,
+                                            lineNumber: 1660,
                                             columnNumber: 17
                                         }, ("TURBOPACK compile-time value", void 0))
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                    lineNumber: 1626,
+                                    lineNumber: 1658,
                                     columnNumber: 15
                                 }, ("TURBOPACK compile-time value", void 0)),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -4663,7 +4718,7 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                             children: "Attendance Status"
                                         }, void 0, false, {
                                             fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                            lineNumber: 1642,
+                                            lineNumber: 1674,
                                             columnNumber: 17
                                         }, ("TURBOPACK compile-time value", void 0)),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("select", {
@@ -4679,7 +4734,7 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                                     children: "Present (Showroom)"
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                                    lineNumber: 1650,
+                                                    lineNumber: 1682,
                                                     columnNumber: 19
                                                 }, ("TURBOPACK compile-time value", void 0)),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("option", {
@@ -4687,7 +4742,7 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                                     children: "On-Site (Client Villa / Measurement)"
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                                    lineNumber: 1651,
+                                                    lineNumber: 1683,
                                                     columnNumber: 19
                                                 }, ("TURBOPACK compile-time value", void 0)),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("option", {
@@ -4695,7 +4750,7 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                                     children: "Half Day"
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                                    lineNumber: 1652,
+                                                    lineNumber: 1684,
                                                     columnNumber: 19
                                                 }, ("TURBOPACK compile-time value", void 0)),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("option", {
@@ -4703,19 +4758,19 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                                     children: "Leave / Off"
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                                    lineNumber: 1653,
+                                                    lineNumber: 1685,
                                                     columnNumber: 19
                                                 }, ("TURBOPACK compile-time value", void 0))
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                            lineNumber: 1643,
+                                            lineNumber: 1675,
                                             columnNumber: 17
                                         }, ("TURBOPACK compile-time value", void 0))
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                    lineNumber: 1641,
+                                    lineNumber: 1673,
                                     columnNumber: 15
                                 }, ("TURBOPACK compile-time value", void 0)),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -4728,7 +4783,7 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                                     children: "Clock In"
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                                    lineNumber: 1659,
+                                                    lineNumber: 1691,
                                                     columnNumber: 19
                                                 }, ("TURBOPACK compile-time value", void 0)),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
@@ -4741,13 +4796,13 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                                     className: "w-full px-3 py-2 border border-stone-300 rounded-lg text-xs"
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                                    lineNumber: 1660,
+                                                    lineNumber: 1692,
                                                     columnNumber: 19
                                                 }, ("TURBOPACK compile-time value", void 0))
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                            lineNumber: 1658,
+                                            lineNumber: 1690,
                                             columnNumber: 17
                                         }, ("TURBOPACK compile-time value", void 0)),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -4757,7 +4812,7 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                                     children: "Clock Out"
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                                    lineNumber: 1668,
+                                                    lineNumber: 1700,
                                                     columnNumber: 19
                                                 }, ("TURBOPACK compile-time value", void 0)),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
@@ -4770,19 +4825,19 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                                     className: "w-full px-3 py-2 border border-stone-300 rounded-lg text-xs"
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                                    lineNumber: 1669,
+                                                    lineNumber: 1701,
                                                     columnNumber: 19
                                                 }, ("TURBOPACK compile-time value", void 0))
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                            lineNumber: 1667,
+                                            lineNumber: 1699,
                                             columnNumber: 17
                                         }, ("TURBOPACK compile-time value", void 0))
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                    lineNumber: 1657,
+                                    lineNumber: 1689,
                                     columnNumber: 15
                                 }, ("TURBOPACK compile-time value", void 0)),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -4792,7 +4847,7 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                             children: "Overtime Hours"
                                         }, void 0, false, {
                                             fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                            lineNumber: 1679,
+                                            lineNumber: 1711,
                                             columnNumber: 17
                                         }, ("TURBOPACK compile-time value", void 0)),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
@@ -4807,13 +4862,13 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                             className: "w-full px-3 py-2 border border-stone-300 rounded-lg text-xs"
                                         }, void 0, false, {
                                             fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                            lineNumber: 1680,
+                                            lineNumber: 1712,
                                             columnNumber: 17
                                         }, ("TURBOPACK compile-time value", void 0))
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                    lineNumber: 1678,
+                                    lineNumber: 1710,
                                     columnNumber: 15
                                 }, ("TURBOPACK compile-time value", void 0)),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -4826,7 +4881,7 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                             children: "Cancel"
                                         }, void 0, false, {
                                             fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                            lineNumber: 1693,
+                                            lineNumber: 1725,
                                             columnNumber: 17
                                         }, ("TURBOPACK compile-time value", void 0)),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -4835,330 +4890,348 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                             children: "Save Record"
                                         }, void 0, false, {
                                             fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                            lineNumber: 1700,
+                                            lineNumber: 1732,
                                             columnNumber: 17
                                         }, ("TURBOPACK compile-time value", void 0))
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                    lineNumber: 1692,
+                                    lineNumber: 1724,
                                     columnNumber: 15
                                 }, ("TURBOPACK compile-time value", void 0))
                             ]
                         }, void 0, true, {
                             fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                            lineNumber: 1625,
+                            lineNumber: 1657,
                             columnNumber: 13
                         }, ("TURBOPACK compile-time value", void 0))
                     ]
                 }, void 0, true, {
                     fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                    lineNumber: 1614,
+                    lineNumber: 1646,
                     columnNumber: 11
                 }, ("TURBOPACK compile-time value", void 0))
             }, void 0, false, {
                 fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                lineNumber: 1613,
+                lineNumber: 1645,
                 columnNumber: 9
             }, ("TURBOPACK compile-time value", void 0)),
             recentPosReceipt && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                className: "fixed inset-0 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4 z-50",
-                children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                    className: "bg-white rounded-2xl max-w-sm w-full p-6 shadow-xl border border-stone-200 text-center font-mono",
-                    children: [
-                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                            className: "border-b border-stone-300 pb-3",
-                            children: [
-                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("h2", {
-                                    className: "text-base font-bold text-stone-900 tracking-wider",
-                                    children: "LIVO LUXURY LIVING"
-                                }, void 0, false, {
-                                    fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                    lineNumber: 1719,
-                                    columnNumber: 15
-                                }, ("TURBOPACK compile-time value", void 0)),
-                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
-                                    className: "text-[11px] text-stone-500",
-                                    children: "Dubai Design District, Building 4"
-                                }, void 0, false, {
-                                    fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                    lineNumber: 1720,
-                                    columnNumber: 15
-                                }, ("TURBOPACK compile-time value", void 0)),
-                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
-                                    className: "text-[10px] text-stone-400",
-                                    children: "TRN: 100489201900003"
-                                }, void 0, false, {
-                                    fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                    lineNumber: 1721,
-                                    columnNumber: 15
-                                }, ("TURBOPACK compile-time value", void 0))
-                            ]
-                        }, void 0, true, {
-                            fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                            lineNumber: 1718,
-                            columnNumber: 13
-                        }, ("TURBOPACK compile-time value", void 0)),
-                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                            className: "py-3 border-b border-dashed border-stone-300 text-xs text-left space-y-1",
-                            children: [
-                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                    className: "flex justify-between",
-                                    children: [
-                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
-                                            children: "Receipt #:"
-                                        }, void 0, false, {
-                                            fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                            lineNumber: 1726,
-                                            columnNumber: 17
-                                        }, ("TURBOPACK compile-time value", void 0)),
-                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
-                                            className: "font-bold",
-                                            children: recentPosReceipt.invoiceNumber
-                                        }, void 0, false, {
-                                            fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                            lineNumber: 1727,
-                                            columnNumber: 17
-                                        }, ("TURBOPACK compile-time value", void 0))
-                                    ]
-                                }, void 0, true, {
-                                    fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                    lineNumber: 1725,
-                                    columnNumber: 15
-                                }, ("TURBOPACK compile-time value", void 0)),
-                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                    className: "flex justify-between",
-                                    children: [
-                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
-                                            children: "Date:"
-                                        }, void 0, false, {
-                                            fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                            lineNumber: 1730,
-                                            columnNumber: 17
-                                        }, ("TURBOPACK compile-time value", void 0)),
-                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
-                                            children: (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$utils$2f$formatters$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["formatDate"])(recentPosReceipt.date)
-                                        }, void 0, false, {
-                                            fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                            lineNumber: 1731,
-                                            columnNumber: 17
-                                        }, ("TURBOPACK compile-time value", void 0))
-                                    ]
-                                }, void 0, true, {
-                                    fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                    lineNumber: 1729,
-                                    columnNumber: 15
-                                }, ("TURBOPACK compile-time value", void 0)),
-                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                    className: "flex justify-between",
-                                    children: [
-                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
-                                            children: "Customer:"
-                                        }, void 0, false, {
-                                            fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                            lineNumber: 1734,
-                                            columnNumber: 17
-                                        }, ("TURBOPACK compile-time value", void 0)),
-                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
-                                            className: "font-bold",
-                                            children: recentPosReceipt.customerName
-                                        }, void 0, false, {
-                                            fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                            lineNumber: 1735,
-                                            columnNumber: 17
-                                        }, ("TURBOPACK compile-time value", void 0))
-                                    ]
-                                }, void 0, true, {
-                                    fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                    lineNumber: 1733,
-                                    columnNumber: 15
-                                }, ("TURBOPACK compile-time value", void 0))
-                            ]
-                        }, void 0, true, {
-                            fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                            lineNumber: 1724,
-                            columnNumber: 13
-                        }, ("TURBOPACK compile-time value", void 0)),
-                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                            className: "py-3 border-b border-dashed border-stone-300 text-xs text-left space-y-2 max-h-48 overflow-y-auto",
-                            children: recentPosReceipt.items.map((it, i)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                    className: "flex justify-between",
-                                    children: [
-                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                            children: [
-                                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                                    children: it.name
-                                                }, void 0, false, {
-                                                    fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                                    lineNumber: 1743,
-                                                    columnNumber: 21
-                                                }, ("TURBOPACK compile-time value", void 0)),
-                                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                                    className: "text-[10px] text-stone-500",
-                                                    children: [
-                                                        it.quantity,
-                                                        " x ",
-                                                        (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$utils$2f$formatters$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["formatCurrency"])(it.unitPrice)
-                                                    ]
-                                                }, void 0, true, {
-                                                    fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                                    lineNumber: 1744,
-                                                    columnNumber: 21
-                                                }, ("TURBOPACK compile-time value", void 0))
-                                            ]
-                                        }, void 0, true, {
-                                            fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                            lineNumber: 1742,
-                                            columnNumber: 19
-                                        }, ("TURBOPACK compile-time value", void 0)),
-                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
-                                            className: "font-bold",
-                                            children: (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$utils$2f$formatters$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["formatCurrency"])(it.taxableAmount)
-                                        }, void 0, false, {
-                                            fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                            lineNumber: 1748,
-                                            columnNumber: 19
-                                        }, ("TURBOPACK compile-time value", void 0))
-                                    ]
-                                }, i, true, {
-                                    fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                    lineNumber: 1741,
-                                    columnNumber: 17
-                                }, ("TURBOPACK compile-time value", void 0)))
-                        }, void 0, false, {
-                            fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                            lineNumber: 1739,
-                            columnNumber: 13
-                        }, ("TURBOPACK compile-time value", void 0)),
-                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                            className: "py-3 text-xs text-left space-y-1 border-b border-stone-300",
-                            children: [
-                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                    className: "flex justify-between",
-                                    children: [
-                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
-                                            children: "Subtotal:"
-                                        }, void 0, false, {
-                                            fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                            lineNumber: 1755,
-                                            columnNumber: 17
-                                        }, ("TURBOPACK compile-time value", void 0)),
-                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
-                                            children: (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$utils$2f$formatters$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["formatCurrency"])(recentPosReceipt.subtotal)
-                                        }, void 0, false, {
-                                            fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                            lineNumber: 1756,
-                                            columnNumber: 17
-                                        }, ("TURBOPACK compile-time value", void 0))
-                                    ]
-                                }, void 0, true, {
-                                    fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                    lineNumber: 1754,
-                                    columnNumber: 15
-                                }, ("TURBOPACK compile-time value", void 0)),
-                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                    className: "flex justify-between",
-                                    children: [
-                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
-                                            children: "VAT (5%):"
-                                        }, void 0, false, {
-                                            fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                            lineNumber: 1759,
-                                            columnNumber: 17
-                                        }, ("TURBOPACK compile-time value", void 0)),
-                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
-                                            children: (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$utils$2f$formatters$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["formatCurrency"])(recentPosReceipt.vatTotal)
-                                        }, void 0, false, {
-                                            fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                            lineNumber: 1760,
-                                            columnNumber: 17
-                                        }, ("TURBOPACK compile-time value", void 0))
-                                    ]
-                                }, void 0, true, {
-                                    fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                    lineNumber: 1758,
-                                    columnNumber: 15
-                                }, ("TURBOPACK compile-time value", void 0)),
-                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                    className: "flex justify-between text-sm font-bold pt-1 border-t border-stone-200",
-                                    children: [
-                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
-                                            children: "TOTAL PAID:"
-                                        }, void 0, false, {
-                                            fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                            lineNumber: 1763,
-                                            columnNumber: 17
-                                        }, ("TURBOPACK compile-time value", void 0)),
-                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
-                                            children: (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$utils$2f$formatters$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["formatCurrency"])(recentPosReceipt.grandTotal)
-                                        }, void 0, false, {
-                                            fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                            lineNumber: 1764,
-                                            columnNumber: 17
-                                        }, ("TURBOPACK compile-time value", void 0))
-                                    ]
-                                }, void 0, true, {
-                                    fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                    lineNumber: 1762,
-                                    columnNumber: 15
-                                }, ("TURBOPACK compile-time value", void 0))
-                            ]
-                        }, void 0, true, {
-                            fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                            lineNumber: 1753,
-                            columnNumber: 13
-                        }, ("TURBOPACK compile-time value", void 0)),
-                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                            className: "pt-4 flex gap-2",
-                            children: [
-                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
-                                    onClick: ()=>setRecentPosReceipt(null),
-                                    className: "flex-1 py-2 bg-stone-100 hover:bg-stone-200 text-stone-700 text-xs font-semibold rounded-lg font-sans",
-                                    children: "Close"
-                                }, void 0, false, {
-                                    fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                    lineNumber: 1769,
-                                    columnNumber: 15
-                                }, ("TURBOPACK compile-time value", void 0)),
-                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
-                                    onClick: ()=>window.print(),
-                                    className: "flex-1 py-2 bg-stone-900 hover:bg-stone-800 text-white text-xs font-semibold rounded-lg font-sans flex items-center justify-center gap-1",
-                                    children: [
-                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$printer$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__Printer$3e$__["Printer"], {
-                                            className: "w-3.5 h-3.5"
-                                        }, void 0, false, {
-                                            fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                            lineNumber: 1779,
-                                            columnNumber: 17
-                                        }, ("TURBOPACK compile-time value", void 0)),
-                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
-                                            children: "Print"
-                                        }, void 0, false, {
-                                            fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                            lineNumber: 1780,
-                                            columnNumber: 17
-                                        }, ("TURBOPACK compile-time value", void 0))
-                                    ]
-                                }, void 0, true, {
-                                    fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                    lineNumber: 1775,
-                                    columnNumber: 15
-                                }, ("TURBOPACK compile-time value", void 0))
-                            ]
-                        }, void 0, true, {
-                            fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                            lineNumber: 1768,
-                            columnNumber: 13
-                        }, ("TURBOPACK compile-time value", void 0))
-                    ]
-                }, void 0, true, {
-                    fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                    lineNumber: 1717,
-                    columnNumber: 11
-                }, ("TURBOPACK compile-time value", void 0))
-            }, void 0, false, {
+                className: "fixed inset-0 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4 z-50 print:bg-white print:p-0",
+                children: [
+                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("style", {
+                        children: `
+            @media print {
+              body * { visibility: hidden; }
+              #printable-pos-receipt, #printable-pos-receipt * { visibility: visible; }
+              #printable-pos-receipt { position: absolute; left: 0; top: 0; margin: 0; padding: 0; width: 100%; }
+              /* Hide the close/print buttons during print */
+              .receipt-actions { display: none !important; }
+            }
+          `
+                    }, void 0, false, {
+                        fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
+                        lineNumber: 1749,
+                        columnNumber: 11
+                    }, ("TURBOPACK compile-time value", void 0)),
+                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                        id: "printable-pos-receipt",
+                        className: "bg-white rounded-2xl max-w-sm w-full p-6 shadow-xl border border-stone-200 text-center font-mono print:border-none print:shadow-none print:p-2",
+                        children: [
+                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                className: "border-b border-stone-300 pb-3",
+                                children: [
+                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("h2", {
+                                        className: "text-base font-bold text-stone-900 tracking-wider",
+                                        children: "LIVO LUXURY LIVING"
+                                    }, void 0, false, {
+                                        fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
+                                        lineNumber: 1760,
+                                        columnNumber: 15
+                                    }, ("TURBOPACK compile-time value", void 0)),
+                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
+                                        className: "text-[11px] text-stone-500",
+                                        children: "Dubai Design District, Building 4"
+                                    }, void 0, false, {
+                                        fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
+                                        lineNumber: 1761,
+                                        columnNumber: 15
+                                    }, ("TURBOPACK compile-time value", void 0)),
+                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
+                                        className: "text-[10px] text-stone-400",
+                                        children: "TRN: 100489201900003"
+                                    }, void 0, false, {
+                                        fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
+                                        lineNumber: 1762,
+                                        columnNumber: 15
+                                    }, ("TURBOPACK compile-time value", void 0))
+                                ]
+                            }, void 0, true, {
+                                fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
+                                lineNumber: 1759,
+                                columnNumber: 13
+                            }, ("TURBOPACK compile-time value", void 0)),
+                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                className: "py-3 border-b border-dashed border-stone-300 text-xs text-left space-y-1",
+                                children: [
+                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                        className: "flex justify-between",
+                                        children: [
+                                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
+                                                children: "Receipt #:"
+                                            }, void 0, false, {
+                                                fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
+                                                lineNumber: 1767,
+                                                columnNumber: 17
+                                            }, ("TURBOPACK compile-time value", void 0)),
+                                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
+                                                className: "font-bold",
+                                                children: recentPosReceipt.invoiceNumber
+                                            }, void 0, false, {
+                                                fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
+                                                lineNumber: 1768,
+                                                columnNumber: 17
+                                            }, ("TURBOPACK compile-time value", void 0))
+                                        ]
+                                    }, void 0, true, {
+                                        fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
+                                        lineNumber: 1766,
+                                        columnNumber: 15
+                                    }, ("TURBOPACK compile-time value", void 0)),
+                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                        className: "flex justify-between",
+                                        children: [
+                                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
+                                                children: "Date:"
+                                            }, void 0, false, {
+                                                fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
+                                                lineNumber: 1771,
+                                                columnNumber: 17
+                                            }, ("TURBOPACK compile-time value", void 0)),
+                                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
+                                                children: (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$utils$2f$formatters$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["formatDate"])(recentPosReceipt.date)
+                                            }, void 0, false, {
+                                                fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
+                                                lineNumber: 1772,
+                                                columnNumber: 17
+                                            }, ("TURBOPACK compile-time value", void 0))
+                                        ]
+                                    }, void 0, true, {
+                                        fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
+                                        lineNumber: 1770,
+                                        columnNumber: 15
+                                    }, ("TURBOPACK compile-time value", void 0)),
+                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                        className: "flex justify-between",
+                                        children: [
+                                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
+                                                children: "Customer:"
+                                            }, void 0, false, {
+                                                fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
+                                                lineNumber: 1775,
+                                                columnNumber: 17
+                                            }, ("TURBOPACK compile-time value", void 0)),
+                                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
+                                                className: "font-bold",
+                                                children: recentPosReceipt.customerName
+                                            }, void 0, false, {
+                                                fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
+                                                lineNumber: 1776,
+                                                columnNumber: 17
+                                            }, ("TURBOPACK compile-time value", void 0))
+                                        ]
+                                    }, void 0, true, {
+                                        fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
+                                        lineNumber: 1774,
+                                        columnNumber: 15
+                                    }, ("TURBOPACK compile-time value", void 0))
+                                ]
+                            }, void 0, true, {
+                                fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
+                                lineNumber: 1765,
+                                columnNumber: 13
+                            }, ("TURBOPACK compile-time value", void 0)),
+                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                className: "py-3 border-b border-dashed border-stone-300 text-xs text-left space-y-2 max-h-48 overflow-y-auto",
+                                children: recentPosReceipt.items.map((it, i)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                        className: "flex justify-between",
+                                        children: [
+                                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                                children: [
+                                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                                        children: it.name
+                                                    }, void 0, false, {
+                                                        fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
+                                                        lineNumber: 1784,
+                                                        columnNumber: 21
+                                                    }, ("TURBOPACK compile-time value", void 0)),
+                                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                                        className: "text-[10px] text-stone-500",
+                                                        children: [
+                                                            it.quantity,
+                                                            " x ",
+                                                            (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$utils$2f$formatters$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["formatCurrency"])(it.unitPrice)
+                                                        ]
+                                                    }, void 0, true, {
+                                                        fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
+                                                        lineNumber: 1785,
+                                                        columnNumber: 21
+                                                    }, ("TURBOPACK compile-time value", void 0))
+                                                ]
+                                            }, void 0, true, {
+                                                fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
+                                                lineNumber: 1783,
+                                                columnNumber: 19
+                                            }, ("TURBOPACK compile-time value", void 0)),
+                                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
+                                                className: "font-bold",
+                                                children: (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$utils$2f$formatters$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["formatCurrency"])(it.taxableAmount)
+                                            }, void 0, false, {
+                                                fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
+                                                lineNumber: 1789,
+                                                columnNumber: 19
+                                            }, ("TURBOPACK compile-time value", void 0))
+                                        ]
+                                    }, i, true, {
+                                        fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
+                                        lineNumber: 1782,
+                                        columnNumber: 17
+                                    }, ("TURBOPACK compile-time value", void 0)))
+                            }, void 0, false, {
+                                fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
+                                lineNumber: 1780,
+                                columnNumber: 13
+                            }, ("TURBOPACK compile-time value", void 0)),
+                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                className: "py-3 text-xs text-left space-y-1 border-b border-stone-300",
+                                children: [
+                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                        className: "flex justify-between",
+                                        children: [
+                                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
+                                                children: "Subtotal:"
+                                            }, void 0, false, {
+                                                fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
+                                                lineNumber: 1796,
+                                                columnNumber: 17
+                                            }, ("TURBOPACK compile-time value", void 0)),
+                                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
+                                                children: (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$utils$2f$formatters$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["formatCurrency"])(recentPosReceipt.subtotal)
+                                            }, void 0, false, {
+                                                fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
+                                                lineNumber: 1797,
+                                                columnNumber: 17
+                                            }, ("TURBOPACK compile-time value", void 0))
+                                        ]
+                                    }, void 0, true, {
+                                        fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
+                                        lineNumber: 1795,
+                                        columnNumber: 15
+                                    }, ("TURBOPACK compile-time value", void 0)),
+                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                        className: "flex justify-between",
+                                        children: [
+                                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
+                                                children: "VAT (15%):"
+                                            }, void 0, false, {
+                                                fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
+                                                lineNumber: 1800,
+                                                columnNumber: 17
+                                            }, ("TURBOPACK compile-time value", void 0)),
+                                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
+                                                children: (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$utils$2f$formatters$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["formatCurrency"])(recentPosReceipt.vatTotal)
+                                            }, void 0, false, {
+                                                fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
+                                                lineNumber: 1801,
+                                                columnNumber: 17
+                                            }, ("TURBOPACK compile-time value", void 0))
+                                        ]
+                                    }, void 0, true, {
+                                        fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
+                                        lineNumber: 1799,
+                                        columnNumber: 15
+                                    }, ("TURBOPACK compile-time value", void 0)),
+                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                        className: "flex justify-between text-sm font-bold pt-1 border-t border-stone-200",
+                                        children: [
+                                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
+                                                children: "TOTAL PAID:"
+                                            }, void 0, false, {
+                                                fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
+                                                lineNumber: 1804,
+                                                columnNumber: 17
+                                            }, ("TURBOPACK compile-time value", void 0)),
+                                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
+                                                children: (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$utils$2f$formatters$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["formatCurrency"])(recentPosReceipt.grandTotal)
+                                            }, void 0, false, {
+                                                fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
+                                                lineNumber: 1805,
+                                                columnNumber: 17
+                                            }, ("TURBOPACK compile-time value", void 0))
+                                        ]
+                                    }, void 0, true, {
+                                        fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
+                                        lineNumber: 1803,
+                                        columnNumber: 15
+                                    }, ("TURBOPACK compile-time value", void 0))
+                                ]
+                            }, void 0, true, {
+                                fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
+                                lineNumber: 1794,
+                                columnNumber: 13
+                            }, ("TURBOPACK compile-time value", void 0)),
+                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                className: "pt-4 flex gap-2 receipt-actions",
+                                children: [
+                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
+                                        onClick: ()=>setRecentPosReceipt(null),
+                                        className: "flex-1 py-2 bg-stone-100 hover:bg-stone-200 text-stone-700 text-xs font-semibold rounded-lg font-sans",
+                                        children: "Close"
+                                    }, void 0, false, {
+                                        fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
+                                        lineNumber: 1810,
+                                        columnNumber: 15
+                                    }, ("TURBOPACK compile-time value", void 0)),
+                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
+                                        onClick: ()=>window.print(),
+                                        className: "flex-1 py-2 bg-stone-900 hover:bg-stone-800 text-white text-xs font-semibold rounded-lg font-sans flex items-center justify-center gap-1",
+                                        children: [
+                                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$printer$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__Printer$3e$__["Printer"], {
+                                                className: "w-3.5 h-3.5"
+                                            }, void 0, false, {
+                                                fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
+                                                lineNumber: 1820,
+                                                columnNumber: 17
+                                            }, ("TURBOPACK compile-time value", void 0)),
+                                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
+                                                children: "Print"
+                                            }, void 0, false, {
+                                                fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
+                                                lineNumber: 1821,
+                                                columnNumber: 17
+                                            }, ("TURBOPACK compile-time value", void 0))
+                                        ]
+                                    }, void 0, true, {
+                                        fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
+                                        lineNumber: 1816,
+                                        columnNumber: 15
+                                    }, ("TURBOPACK compile-time value", void 0))
+                                ]
+                            }, void 0, true, {
+                                fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
+                                lineNumber: 1809,
+                                columnNumber: 13
+                            }, ("TURBOPACK compile-time value", void 0))
+                        ]
+                    }, void 0, true, {
+                        fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
+                        lineNumber: 1758,
+                        columnNumber: 11
+                    }, ("TURBOPACK compile-time value", void 0))
+                ]
+            }, void 0, true, {
                 fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                lineNumber: 1716,
+                lineNumber: 1748,
                 columnNumber: 9
             }, ("TURBOPACK compile-time value", void 0)),
             previewQuotation && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -5179,7 +5252,7 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                            lineNumber: 1795,
+                                            lineNumber: 1836,
                                             columnNumber: 17
                                         }, ("TURBOPACK compile-time value", void 0)),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -5191,13 +5264,13 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                            lineNumber: 1796,
+                                            lineNumber: 1837,
                                             columnNumber: 17
                                         }, ("TURBOPACK compile-time value", void 0))
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                    lineNumber: 1794,
+                                    lineNumber: 1835,
                                     columnNumber: 15
                                 }, ("TURBOPACK compile-time value", void 0)),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -5206,13 +5279,13 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                     children: "✕"
                                 }, void 0, false, {
                                     fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                    lineNumber: 1798,
+                                    lineNumber: 1839,
                                     columnNumber: 15
                                 }, ("TURBOPACK compile-time value", void 0))
                             ]
                         }, void 0, true, {
                             fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                            lineNumber: 1793,
+                            lineNumber: 1834,
                             columnNumber: 13
                         }, ("TURBOPACK compile-time value", void 0)),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -5228,7 +5301,7 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                            lineNumber: 1805,
+                                            lineNumber: 1846,
                                             columnNumber: 19
                                         }, ("TURBOPACK compile-time value", void 0)),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -5236,18 +5309,18 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                             children: (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$utils$2f$formatters$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["formatCurrency"])(it.total)
                                         }, void 0, false, {
                                             fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                            lineNumber: 1806,
+                                            lineNumber: 1847,
                                             columnNumber: 19
                                         }, ("TURBOPACK compile-time value", void 0))
                                     ]
                                 }, idx, true, {
                                     fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                    lineNumber: 1804,
+                                    lineNumber: 1845,
                                     columnNumber: 17
                                 }, ("TURBOPACK compile-time value", void 0)))
                         }, void 0, false, {
                             fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                            lineNumber: 1802,
+                            lineNumber: 1843,
                             columnNumber: 13
                         }, ("TURBOPACK compile-time value", void 0)),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -5257,20 +5330,20 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                     children: "Grand Total (incl 5% VAT):"
                                 }, void 0, false, {
                                     fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                    lineNumber: 1811,
+                                    lineNumber: 1852,
                                     columnNumber: 15
                                 }, ("TURBOPACK compile-time value", void 0)),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
                                     children: (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$utils$2f$formatters$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["formatCurrency"])(previewQuotation.grandTotal)
                                 }, void 0, false, {
                                     fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                    lineNumber: 1812,
+                                    lineNumber: 1853,
                                     columnNumber: 15
                                 }, ("TURBOPACK compile-time value", void 0))
                             ]
                         }, void 0, true, {
                             fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                            lineNumber: 1810,
+                            lineNumber: 1851,
                             columnNumber: 13
                         }, ("TURBOPACK compile-time value", void 0)),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -5282,7 +5355,7 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                     children: "Close"
                                 }, void 0, false, {
                                     fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                    lineNumber: 1815,
+                                    lineNumber: 1856,
                                     columnNumber: 15
                                 }, ("TURBOPACK compile-time value", void 0)),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -5291,24 +5364,24 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                     children: "Print PDF"
                                 }, void 0, false, {
                                     fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                    lineNumber: 1821,
+                                    lineNumber: 1862,
                                     columnNumber: 15
                                 }, ("TURBOPACK compile-time value", void 0))
                             ]
                         }, void 0, true, {
                             fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                            lineNumber: 1814,
+                            lineNumber: 1855,
                             columnNumber: 13
                         }, ("TURBOPACK compile-time value", void 0))
                     ]
                 }, void 0, true, {
                     fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                    lineNumber: 1792,
+                    lineNumber: 1833,
                     columnNumber: 11
                 }, ("TURBOPACK compile-time value", void 0))
             }, void 0, false, {
                 fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                lineNumber: 1791,
+                lineNumber: 1832,
                 columnNumber: 9
             }, ("TURBOPACK compile-time value", void 0)),
             previewInvoice && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -5329,7 +5402,7 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                            lineNumber: 1840,
+                                            lineNumber: 1881,
                                             columnNumber: 17
                                         }, ("TURBOPACK compile-time value", void 0)),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -5341,13 +5414,13 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                            lineNumber: 1841,
+                                            lineNumber: 1882,
                                             columnNumber: 17
                                         }, ("TURBOPACK compile-time value", void 0))
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                    lineNumber: 1839,
+                                    lineNumber: 1880,
                                     columnNumber: 15
                                 }, ("TURBOPACK compile-time value", void 0)),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -5356,13 +5429,13 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                     children: "✕"
                                 }, void 0, false, {
                                     fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                    lineNumber: 1843,
+                                    lineNumber: 1884,
                                     columnNumber: 15
                                 }, ("TURBOPACK compile-time value", void 0))
                             ]
                         }, void 0, true, {
                             fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                            lineNumber: 1838,
+                            lineNumber: 1879,
                             columnNumber: 13
                         }, ("TURBOPACK compile-time value", void 0)),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -5378,7 +5451,7 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                            lineNumber: 1850,
+                                            lineNumber: 1891,
                                             columnNumber: 19
                                         }, ("TURBOPACK compile-time value", void 0)),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -5386,18 +5459,18 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                             children: (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$utils$2f$formatters$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["formatCurrency"])(it.taxableAmount)
                                         }, void 0, false, {
                                             fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                            lineNumber: 1851,
+                                            lineNumber: 1892,
                                             columnNumber: 19
                                         }, ("TURBOPACK compile-time value", void 0))
                                     ]
                                 }, idx, true, {
                                     fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                    lineNumber: 1849,
+                                    lineNumber: 1890,
                                     columnNumber: 17
                                 }, ("TURBOPACK compile-time value", void 0)))
                         }, void 0, false, {
                             fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                            lineNumber: 1847,
+                            lineNumber: 1888,
                             columnNumber: 13
                         }, ("TURBOPACK compile-time value", void 0)),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -5410,7 +5483,7 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                             children: "Subtotal:"
                                         }, void 0, false, {
                                             fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                            lineNumber: 1857,
+                                            lineNumber: 1898,
                                             columnNumber: 17
                                         }, ("TURBOPACK compile-time value", void 0)),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -5418,13 +5491,13 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                             children: (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$utils$2f$formatters$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["formatCurrency"])(previewInvoice.subtotal)
                                         }, void 0, false, {
                                             fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                            lineNumber: 1858,
+                                            lineNumber: 1899,
                                             columnNumber: 17
                                         }, ("TURBOPACK compile-time value", void 0))
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                    lineNumber: 1856,
+                                    lineNumber: 1897,
                                     columnNumber: 15
                                 }, ("TURBOPACK compile-time value", void 0)),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -5434,7 +5507,7 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                             children: "VAT (5%):"
                                         }, void 0, false, {
                                             fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                            lineNumber: 1861,
+                                            lineNumber: 1902,
                                             columnNumber: 17
                                         }, ("TURBOPACK compile-time value", void 0)),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -5442,13 +5515,13 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                             children: (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$utils$2f$formatters$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["formatCurrency"])(previewInvoice.vatTotal)
                                         }, void 0, false, {
                                             fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                            lineNumber: 1862,
+                                            lineNumber: 1903,
                                             columnNumber: 17
                                         }, ("TURBOPACK compile-time value", void 0))
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                    lineNumber: 1860,
+                                    lineNumber: 1901,
                                     columnNumber: 15
                                 }, ("TURBOPACK compile-time value", void 0)),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -5458,26 +5531,26 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                             children: "Grand Total:"
                                         }, void 0, false, {
                                             fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                            lineNumber: 1865,
+                                            lineNumber: 1906,
                                             columnNumber: 17
                                         }, ("TURBOPACK compile-time value", void 0)),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
                                             children: (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$utils$2f$formatters$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["formatCurrency"])(previewInvoice.grandTotal)
                                         }, void 0, false, {
                                             fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                            lineNumber: 1866,
+                                            lineNumber: 1907,
                                             columnNumber: 17
                                         }, ("TURBOPACK compile-time value", void 0))
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                    lineNumber: 1864,
+                                    lineNumber: 1905,
                                     columnNumber: 15
                                 }, ("TURBOPACK compile-time value", void 0))
                             ]
                         }, void 0, true, {
                             fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                            lineNumber: 1855,
+                            lineNumber: 1896,
                             columnNumber: 13
                         }, ("TURBOPACK compile-time value", void 0)),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -5489,7 +5562,7 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                     children: "Close"
                                 }, void 0, false, {
                                     fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                    lineNumber: 1870,
+                                    lineNumber: 1911,
                                     columnNumber: 15
                                 }, ("TURBOPACK compile-time value", void 0)),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -5498,30 +5571,30 @@ const BillingPayrollModule = ({ onPrintInvoice, onPrintQuotation })=>{
                                     children: "Print PDF"
                                 }, void 0, false, {
                                     fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                                    lineNumber: 1876,
+                                    lineNumber: 1917,
                                     columnNumber: 15
                                 }, ("TURBOPACK compile-time value", void 0))
                             ]
                         }, void 0, true, {
                             fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                            lineNumber: 1869,
+                            lineNumber: 1910,
                             columnNumber: 13
                         }, ("TURBOPACK compile-time value", void 0))
                     ]
                 }, void 0, true, {
                     fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                    lineNumber: 1837,
+                    lineNumber: 1878,
                     columnNumber: 11
                 }, ("TURBOPACK compile-time value", void 0))
             }, void 0, false, {
                 fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-                lineNumber: 1836,
+                lineNumber: 1877,
                 columnNumber: 9
             }, ("TURBOPACK compile-time value", void 0))
         ]
     }, void 0, true, {
         fileName: "[project]/src/components/billing/BillingPayrollModule.tsx",
-        lineNumber: 336,
+        lineNumber: 361,
         columnNumber: 5
     }, ("TURBOPACK compile-time value", void 0));
 };

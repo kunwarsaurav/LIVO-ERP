@@ -1,4 +1,6 @@
+"use client";
 import React, { useState } from 'react';
+import Barcode from 'react-barcode';
 import {
   Boxes,
   AlertTriangle,
@@ -17,10 +19,12 @@ import {
   Building,
   DollarSign,
   TrendingUp,
+  Printer,
 } from 'lucide-react';
 import { useERP } from '../../context/ERPContext';
 import { Product, ProductCategory } from '../../types';
 import { formatCurrency, formatDate } from '../../utils/formatters';
+import { PrintBarcodeModal } from './PrintBarcodeModal';
 
 interface StockManagementProps {
   onOpenTagModal?: (product: Product) => void;
@@ -50,6 +54,7 @@ export const StockManagement: React.FC<StockManagementProps> = ({ onOpenTagModal
   // Modals state
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
+  const [printLabelProduct, setPrintLabelProduct] = useState<Product | null>(null);
   const [isMovementModalOpen, setIsMovementModalOpen] = useState(false);
   const [movementTargetProduct, setMovementTargetProduct] = useState<Product | null>(null);
 
@@ -342,6 +347,17 @@ export const StockManagement: React.FC<StockManagementProps> = ({ onOpenTagModal
                                     {product.modelNumber}
                                   </span>
                                 </div>
+                                <div className="mt-1.5 opacity-80" style={{ transform: 'scale(0.8)', transformOrigin: 'left top' }}>
+                                  <Barcode 
+                                    value={product.sku} 
+                                    width={1.2} 
+                                    height={24} 
+                                    displayValue={false} 
+                                    margin={0} 
+                                    background="transparent" 
+                                    lineColor="#44403c"
+                                  />
+                                </div>
                               </div>
                             </div>
                           </td>
@@ -416,16 +432,25 @@ export const StockManagement: React.FC<StockManagementProps> = ({ onOpenTagModal
                                 <ArrowUpRight className="w-3.5 h-3.5" />
                               </button>
 
-                              {/* Print Tag */}
+                              {/* Print Tag (Hang tags etc) */}
                               {onOpenTagModal && (
                                 <button
                                   onClick={() => onOpenTagModal(product)}
-                                  title="Print MRP & QR Tag"
+                                  title="Print MRP & QR Tag (Showroom)"
                                   className="p-1.5 rounded-md hover:bg-stone-200 text-stone-700 transition-colors"
                                 >
                                   <QrCode className="w-3.5 h-3.5" />
                                 </button>
                               )}
+
+                              {/* Print Warehouse Barcode Label */}
+                              <button
+                                onClick={() => setPrintLabelProduct(product)}
+                                title="Print Warehouse Barcode Sticker"
+                                className="p-1.5 rounded-md hover:bg-stone-200 text-stone-700 transition-colors"
+                              >
+                                <Printer className="w-3.5 h-3.5" />
+                              </button>
 
                               {/* Edit */}
                               <button
@@ -593,6 +618,7 @@ export const StockManagement: React.FC<StockManagementProps> = ({ onOpenTagModal
         <ProductFormModal
           product={editingProduct}
           suppliers={suppliers}
+          productCount={products.length}
           onClose={() => {
             setIsAddModalOpen(false);
             setEditingProduct(null);
@@ -744,6 +770,12 @@ export const StockManagement: React.FC<StockManagementProps> = ({ onOpenTagModal
           </div>
         </div>
       )}
+
+      {/* MODAL: Print Barcode Label */}
+      <PrintBarcodeModal 
+        product={printLabelProduct} 
+        onClose={() => setPrintLabelProduct(null)} 
+      />
     </div>
   );
 };
@@ -752,6 +784,7 @@ export const StockManagement: React.FC<StockManagementProps> = ({ onOpenTagModal
 interface ProductFormModalProps {
   product: Product | null;
   suppliers: any[];
+  productCount: number;
   onClose: () => void;
   onSave: (data: Omit<Product, 'id'>) => void;
 }
@@ -759,9 +792,13 @@ interface ProductFormModalProps {
 const ProductFormModal: React.FC<ProductFormModalProps> = ({
   product,
   suppliers,
+  productCount,
   onClose,
   onSave,
 }) => {
+  // Generate sequential barcode for new products: LIV-00001, LIV-00002, ...
+  const nextBarcode = product?.barcode || `LIV-${String(productCount + 1).padStart(5, '0')}`;
+
   const [formData, setFormData] = useState<Omit<Product, 'id'>>({
     sku: product?.sku || `LIV-SKU-${Date.now().toString().slice(-4)}`,
     name: product?.name || '',
@@ -780,7 +817,7 @@ const ProductFormModal: React.FC<ProductFormModalProps> = ({
     minAlertStock: product?.minAlertStock || 2,
     supplierId: product?.supplierId || suppliers[0]?.id || 'sup-01',
     supplierName: product?.supplierName || suppliers[0]?.name || 'Milano Artisan Works',
-    barcode: product?.barcode || `LIV89201${Math.floor(1000 + Math.random() * 9000)}`,
+    barcode: nextBarcode,
     warrantyYears: product?.warrantyYears || 5,
     description: product?.description || '',
     imageUrl:
@@ -866,7 +903,45 @@ const ProductFormModal: React.FC<ProductFormModalProps> = ({
                 className="w-full px-3 py-1.5 border border-stone-300 rounded-lg font-mono"
               />
             </div>
+          </div>
 
+          {/* Barcode Preview — staff sees the exact barcode before saving */}
+          <div className="p-3.5 rounded-lg bg-amber-50 border border-amber-200 flex flex-col sm:flex-row items-start sm:items-center gap-4">
+            <div className="shrink-0 bg-white p-2 rounded border border-amber-200 flex justify-center">
+              <Barcode
+                value={formData.barcode || 'LIV-00001'}
+                width={1.3}
+                height={44}
+                displayValue
+                fontSize={10}
+                margin={0}
+                background="transparent"
+                lineColor="#1c1917"
+              />
+            </div>
+            <div className="flex-1 space-y-1.5 w-full">
+              <div className="text-[11px] font-bold text-amber-800 uppercase tracking-wider">
+                Auto-Generated Barcode
+              </div>
+              <p className="text-[11px] text-stone-500">
+                This barcode will be printed on the product label and used by the scanner at POS.
+              </p>
+              <div>
+                <label className="block text-[10px] text-stone-600 font-medium mb-0.5">
+                  Override (use manufacturer barcode if the product already has one):
+                </label>
+                <input
+                  type="text"
+                  value={formData.barcode}
+                  onChange={(e) => setFormData({ ...formData, barcode: e.target.value })}
+                  className="w-full px-2.5 py-1.5 border border-amber-300 rounded text-xs font-mono bg-white focus:outline-none focus:border-amber-600"
+                  placeholder="e.g. LIV-00001 or manufacturer EAN"
+                />
+              </div>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5">
             <div>
               <label className="block text-stone-700 font-medium mb-1">Catalogue Category</label>
               <select
