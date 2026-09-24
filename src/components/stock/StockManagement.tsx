@@ -849,8 +849,9 @@ const ProductFormModal: React.FC<ProductFormModalProps> = ({
   ];
 
   return (
-    <div className="fixed inset-0 z-50 bg-stone-900/60 backdrop-blur-xs flex items-center justify-center p-4 overflow-y-auto">
-      <div className="bg-white rounded-xl shadow-2xl max-w-2xl w-full p-6 border border-stone-200 my-8">
+    <div className="fixed inset-0 z-50 bg-stone-900/60 backdrop-blur-xs overflow-y-auto">
+      <div className="flex min-h-screen items-center justify-center p-4 py-10">
+        <div className="bg-white rounded-xl shadow-2xl max-w-2xl w-full p-6 border border-stone-200">
         <h3 className="text-lg font-serif font-bold text-stone-900 mb-1">
           {product ? 'Edit Luxury Product' : 'Register New Luxury Product & SKU'}
         </h3>
@@ -1129,6 +1130,7 @@ const ProductFormModal: React.FC<ProductFormModalProps> = ({
             </button>
           </div>
         </form>
+      </div>
       </div>
     </div>
   );
