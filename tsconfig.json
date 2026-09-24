@@ -3,10 +3,7 @@
     "target": "ES2022",
     "experimentalDecorators": true,
     "useDefineForClassFields": false,
-    "module": "ESNext",
-    "types": [
-      "vite/client"
-    ],
+"module": "ESNext",
     "lib": [
       "ES2022",
       "DOM",
@@ -19,8 +16,14 @@
     "allowJs": true,
     "jsx": "react-jsx",
     "paths": {
+      "@/lib/utils/*": [
+        "./src/utils/lib/*"
+      ],
+      "@/lib/*": [
+        "./src/utils/lib/*"
+      ],
       "@/*": [
-        "./*"
+        "./src/*"
       ]
     },
     "allowImportingTsExtensions": true,
