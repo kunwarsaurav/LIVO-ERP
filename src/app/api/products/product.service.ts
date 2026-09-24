@@ -30,11 +30,34 @@ export const getAllProducts = async (search?: string) => {
         ],
       }
     : {};
-  return ProductModel.find(filter).sort({ createdAt: -1 });
+  const products = await ProductModel.find(filter).sort({ createdAt: -1 }).lean();
+  
+  // Map Website fields backwards into ERP fields so website-added products show up properly in the ERP
+  return products.map(p => ({
+    ...p,
+    sellingPrice: p.sellingPrice || p.price || 0,
+    mrp: p.mrp || p.originalPrice || 0,
+    imageUrl: p.imageUrl || (p.images && p.images.length > 0 ? p.images[0] : ""),
+    sizeDimensions: p.sizeDimensions || p.dimensions || "",
+    currentStock: p.currentStock !== undefined ? p.currentStock : (p.inStock ? 5 : 0),
+    sku: p.sku || p.id,
+    barcode: p.barcode || p.sku || p.id
+  }));
 };
 
 export const getProductById = async (id: string) => {
-  return ProductModel.findOne(productFilter(id));
+  const p = await ProductModel.findOne(productFilter(id)).lean();
+  if (!p) return null;
+  return {
+    ...p,
+    sellingPrice: p.sellingPrice || p.price || 0,
+    mrp: p.mrp || p.originalPrice || 0,
+    imageUrl: p.imageUrl || (p.images && p.images.length > 0 ? p.images[0] : ""),
+    sizeDimensions: p.sizeDimensions || p.dimensions || "",
+    currentStock: p.currentStock !== undefined ? p.currentStock : (p.inStock ? 5 : 0),
+    sku: p.sku || p.id,
+    barcode: p.barcode || p.sku || p.id
+  };
 };
 
 export const updateProductById = async (
