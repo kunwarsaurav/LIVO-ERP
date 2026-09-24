@@ -25,6 +25,7 @@ import { useERP } from '../../context/ERPContext';
 import { Product, ProductCategory } from '../../types';
 import { formatCurrency, formatDate } from '../../utils/formatters';
 import { PrintBarcodeModal } from './PrintBarcodeModal';
+import { ImageDropZone } from '../features/protected/shared/ImageDropZone';
 
 interface StockManagementProps {
   onOpenTagModal?: (product: Product) => void;
@@ -1094,13 +1095,11 @@ const ProductFormModal: React.FC<ProductFormModalProps> = ({
           </div>
 
           <div>
-            <label className="block text-stone-700 font-medium mb-1">Image URL</label>
-            <input
-              type="url"
-              value={formData.imageUrl}
-              onChange={(e) => setFormData({ ...formData, imageUrl: e.target.value })}
-              placeholder="https://..."
-              className="w-full px-3 py-1.5 border border-stone-300 rounded-lg"
+            <label className="block text-stone-700 font-medium mb-1">Product Image</label>
+            <ImageDropZone
+              mode="single"
+              value={formData.imageUrl ? [{ url: formData.imageUrl }] : []}
+              onChange={(images) => setFormData({ ...formData, imageUrl: images[0]?.url || '' })}
             />
           </div>
 

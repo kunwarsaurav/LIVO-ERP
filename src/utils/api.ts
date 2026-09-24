@@ -1,21 +1,20 @@
-import axios from 'axios';
+// A lightweight fetch wrapper that mimics axios to avoid Next.js client bundling errors with axios
+const baseURL = process.env.NEXT_PUBLIC_API_BASE_URL || '/api';
 
-const api = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_BASE_URL || '/api',
-  headers: {
+const request = async (endpoint: string, options: RequestInit = {}) => {
+  const url = `${baseURL}${endpoint}`;
+  const headers = {
     'Content-Type': 'application/json',
-  },
-});
+    ...options.headers,
+  };
 
-// TEMPORARY MOCK FOR UI TESTING (Since we deleted mockData.ts)
-// This allows you to see the barcodes and UI while the real backend is being integrated.
-api.interceptors.response.use(
-  (response) => response,
-  (error) => {
-    // If the backend isn't running, return dummy data so the UI doesn't look empty
-    if (error.config.url === '/products') {
+  const response = await fetch(url, { ...options, headers });
+  
+  if (!response.ok) {
+    // Check if we need to return mock data for /products
+    if (endpoint === '/products' && response.status === 404) {
       console.warn("Backend not found. Returning mock products for UI testing.");
-      return Promise.resolve({
+      return {
         data: [
           {
             id: 'prod-1',
@@ -56,11 +55,26 @@ api.interceptors.response.use(
             imageUrl: 'https://images.unsplash.com/photo-1505693314120-0d443867891c?w=200',
           }
         ]
-      });
+      };
     }
-    // Return empty arrays for other endpoints so the app doesn't crash
-    return Promise.resolve({ data: [] });
+    
+    // For other endpoints that fail (404), return empty array so UI doesn't crash
+    if (response.status === 404) {
+      return { data: [] };
+    }
+    
+    throw new Error(`API error: ${response.statusText}`);
   }
-);
+  
+  const data = await response.json();
+  return { data };
+};
+
+const api = {
+  get: (endpoint: string) => request(endpoint, { method: 'GET' }),
+  post: (endpoint: string, body: any) => request(endpoint, { method: 'POST', body: JSON.stringify(body) }),
+  put: (endpoint: string, body: any) => request(endpoint, { method: 'PUT', body: JSON.stringify(body) }),
+  delete: (endpoint: string) => request(endpoint, { method: 'DELETE' }),
+};
 
 export default api;
