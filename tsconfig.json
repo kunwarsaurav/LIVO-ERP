@@ -16,8 +16,14 @@
     "allowJs": true,
     "jsx": "react-jsx",
     "paths": {
+      "@/lib/utils/*": [
+        "./src/utils/lib/*"
+      ],
+      "@/lib/*": [
+        "./src/utils/lib/*"
+      ],
       "@/*": [
-        "./*"
+        "./src/*"
       ]
     },
     "allowImportingTsExtensions": true,
