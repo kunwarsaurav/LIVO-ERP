@@ -1,0 +1,6 @@
+{
+  "name": "Livo Furniture ERP",
+  "description": "Complete enterprise resource planning suite for Livo Furniture & Interior Design — covering stock, accounting, billing & payroll, MRP tags, luxury catalogues, suppliers, and sales pipeline.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
