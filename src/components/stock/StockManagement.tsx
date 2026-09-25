@@ -919,23 +919,26 @@ const ProductFormModal: React.FC<ProductFormModalProps> = ({
     customizable: product?.customizable ?? true,
   });
 
+  const [isCustomCategory, setIsCustomCategory] = useState(false);
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     onSave(formData);
   };
 
   const categories: ProductCategory[] = [
-    'Sofa',
-    'Bed',
-    'Wardrobe',
+    'Custom Closets & Storage',
+    'Towel',
+    'Coffee & Tea Tables',
+    'Study & Office',
+    'Premium Sofas',
+    'Luxury Bedsets',
     'Kitchen',
-    'Kitchen accessories/hardware',
+    'Accent Chairs',
+    'Mattress',
+    'Sofa',
     'Dining',
-    'Office furniture',
-    'Curtains/Parda',
-    'Carpet',
-    'Gypsum products',
-    'Home décor',
+    'Home décor'
   ];
 
   return (
@@ -1033,19 +1036,74 @@ const ProductFormModal: React.FC<ProductFormModalProps> = ({
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-3.5">
             <div>
               <label className="block text-stone-700 font-medium mb-1">Catalogue Category</label>
+              {!isCustomCategory ? (
+                <select
+                  value={formData.category}
+                  onChange={(e) => {
+                    if (e.target.value === 'custom') {
+                      setIsCustomCategory(true);
+                      setFormData({ ...formData, category: '' });
+                    } else {
+                      setFormData({ ...formData, category: e.target.value as ProductCategory });
+                    }
+                  }}
+                  className="w-full px-3 py-1.5 border border-stone-300 rounded-lg"
+                >
+                  {categories.map((c) => (
+                    <option key={c} value={c}>
+                      {c}
+                    </option>
+                  ))}
+                  <option value="custom" className="text-amber-600 font-bold border-t border-stone-200 mt-1 pt-1">
+                    + Add Custom Category
+                  </option>
+                </select>
+              ) : (
+                <div className="flex gap-2">
+                  <input
+                    type="text"
+                    value={formData.category}
+                    onChange={(e) => setFormData({ ...formData, category: e.target.value as ProductCategory })}
+                    placeholder="Enter custom category"
+                    className="flex-1 px-3 py-1.5 border border-amber-300 ring-2 ring-amber-500/20 rounded-lg focus:outline-none"
+                    autoFocus
+                  />
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setIsCustomCategory(false);
+                      setFormData({ ...formData, category: categories[0] });
+                    }}
+                    className="px-2 py-1.5 text-stone-400 hover:text-stone-700 hover:bg-stone-100 rounded-lg transition-colors border border-stone-200"
+                    title="Cancel custom category"
+                  >
+                    X
+                  </button>
+                </div>
+              )}
+            </div>
+
+            <div>
+              <label className="block text-stone-700 font-medium mb-1">Sanctuary / Room Space</label>
               <select
-                value={formData.category}
+                value={formData.room || "All Spaces"}
                 onChange={(e) =>
-                  setFormData({ ...formData, category: e.target.value as ProductCategory })
+                  setFormData({ ...formData, room: e.target.value })
                 }
                 className="w-full px-3 py-1.5 border border-stone-300 rounded-lg"
               >
-                {categories.map((c) => (
-                  <option key={c} value={c}>
-                    {c}
+                {[
+                  "Lounge & Living Room",
+                  "Bedroom Sanctuary",
+                  "Dining Hall",
+                  "Library & Office",
+                  "All Spaces"
+                ].map((r) => (
+                  <option key={r} value={r}>
+                    {r}
                   </option>
                 ))}
               </select>

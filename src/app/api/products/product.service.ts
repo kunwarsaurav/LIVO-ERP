@@ -14,14 +14,16 @@ export const createProduct = async (product: CreateProductInput) => {
     images: product.imageUrl ? [product.imageUrl] : [],
     dimensions: product.sizeDimensions || "",
     inStock: (product.currentStock || 0) > 0,
-    room: "all", // Required by website
+    room: product.room || "All Spaces",
     id: product.sku || product.id,
     warranty: product.warrantyYears ? `${product.warrantyYears} Years` : undefined,
     colors: product.colorFinish ? [`${product.colorFinish}|#000000`] : [],
+    materials: product.material ? [product.material] : [],
+    features: product.specifications || [],
     reservedStock: 0,
   };
   
-  return ProductModel.create(mappedProduct as IProductDocument);
+  return ProductModel.create(mappedProduct as unknown as IProductDocument);
 };
 
 export const getAllProducts = async (search?: string) => {
@@ -75,9 +77,12 @@ export const updateProductById = async (
   if (validatedData.imageUrl !== undefined) mappedUpdate.images = validatedData.imageUrl ? [validatedData.imageUrl] : [];
   if (validatedData.sizeDimensions !== undefined) mappedUpdate.dimensions = validatedData.sizeDimensions;
   if (validatedData.currentStock !== undefined) mappedUpdate.inStock = validatedData.currentStock > 0;
+  if (validatedData.room !== undefined) mappedUpdate.room = validatedData.room;
   if (validatedData.sku !== undefined) mappedUpdate.id = validatedData.sku;
   if (validatedData.warrantyYears !== undefined) mappedUpdate.warranty = validatedData.warrantyYears ? `${validatedData.warrantyYears} Years` : undefined;
   if (validatedData.colorFinish !== undefined) mappedUpdate.colors = validatedData.colorFinish ? [`${validatedData.colorFinish}|#000000`] : [];
+  if (validatedData.material !== undefined) mappedUpdate.materials = validatedData.material ? [validatedData.material] : [];
+  if (validatedData.specifications !== undefined) mappedUpdate.features = validatedData.specifications || [];
 
   return ProductModel.findOneAndUpdate(productFilter(id), mappedUpdate, {
     returnDocument: "after",
