@@ -256,6 +256,8 @@ export interface SalesOrder {
   quotationId?: string;
   customerId: string;
   customerName: string;
+  customerPhone?: string;
+  customerEmail?: string;
   projectType: string;
   orderDate: string;
   targetDeliveryDate: string;
@@ -270,6 +272,8 @@ export interface SalesOrder {
     dimensions: string;
     finish: string;
   }>;
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 export interface InstallationTask {

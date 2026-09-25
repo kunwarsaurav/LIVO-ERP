@@ -6,10 +6,7 @@ import * as React from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useImageUpload } from "./useImageUpload";
-import type {
-  ImageUploadError,
-  ImageUploadResult,
-} from "./image-type";
+import type { ImageUploadError, ImageUploadResult } from "./image-type";
 import { cn } from "@/lib/utils";
 
 interface UploadedImageValue {
@@ -39,6 +36,7 @@ export function ImageDropZone({
   const [dragActive, setDragActive] = React.useState(false);
   const [urlInput, setUrlInput] = React.useState("");
   const [urlError, setUrlError] = React.useState<string | null>(null);
+  const [source, setSource] = React.useState<"upload" | "url">("upload");
 
   const { isUploading, errors, uploadFiles } = useImageUpload({
     onUploaded: (result) => {
@@ -102,58 +100,133 @@ export function ImageDropZone({
 
   return (
     <div className={cn("flex w-full flex-col gap-3", className)}>
-      <div
-        role="button"
-        tabIndex={0}
-        aria-disabled={disabled || isUploading || remaining <= 0}
-        onClick={() => {
-          if (!disabled && !isUploading && remaining > 0) inputRef.current?.click();
-        }}
-        onDragOver={(event) => {
-          event.preventDefault();
-          if (!disabled && remaining > 0) setDragActive(true);
-        }}
-        onDragLeave={() => setDragActive(false)}
-        onDrop={handleDrop}
-        onKeyDown={(event) => {
-          if (event.key === "Enter" || event.key === " ") {
-            if (!disabled && !isUploading && remaining > 0) inputRef.current?.click();
-          }
-        }}
-        className={cn(
-          "flex flex-col items-center justify-center gap-2 rounded-lg border-2 border-dashed p-6 text-center transition-colors",
-          dragActive
-            ? "border-primary bg-primary/5"
-            : "border-muted-foreground/25 hover:border-muted-foreground/50 hover:bg-muted/30",
-          (disabled || isUploading || remaining <= 0) &&
-            "pointer-events-none cursor-not-allowed opacity-60",
-          "cursor-pointer",
-        )}
-      >
-        {isUploading ? (
-          <>
-            <Loader2 className="size-8 animate-spin text-muted-foreground" />
-            <p className="text-sm text-muted-foreground">Uploading…</p>
-          </>
-        ) : (
-          <>
-            <UploadCloud className="size-8 text-muted-foreground" />
-            <p className="text-sm font-medium">
-              Drag & drop or{" "}
-              <span className="text-primary underline-offset-4 hover:underline">
-                browse
-              </span>{" "}
-              {mode === "single" ? "an image" : "images"}
-            </p>
-            <p className="text-xs text-muted-foreground">
-              JPEG, PNG or WEBP · max 5MB
-              {mode === "multiple" && remaining > 0
-                ? ` · ${remaining} slot${remaining === 1 ? "" : "s"} left`
-                : ""}
-            </p>
-          </>
-        )}
+      <div className="grid grid-cols-2 rounded-lg border border-muted-foreground/25 bg-muted/30 p-1">
+        <button
+          type="button"
+          aria-pressed={source === "upload"}
+          disabled={disabled || isUploading}
+          onClick={() => setSource("upload")}
+          className={cn(
+            "rounded-md px-3 py-2 text-sm font-medium transition-colors",
+            source === "upload"
+              ? "bg-background text-foreground shadow-sm"
+              : "text-muted-foreground hover:text-foreground",
+          )}
+        >
+          <UploadCloud className="mr-2 inline size-4" />
+          Upload file
+        </button>
+        <button
+          type="button"
+          aria-pressed={source === "url"}
+          disabled={disabled || isUploading}
+          onClick={() => setSource("url")}
+          className={cn(
+            "rounded-md px-3 py-2 text-sm font-medium transition-colors",
+            source === "url"
+              ? "bg-background text-foreground shadow-sm"
+              : "text-muted-foreground hover:text-foreground",
+          )}
+        >
+          <Link2 className="mr-2 inline size-4" />
+          Image URL
+        </button>
       </div>
+
+      {source === "upload" ? (
+        <div
+          role="button"
+          tabIndex={0}
+          aria-disabled={disabled || isUploading || remaining <= 0}
+          onClick={() => {
+            if (!disabled && !isUploading && remaining > 0)
+              inputRef.current?.click();
+          }}
+          onDragOver={(event) => {
+            event.preventDefault();
+            if (!disabled && remaining > 0) setDragActive(true);
+          }}
+          onDragLeave={() => setDragActive(false)}
+          onDrop={handleDrop}
+          onKeyDown={(event) => {
+            if (event.key === "Enter" || event.key === " ") {
+              if (!disabled && !isUploading && remaining > 0)
+                inputRef.current?.click();
+            }
+          }}
+          className={cn(
+            "flex flex-col items-center justify-center gap-2 rounded-lg border-2 border-dashed p-6 text-center transition-colors",
+            dragActive
+              ? "border-primary bg-primary/5"
+              : "border-muted-foreground/25 hover:border-muted-foreground/50 hover:bg-muted/30",
+            (disabled || isUploading || remaining <= 0) &&
+              "pointer-events-none cursor-not-allowed opacity-60",
+            "cursor-pointer",
+          )}
+        >
+          {isUploading ? (
+            <>
+              <Loader2 className="size-8 animate-spin text-muted-foreground" />
+              <p className="text-sm text-muted-foreground">Uploading…</p>
+            </>
+          ) : (
+            <>
+              <UploadCloud className="size-8 text-muted-foreground" />
+              <p className="text-sm font-medium">
+                Drag & drop or{" "}
+                <span className="text-primary underline-offset-4 hover:underline">
+                  browse
+                </span>{" "}
+                {mode === "single" ? "an image" : "images"}
+              </p>
+              <p className="text-xs text-muted-foreground">
+                JPEG, PNG or WEBP · max 5MB
+                {mode === "multiple" && remaining > 0
+                  ? ` · ${remaining} slot${remaining === 1 ? "" : "s"} left`
+                  : ""}
+              </p>
+            </>
+          )}
+        </div>
+      ) : (
+        (mode === "single" || remaining > 0) && (
+          <div className="flex flex-col gap-1">
+            <div className="flex items-center gap-2">
+              <div className="relative flex-1">
+                <Link2 className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
+                <Input
+                  type="url"
+                  value={urlInput}
+                  placeholder="Paste an image URL"
+                  aria-label="Image URL"
+                  className="pl-9"
+                  onChange={(event) => {
+                    setUrlInput(event.target.value);
+                    setUrlError(null);
+                  }}
+                  onKeyDown={(event) => {
+                    if (event.key === "Enter") {
+                      event.preventDefault();
+                      addByUrl();
+                    }
+                  }}
+                />
+              </div>
+              <Button
+                type="button"
+                size="sm"
+                variant="outline"
+                disabled={disabled || isUploading || !urlInput.trim()}
+                onClick={addByUrl}
+              >
+                <Plus className="size-4" />
+                Add
+              </Button>
+            </div>
+            {urlError && <p className="text-xs text-destructive">{urlError}</p>}
+          </div>
+        )
+      )}
 
       <input
         ref={inputRef}
@@ -167,48 +240,13 @@ export function ImageDropZone({
         }}
       />
 
-      {(mode === "single" || remaining > 0) && (
-        <div className="flex flex-col gap-1">
-          <div className="flex items-center gap-2">
-            <div className="relative flex-1">
-              <Link2 className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
-              <Input
-                type="url"
-                value={urlInput}
-                placeholder="Or paste an image URL"
-                aria-label="Image URL"
-                className="pl-9"
-                onChange={(event) => {
-                  setUrlInput(event.target.value);
-                  setUrlError(null);
-                }}
-                onKeyDown={(event) => {
-                  if (event.key === "Enter") {
-                    event.preventDefault();
-                    addByUrl();
-                  }
-                }}
-              />
-            </div>
-            <Button
-              type="button"
-              size="sm"
-              variant="outline"
-              disabled={disabled || isUploading || !urlInput.trim()}
-              onClick={addByUrl}
-            >
-              <Plus className="size-4" />
-              Add
-            </Button>
-          </div>
-          {urlError && <p className="text-xs text-destructive">{urlError}</p>}
-        </div>
-      )}
-
       {errors.length > 0 && (
         <ul className="flex flex-col gap-1">
           {errors.map((error) => (
-            <li key={`${error.file}-${error.reason}`} className="text-xs text-destructive">
+            <li
+              key={`${error.file}-${error.reason}`}
+              className="text-xs text-destructive"
+            >
               {error.file}: {error.reason}
             </li>
           ))}
@@ -219,11 +257,16 @@ export function ImageDropZone({
         <div
           className={cn(
             "grid gap-3",
-            mode === "multiple" ? "grid-cols-2 sm:grid-cols-3 md:grid-cols-4" : "grid-cols-1",
+            mode === "multiple"
+              ? "grid-cols-2 sm:grid-cols-3 md:grid-cols-4"
+              : "grid-cols-1 max-w-40",
           )}
         >
           {value.map((image, index) => (
-            <div key={image.url} className="group relative overflow-hidden rounded-lg border">
+            <div
+              key={image.url}
+              className="group relative overflow-hidden rounded-lg border"
+            >
               <img
                 src={image.url}
                 alt={`Uploaded image ${index + 1}`}

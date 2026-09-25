@@ -97,7 +97,7 @@ export const ERPProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const { data: payroll = [] } = useQuery<PayrollRecord[]>({ queryKey: ['payroll'], queryFn: async () => (await api.get('/payroll')).data });
   const { data: commissions = [] } = useQuery<CommissionRecord[]>({ queryKey: ['commissions'], queryFn: async () => (await api.get('/commissions')).data });
   const { data: leads = [] } = useQuery<Lead[]>({ queryKey: ['leads'], queryFn: async () => (await api.get('/leads')).data });
-  const { data: orders = [] } = useQuery<SalesOrder[]>({ queryKey: ['orders'], queryFn: async () => (await api.get('/orders')).data });
+  const { data: orders = [] } = useQuery<SalesOrder[]>({ queryKey: ['orders'], queryFn: async () => (await api.get('/orders', { params: { limit: 200 } })).data?.data ?? [] });
   const { data: installations = [] } = useQuery<InstallationTask[]>({ queryKey: ['installations'], queryFn: async () => (await api.get('/installations')).data });
   const { data: feedback = [] } = useQuery<CustomerFeedback[]>({ queryKey: ['feedback'], queryFn: async () => (await api.get('/feedback')).data });
 
@@ -162,7 +162,7 @@ export const ERPProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['leads'] })
   });
   const updateOrderStatusMut = useMutation({
-    mutationFn: async ({ id, status }: { id: string, status: string }) => (await api.put(`/orders/${id}/status`, { status })).data,
+    mutationFn: async ({ id, status }: { id: string, status: string }) => (await api.patch(`/orders/${id}`, { productionStatus: status })).data,
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['orders'] })
   });
   const updateInstallationStatusMut = useMutation({

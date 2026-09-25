@@ -20,6 +20,14 @@ import { useERP } from '../../context/ERPContext';
 import { Lead, SalesOrder, InstallationTask, CustomerFeedback } from '../../types';
 import { formatCurrency, formatDate, getStatusColor } from '../../utils/formatters';
 
+const PRODUCTION_STATUSES: SalesOrder['productionStatus'][] = [
+  'Ordered',
+  'In Production / Procurement',
+  'Warehouse Ready',
+  'Out for Delivery',
+  'Installed & Signed Off',
+];
+
 export const SalesCRMModule: React.FC = () => {
   const {
     leads,
@@ -34,6 +42,31 @@ export const SalesCRMModule: React.FC = () => {
   } = useERP();
 
   const [activeTab, setActiveTab] = useState<'leads' | 'orders' | 'installations' | 'feedback'>('leads');
+  const [orderSearch, setOrderSearch] = useState('');
+
+  const filteredOrders = orderSearch.trim()
+    ? orders.filter((ord) =>
+        [ord.customerName, ord.customerPhone, ord.customerEmail, ord.orderNumber, ord.projectType]
+          .filter(Boolean)
+          .some((value) => value!.toLowerCase().includes(orderSearch.trim().toLowerCase()))
+      )
+    : orders;
+
+  // Status Update Modal state
+  const [orderForStatusUpdate, setOrderForStatusUpdate] = useState<SalesOrder | null>(null);
+  const [statusDraft, setStatusDraft] = useState<SalesOrder['productionStatus']>('Ordered');
+
+  const handleOpenStatusForm = (ord: SalesOrder) => {
+    setStatusDraft(ord.productionStatus);
+    setOrderForStatusUpdate(ord);
+  };
+
+  const handleSaveStatus = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!orderForStatusUpdate) return;
+    updateOrderStatus(orderForStatusUpdate.id, statusDraft);
+    setOrderForStatusUpdate(null);
+  };
 
   // New Lead Modal
   const [isLeadModalOpen, setIsLeadModalOpen] = useState(false);
@@ -293,11 +326,25 @@ export const SalesCRMModule: React.FC = () => {
       {/* TAB 2: CONFIRMED SALES ORDERS */}
       {activeTab === 'orders' && (
         <div className="bg-white rounded-xl border border-stone-200 shadow-xs overflow-hidden">
-          <div className="p-4 border-b border-stone-100 flex items-center justify-between">
+          <div className="p-4 border-b border-stone-100 flex flex-col md:flex-row md:items-center justify-between gap-3">
             <h3 className="text-xs font-semibold uppercase tracking-wider text-stone-700">
               Executive Sales Orders Execution Register
             </h3>
-            <span className="text-xs text-stone-500">{orders.length} Orders</span>
+            <div className="flex items-center gap-3">
+              <div className="relative">
+                <Search className="w-3.5 h-3.5 text-stone-400 absolute left-2.5 top-1/2 -translate-y-1/2" />
+                <input
+                  type="text"
+                  value={orderSearch}
+                  onChange={(e) => setOrderSearch(e.target.value)}
+                  placeholder="Search client by phone, email or name"
+                  className="pl-8 pr-3 py-1.5 rounded-lg border border-stone-300 text-xs text-stone-800 w-64 max-w-full focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500"
+                />
+              </div>
+              <span className="text-xs text-stone-500">
+                {filteredOrders.length}/{orders.length} Orders
+              </span>
+            </div>
           </div>
 
           <div className="overflow-x-auto">
@@ -314,15 +361,51 @@ export const SalesCRMModule: React.FC = () => {
                 </tr>
               </thead>
               <tbody className="divide-y divide-stone-100">
-                {orders.map((ord) => (
+                {orders.length === 0 && (
+                  <tr>
+                    <td colSpan={7} className="py-10 text-center">
+                      <div className="flex flex-col items-center gap-2 text-stone-400">
+                        <ClipboardList className="w-8 h-8 text-stone-300" />
+                        <span className="text-xs font-medium text-stone-500">
+                          No confirmed sales orders yet.
+                        </span>
+                        <span className="text-[10px]">
+                          Orders placed via the sales workflow will appear here.
+                        </span>
+                      </div>
+                    </td>
+                  </tr>
+                )}
+                {orders.length > 0 && filteredOrders.length === 0 && (
+                  <tr>
+                    <td colSpan={7} className="py-10 text-center">
+                      <div className="flex flex-col items-center gap-2 text-stone-400">
+                        <Search className="w-8 h-8 text-stone-300" />
+                        <span className="text-xs font-medium text-stone-500">
+                          No client matches your search.
+                        </span>
+                        <span className="text-[10px]">
+                          Try another phone number, email address or client name.
+                        </span>
+                      </div>
+                    </td>
+                  </tr>
+                )}
+                {filteredOrders.map((ord) => (
                   <tr key={ord.id} className="hover:bg-stone-50">
                     <td className="py-3 px-4">
                       <div className="font-mono font-bold text-stone-900">{ord.orderNumber}</div>
-                      <div className="text-[10px] text-stone-400">{formatDate(ord.orderDate)}</div>
+                      <div className="text-[10px] text-stone-400">{formatDate(ord.orderDate || ord.createdAt)}</div>
                     </td>
 
                     <td className="py-3 px-3">
                       <div className="font-semibold text-stone-900">{ord.customerName}</div>
+                      {ord.customerPhone && (
+                        <div className="text-[10px] text-stone-400 font-mono">{ord.customerPhone}</div>
+                      )}
+                      {ord.customerEmail && (
+                        <div className="text-[10px] text-stone-400 font-mono truncate max-w-xs">{ord.customerEmail}</div>
+                      )}
                       <div className="text-[10px] text-stone-400 truncate max-w-xs">{ord.deliveryAddress}</div>
                     </td>
 
@@ -343,9 +426,14 @@ export const SalesCRMModule: React.FC = () => {
                     </td>
 
                     <td className="py-3 px-4 text-center">
-                      <span className={`inline-flex px-2 py-0.5 rounded text-[10px] font-semibold border ${getStatusColor(ord.productionStatus)}`}>
+                      <button
+                        type="button"
+                        onClick={() => handleOpenStatusForm(ord)}
+                        title="Update production status"
+                        className={`inline-flex px-2 py-0.5 rounded text-[10px] font-semibold border cursor-pointer transition-colors ${getStatusColor(ord.productionStatus)} hover:ring-1 hover:ring-stone-400`}
+                      >
                         {ord.productionStatus}
-                      </span>
+                      </button>
                     </td>
                   </tr>
                 ))}
@@ -703,6 +791,69 @@ export const SalesCRMModule: React.FC = () => {
                   className="px-4 py-1.5 rounded-lg bg-stone-900 hover:bg-stone-800 text-white font-medium"
                 >
                   Submit CSAT Review
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* MODAL: Update Order Production Status */}
+      {orderForStatusUpdate && (
+        <div className="fixed inset-0 z-50 bg-stone-900/60 backdrop-blur-xs flex items-center justify-center p-4">
+          <div className="bg-white rounded-xl shadow-xl max-w-md w-full p-6 border border-stone-200">
+            <h3 className="text-base font-serif font-bold text-stone-900 mb-1">
+              Update Order Execution Status
+            </h3>
+            <p className="text-xs text-stone-500 mb-4">
+              Advance the production status for{" "}
+              <strong>
+                {orderForStatusUpdate.orderNumber} — {orderForStatusUpdate.customerName}
+              </strong>
+            </p>
+
+            <form onSubmit={handleSaveStatus} className="space-y-3.5 text-xs">
+              <div>
+                <label className="block text-stone-600 font-medium mb-2">Production Status</label>
+                <div className="space-y-2">
+                  {PRODUCTION_STATUSES.map((status) => (
+                    <label
+                      key={status}
+                      className={`flex items-center gap-2.5 px-3 py-2 rounded-lg border cursor-pointer transition-colors ${
+                        statusDraft === status
+                          ? 'border-amber-500 bg-amber-50'
+                          : 'border-stone-200 hover:border-stone-300 bg-stone-50/50'
+                      }`}
+                    >
+                      <input
+                        type="radio"
+                        name="productionStatus"
+                        value={status}
+                        checked={statusDraft === status}
+                        onChange={() => setStatusDraft(status)}
+                        className="accent-amber-600"
+                      />
+                      <span className={`inline-flex px-2 py-0.5 rounded text-[10px] font-semibold border ${getStatusColor(status)}`}>
+                        {status}
+                      </span>
+                    </label>
+                  ))}
+                </div>
+              </div>
+
+              <div className="flex items-center justify-between pt-3 border-t border-stone-200">
+                <button
+                  type="button"
+                  onClick={() => setOrderForStatusUpdate(null)}
+                  className="px-3 py-1.5 rounded-lg border border-stone-300 text-stone-600 hover:bg-stone-50"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="px-4 py-1.5 rounded-lg bg-stone-900 hover:bg-stone-800 text-white font-medium"
+                >
+                  Save Status
                 </button>
               </div>
             </form>
