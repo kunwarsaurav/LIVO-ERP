@@ -68,8 +68,8 @@ export const StockManagement: React.FC<StockManagementProps> = ({ onOpenTagModal
   const [movementNotes, setMovementNotes] = useState('');
 
   // Extract unique brands & categories
-  const allBrands = Array.from(new Set(products.map((p) => p.brand)));
-  const allCategories = Array.from(new Set(products.map((p) => p.category)));
+  const allBrands = Array.from(new Set(products.map((p) => String(p.brand || 'Unbranded'))));
+  const allCategories = Array.from(new Set(products.map((p) => String(p.category || 'Uncategorized'))));
 
   // Brand-wise aggregation
   const brandStats = allBrands.map((brand) => {
