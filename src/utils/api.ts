@@ -74,8 +74,8 @@ const request = async (endpoint: string, options: RequestInit = {}) => {
 
 const api = {
   get: (endpoint: string) => request(endpoint, { method: 'GET' }),
-  post: (endpoint: string, body: any) => request(endpoint, { method: 'POST', body: JSON.stringify(body) }),
-  put: (endpoint: string, body: any) => request(endpoint, { method: 'PUT', body: JSON.stringify(body) }),
+  post: (endpoint: string, body?: any) => request(endpoint, { method: 'POST', body: body ? JSON.stringify(body) : undefined }),
+  put: (endpoint: string, body?: any) => request(endpoint, { method: 'PUT', body: body ? JSON.stringify(body) : undefined }),
   delete: (endpoint: string) => request(endpoint, { method: 'DELETE' }),
 };
 
