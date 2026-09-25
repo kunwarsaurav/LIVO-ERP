@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Barcode from 'react-barcode';
 import {
   Boxes,
@@ -52,6 +52,10 @@ export const StockManagement: React.FC<StockManagementProps> = ({ onOpenTagModal
   const [onlyLowStock, setOnlyLowStock] = useState(false);
   const [activeTab, setActiveTab] = useState<'products' | 'brands' | 'movements'>('products');
 
+  // Pagination state
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
+
   // Modals state
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
@@ -100,6 +104,17 @@ export const StockManagement: React.FC<StockManagementProps> = ({ onOpenTagModal
     const matchesLowStock = !onlyLowStock || (p.currentStock - (p.reservedStock || 0)) <= p.minAlertStock;
     return matchesSearch && matchesBrand && matchesCat && matchesLowStock;
   });
+
+  // Reset pagination on filter changes
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [search, selectedBrand, selectedCategory, onlyLowStock, activeTab]);
+
+  const totalPages = Math.ceil(filteredProducts.length / itemsPerPage);
+  const paginatedProducts = filteredProducts.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
 
   const handleOpenMovementModal = (product: Product, defaultType: 'IN' | 'OUT' = 'IN') => {
     setMovementTargetProduct(product);
@@ -336,7 +351,7 @@ export const StockManagement: React.FC<StockManagementProps> = ({ onOpenTagModal
                       </td>
                     </tr>
                   ) : (
-                    filteredProducts.map((product) => {
+                    paginatedProducts.map((product) => {
                       const isLowStock = product.currentStock <= product.minAlertStock;
                       const marginPct = (
                         ((product.sellingPrice - product.purchasePrice) / product.sellingPrice) *
@@ -506,6 +521,61 @@ export const StockManagement: React.FC<StockManagementProps> = ({ onOpenTagModal
                 </tbody>
               </table>
             </div>
+            
+            {/* Pagination Controls */}
+            {filteredProducts.length > itemsPerPage && (
+              <div className="flex items-center justify-between px-4 py-3 border-t border-stone-200 bg-stone-50">
+                <div className="text-xs text-stone-500">
+                  Showing <span className="font-medium text-stone-900">{(currentPage - 1) * itemsPerPage + 1}</span> to <span className="font-medium text-stone-900">{Math.min(currentPage * itemsPerPage, filteredProducts.length)}</span> of <span className="font-medium text-stone-900">{filteredProducts.length}</span> results
+                </div>
+                <div className="flex items-center gap-1">
+                  <button
+                    onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                    disabled={currentPage === 1}
+                    className="px-2.5 py-1.5 border border-stone-200 rounded-md text-xs font-medium bg-white text-stone-600 hover:bg-stone-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                  >
+                    Previous
+                  </button>
+                  <div className="flex items-center gap-1 mx-2">
+                    {Array.from({ length: totalPages }).map((_, i) => {
+                      // Show limited page numbers for cleaner UI
+                      if (
+                        totalPages > 7 && 
+                        i !== 0 && 
+                        i !== totalPages - 1 && 
+                        Math.abs(i + 1 - currentPage) > 1
+                      ) {
+                        if (i + 1 === currentPage - 2 || i + 1 === currentPage + 2) {
+                          return <span key={i} className="text-stone-400 text-xs px-1">...</span>;
+                        }
+                        return null;
+                      }
+
+                      return (
+                        <button
+                          key={i}
+                          onClick={() => setCurrentPage(i + 1)}
+                          className={`w-7 h-7 flex items-center justify-center rounded-md text-xs font-medium transition-colors ${
+                            currentPage === i + 1
+                              ? 'bg-amber-600 text-white'
+                              : 'bg-white border border-stone-200 text-stone-600 hover:bg-stone-50'
+                          }`}
+                        >
+                          {i + 1}
+                        </button>
+                      );
+                    })}
+                  </div>
+                  <button
+                    onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+                    disabled={currentPage === totalPages}
+                    className="px-2.5 py-1.5 border border-stone-200 rounded-md text-xs font-medium bg-white text-stone-600 hover:bg-stone-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                  >
+                    Next
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       )}
