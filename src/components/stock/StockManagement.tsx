@@ -309,7 +309,7 @@ export const StockManagement: React.FC<StockManagementProps> = ({
         <div className="space-y-4">
           {/* Controls & Filter Bar */}
           <div className="bg-white p-3.5 rounded-xl border border-stone-200 shadow-xs flex flex-wrap items-center justify-between gap-3">
-            <div className="flex flex-wrap items-center gap-2.5 flex-1 min-w-[280px]">
+            <div className="flex flex-wrap items-center gap-2.5 flex-1 min-w-70">
               <div className="relative flex-1 max-w-xs">
                 <Search className="w-3.5 h-3.5 text-stone-400 absolute left-3 top-1/2 -translate-y-1/2" />
                 <input

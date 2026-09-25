@@ -32,6 +32,7 @@ export function getStatusColor(status: string): string {
     case 'paid':
     case 'delivered':
     case 'won / order':
+    case 'completed':
     case 'completed & approved':
     case 'installed & signed off':
     case 'present':
@@ -41,6 +42,7 @@ export function getStatusColor(status: string): string {
     case 'partial':
     case 'in-transit':
     case 'site measurement':
+    case 'contacted':
     case 'in production / procurement':
     case 'warehouse ready':
     case 'out for delivery':
@@ -56,6 +58,7 @@ export function getStatusColor(status: string): string {
       return 'bg-rose-50 text-rose-700 border-rose-200';
     case 'draft':
     case 'new inquiry':
+    case 'pending':
     case 'ordered':
     case 'scheduled':
     default:

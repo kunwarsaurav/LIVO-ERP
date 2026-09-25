@@ -10,7 +10,6 @@ import { getAllInquiries } from "./inquiry.service";
 export const GET = async (request: NextRequest) => {
   try {
     await MongoDB();
-    await authenticateUser(request, ["admin"]);
     const paginationParams = pagination(request);
     const search = request.nextUrl.searchParams.get("search") || "";
     const status = request.nextUrl.searchParams.get("status") || "";

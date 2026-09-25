@@ -62,8 +62,7 @@ interface ERPContextType {
   updateCommissionStatus: (id: string, status: CommissionRecord['status']) => void;
   addLead: (lead: Omit<Lead, 'id' | 'leadNumber' | 'createdAt'>) => void;
   updateLeadStage: (id: string, stage: Lead['stage']) => void;
-  updateOrderStatus: (id: string, status: SalesO
-    rder['productionStatus']) => void;
+  // updateOrderStatus: (id: string, status: SalesOrder['productionStatus']) => void;
   updateInstallationStatus: (id: string, status: InstallationTask['status'], snags?: string) => void;
   addFeedback: (fb: Omit<CustomerFeedback, 'id' | 'completionDate'>) => void;
   addSupplier: (sup: Omit<Supplier, 'id'>) => void;
@@ -97,8 +96,33 @@ export const ERPProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const { data: attendance = [] } = useQuery<AttendanceRecord[]>({ queryKey: ['attendance'], queryFn: async () => (await api.get('/attendance')).data });
   const { data: payroll = [] } = useQuery<PayrollRecord[]>({ queryKey: ['payroll'], queryFn: async () => (await api.get('/payroll')).data });
   const { data: commissions = [] } = useQuery<CommissionRecord[]>({ queryKey: ['commissions'], queryFn: async () => (await api.get('/commissions')).data });
-  const { data: leads = [] } = useQuery<Lead[]>({ queryKey: ['leads'], queryFn: async () => (await api.get('/leads')).data });
-  const { data: orders = [] } = useQuery<SalesOrder[]>({ queryKey: ['orders'], queryFn: async () => (await api.get('/orders', { params: { limit: 200 } })).data?.data ?? [] });
+  const { data: leadsResponse } = useQuery<Lead[] | { data?: Lead[] }>({
+    queryKey: ['leads'],
+    queryFn: async () => {
+      try {
+        const response = await api.get('/inquiries?limit=200');
+        const list = Array.isArray(response.data) ? response.data : response.data?.data ?? [];
+        if (list && list.length > 0) return list;
+      } catch (err) {
+        console.warn('Failed fetching /inquiries, falling back to /leads', err);
+      }
+      try {
+        const fallback = await api.get('/leads');
+        return Array.isArray(fallback.data) ? fallback.data : fallback.data?.data ?? [];
+      } catch {
+        return [];
+      }
+    },
+  });
+  const leads = Array.isArray(leadsResponse) ? leadsResponse : leadsResponse?.data ?? [];
+  const { data: ordersResponse } = useQuery<SalesOrder[] | { data?: SalesOrder[] }>({
+    queryKey: ['orders'],
+    queryFn: async () => {
+      const response = await api.get('/orders?limit=200');
+      return Array.isArray(response.data) ? response.data : response.data?.data ?? [];
+    },
+  });
+  const orders = Array.isArray(ordersResponse) ? ordersResponse : ordersResponse?.data ?? [];
   const { data: installations = [] } = useQuery<InstallationTask[]>({ queryKey: ['installations'], queryFn: async () => (await api.get('/installations')).data });
   const { data: feedback = [] } = useQuery<CustomerFeedback[]>({ queryKey: ['feedback'], queryFn: async () => (await api.get('/feedback')).data });
 
@@ -123,7 +147,7 @@ export const ERPProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const addQuotationMut = createMutation('/quotations', 'quotations');
   const updateQuotationMut = createMutation('/quotations', 'quotations', 'put');
   const convertQuoteMut = useMutation({
-    mutationFn: async (quoteId: string) => (await api.post(`/quotations/${quoteId}/convert`)).data,
+    mutationFn: async (quoteId: string) => (await api.post(`/quotations/${quoteId}/convert`,{})).data,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['quotations'] });
       queryClient.invalidateQueries({ queryKey: ['orders'] });
@@ -159,11 +183,25 @@ export const ERPProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   });
   const addLeadMut = createMutation('/leads', 'leads');
   const updateLeadStageMut = useMutation({
-    mutationFn: async ({ id, stage }: { id: string, stage: string }) => (await api.put(`/leads/${id}/stage`, { stage })).data,
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['leads'] })
+    mutationFn: async ({ id, stage }: { id: string, stage: string }) => {
+      const normStatus = stage.toLowerCase();
+      try {
+        return (await api.patch(`/inquiries/${id}`, { status: normStatus })).data;
+      } catch {
+        try {
+          return (await api.put(`/leads/${id}/stage`, { stage })).data;
+        } catch {
+          return (await api.put(`/inquiries/${id}`, { status: normStatus })).data;
+        }
+      }
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['leads'] });
+      queryClient.invalidateQueries({ queryKey: ['inquiries'] });
+    }
   });
   const updateOrderStatusMut = useMutation({
-    mutationFn: async ({ id, status }: { id: string, status: string }) => (await api.patch(`/orders/${id}`, { productionStatus: status })).data,
+    mutationFn: async ({ id, status }: { id: string, status: string }) => (await api.put(`/orders/${id}/status`, { status })).data,
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['orders'] })
   });
   const updateInstallationStatusMut = useMutation({
@@ -175,7 +213,7 @@ export const ERPProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const addDeliveryMut = createMutation('/deliveries', 'deliveries');
 
   const resetAllDataMut = useMutation({
-    mutationFn: async () => (await api.post('/system/reset')).data,
+    mutationFn: async () => (await api.post('/system/reset',{})).data,
     onSuccess: () => queryClient.invalidateQueries()
   });
 
@@ -199,7 +237,7 @@ export const ERPProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const updateCommissionStatus = (id: string, status: CommissionRecord['status']) => updateCommissionStatusMut.mutate({ id, status });
   const addLead = (l: Omit<Lead, 'id' | 'leadNumber' | 'createdAt'>) => addLeadMut.mutate(l);
   const updateLeadStage = (id: string, stage: Lead['stage']) => updateLeadStageMut.mutate({ id, stage });
-  const updateOrderStatus = (id: string, status: SalesOrder['productionStatus']) => updateOrderStatusMut.mutate({ id, status });
+  // const updateOrderStatus = (id: string, status: SalesOrder['status']) => updateOrderStatusMut.mutate({ id, status });
   const updateInstallationStatus = (id: string, status: InstallationTask['status'], snags?: string) => updateInstallationStatusMut.mutate({ id, status, snags });
   const addFeedback = (fb: Omit<CustomerFeedback, 'id' | 'completionDate'>) => addFeedbackMut.mutate(fb);
   const addSupplier = (sup: Omit<Supplier, 'id'>) => addSupplierMut.mutate(sup);
@@ -253,7 +291,7 @@ export const ERPProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         updateCommissionStatus,
         addLead,
         updateLeadStage,
-        updateOrderStatus,
+        // updateOrderStatus,
         updateInstallationStatus,
         addFeedback,
         addSupplier,

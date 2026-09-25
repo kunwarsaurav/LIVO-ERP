@@ -34,8 +34,8 @@ export const Sidebar: React.FC<SidebarProps> = ({ currentTab, onSelectTab }) => 
   const { lowStockCount, quotations, leads, orders } = useERP();
 
   const pendingQuotes = quotations.filter((q) => q.status === 'Sent').length;
-  const activeOrders = orders.filter((o) => o.productionStatus !== 'Installed & Signed Off').length;
-  const activeLeads = leads.filter((l) => l.stage !== 'Lost' && l.stage !== 'Won / Order').length;
+  const activeOrders = orders.filter((o) => (o as any).productionStatus !== 'Installed & Signed Off' && o.status !== 'Installed & Signed Off').length;
+  const activeLeads = leads.filter((l) => l.stage?.toLowerCase() !== 'completed').length;
 
   const navItems = [
     {

@@ -12,7 +12,7 @@ import { ValidationError } from "@/lib/errors";
 
 type Params = { params: Promise<{ id: string }> };
 
-export const validateProductId = (id: string): void => {
+const validateProductId = (id: string): void => {
   if (!id || id.length > 200 || !/^[a-zA-Z0-9-_]+$/.test(id)) {
     throw new ValidationError("Invalid Product ID format");
   }

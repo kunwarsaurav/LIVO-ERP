@@ -76,6 +76,7 @@ const api = {
   get: (endpoint: string) => request(endpoint, { method: 'GET' }),
   post: (endpoint: string, body: any) => request(endpoint, { method: 'POST', body: JSON.stringify(body) }),
   put: (endpoint: string, body: any) => request(endpoint, { method: 'PUT', body: JSON.stringify(body) }),
+  patch: (endpoint: string, body: any) => request(endpoint, { method: 'PATCH', body: JSON.stringify(body) }),
   delete: (endpoint: string) => request(endpoint, { method: 'DELETE' }),
 };
 

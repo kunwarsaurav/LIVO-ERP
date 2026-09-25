@@ -1,5 +1,4 @@
 export type ProductCategory = string;
-
 export interface Product {
   id: string;
   sku: string;
@@ -35,9 +34,15 @@ export interface StockMovement {
   productId: string;
   productName: string;
   sku: string;
-  type: 'IN' | 'OUT' | 'ADJUSTMENT';
+  type: "IN" | "OUT" | "ADJUSTMENT";
   quantity: number;
-  reason: 'Purchase Receipt' | 'Showroom Sale' | 'Project Dispatch' | 'Damaged/Scrap' | 'Sample Display' | 'Return';
+  reason:
+  | "Purchase Receipt"
+  | "Showroom Sale"
+  | "Project Dispatch"
+  | "Damaged/Scrap"
+  | "Sample Display"
+  | "Return";
   referenceNo: string;
   date: string;
   performedBy: string;
@@ -66,7 +71,12 @@ export interface InboundDelivery {
   consignmentNo: string;
   carrierName: string;
   expectedDate: string;
-  status: 'Dispatched' | 'In-Transit' | 'Customs Clearance' | 'Delivered' | 'Pending Inspection';
+  status:
+  | "Dispatched"
+  | "In-Transit"
+  | "Customs Clearance"
+  | "Delivered"
+  | "Pending Inspection";
   itemsCount: number;
   totalValue: number;
   destinationWarehouse: string;
@@ -76,7 +86,11 @@ export interface Customer {
   id: string;
   name: string;
   companyName?: string;
-  type: 'Residential' | 'Commercial / Corporate' | 'Architect / Designer' | 'Retail Client';
+  type:
+  | "Residential"
+  | "Commercial / Corporate"
+  | "Architect / Designer"
+  | "Retail Client";
   phone: string;
   email: string;
   address: string;
@@ -116,7 +130,7 @@ export interface Quotation {
   vatAmount: number;
   discountAmount: number;
   grandTotal: number;
-  status: 'Draft' | 'Sent' | 'Approved' | 'Rejected' | 'Converted to Order';
+  status: "Draft" | "Sent" | "Approved" | "Rejected" | "Converted to Order";
   notes?: string;
   preparedBy: string;
 }
@@ -148,31 +162,39 @@ export interface Invoice {
   vatTotal: number;
   grandTotal: number;
   amountPaid: number;
-  paymentStatus: 'Unpaid' | 'Partial' | 'Paid';
-  paymentMethod?: 'Cash' | 'Credit Card' | 'Bank Transfer' | 'Cheque';
-  invoiceType: 'Tax Invoice' | 'POS Receipt' | 'Proforma';
+  paymentStatus: "Unpaid" | "Partial" | "Paid";
+  paymentMethod?: "Cash" | "Credit Card" | "Bank Transfer" | "Cheque";
+  invoiceType: "Tax Invoice" | "POS Receipt" | "Proforma";
 }
 
 export interface Expense {
   id: string;
   date: string;
-  category: 'Showroom Rent' | 'Warehouse Utilities' | 'Staff Travel & Logistics' | 'Marketing & Photography' | 'Installation Tools' | 'Office Supplies' | 'Maintenance';
+  category:
+  | "Showroom Rent"
+  | "Warehouse Utilities"
+  | "Staff Travel & Logistics"
+  | "Marketing & Photography"
+  | "Installation Tools"
+  | "Office Supplies"
+  | "Maintenance";
   description: string;
   amount: number;
   vatPaid: number;
-  account: 'Cash' | 'Bank - Emirates NBD' | 'Bank - HDFC Current' | 'Petty Cash';
+  account:
+  "Cash" | "Bank - Emirates NBD" | "Bank - HDFC Current" | "Petty Cash";
   paidTo: string;
   referenceNo: string;
-  status: 'Paid' | 'Pending';
+  status: "Paid" | "Pending";
 }
 
 export interface AccountingTransaction {
   id: string;
   date: string;
-  type: 'SALE' | 'PURCHASE' | 'EXPENSE' | 'RECEIPT' | 'PAYMENT';
+  type: "SALE" | "PURCHASE" | "EXPENSE" | "RECEIPT" | "PAYMENT";
   partyName: string;
-  partyType: 'Customer' | 'Supplier' | 'Vendor' | 'Internal';
-  account: 'Cash' | 'Bank - Primary' | 'Bank - Operations' | 'Petty Cash';
+  partyType: "Customer" | "Supplier" | "Vendor" | "Internal";
+  account: "Cash" | "Bank - Primary" | "Bank - Operations" | "Petty Cash";
   referenceNo: string;
   debit: number;
   credit: number;
@@ -186,7 +208,12 @@ export interface Employee {
   code: string;
   name: string;
   designation: string;
-  department: 'Interior Design' | 'Showroom Sales' | 'Installation & Carpentry' | 'Warehouse & Logistics' | 'Management & Accounts';
+  department:
+  | "Interior Design"
+  | "Showroom Sales"
+  | "Installation & Carpentry"
+  | "Warehouse & Logistics"
+  | "Management & Accounts";
   phone: string;
   email: string;
   joinDate: string;
@@ -194,7 +221,7 @@ export interface Employee {
   allowances: number;
   commissionRatePercent: number; // e.g. 2% on closed projects
   bankAccount: string;
-  status: 'Active' | 'On Leave';
+  status: "Active" | "On Leave";
 }
 
 export interface AttendanceRecord {
@@ -202,7 +229,7 @@ export interface AttendanceRecord {
   employeeId: string;
   employeeName: string;
   date: string;
-  status: 'Present' | 'On-Site' | 'Half Day' | 'Leave' | 'Overtime';
+  status: "Present" | "On-Site" | "Half Day" | "Leave" | "Overtime";
   checkIn: string;
   checkOut: string;
   overtimeHours: number;
@@ -221,24 +248,42 @@ export interface PayrollRecord {
   salesCommission: number;
   deductions: number;
   netPay: number;
-  status: 'Processed' | 'Paid';
+  status: "Processed" | "Paid";
   paymentDate?: string;
 }
 
+export interface LeadCartItem {
+  name: string;
+  quantity?: number;
+  price?: number;
+  productId?: string;
+  sku?: string;
+}
+
 export interface Lead {
+  _id?: string;
   id: string;
-  leadNumber: string;
-  clientName: string;
-  clientType: 'Residential Villa' | 'Penthouse' | 'Corporate Office' | 'Boutique Hotel';
+  leadNumber?: string;
+  name?: string;
+  clientName?: string;
+  clientType?: string;
   phone: string;
-  email: string;
-  spaceSizeSqFt: number;
-  budgetEst: number;
-  stage: 'New Inquiry' | 'Consultation' | 'Site Measurement' | '3D Proposal' | 'Quotation Sent' | 'Won / Order' | 'Lost';
-  assignedDesigner: string;
-  createdAt: string;
-  nextFollowUpDate: string;
-  notes: string;
+  email?: string;
+  date?: string;
+  status?: "pending" | "contacted" | "completed" | "Pending" | "Contacted" | "Completed" | string;
+  stage?: "pending" | "contacted" | "completed" | "Pending" | "Contacted" | "Completed" | string;
+  productName?: string;
+  productPrice?: number;
+  message?: string;
+  items?: LeadCartItem[];
+  totalAmount?: number;
+  spaceSizeSqFt?: number;
+  budgetEst?: number;
+  assignedDesigner?: string;
+  createdAt?: string | Date;
+  updatedAt?: string | Date;
+  nextFollowUpDate?: string;
+  notes?: string;
 }
 
 export interface SalesOrder {
@@ -254,7 +299,13 @@ export interface SalesOrder {
   targetDeliveryDate: string;
   totalAmount: number;
   amountPaid: number;
-  productionStatus: 'Ordered' | 'In Production / Procurement' | 'Warehouse Ready' | 'Out for Delivery' | 'Installed & Signed Off';
+  status: string;
+  productionStatus?:
+    | "Ordered"
+    | "In Production / Procurement"
+    | "Warehouse Ready"
+    | "Out for Delivery"
+    | "Installed & Signed Off";
   deliveryAddress: string;
   items: Array<{
     name: string;
@@ -276,7 +327,12 @@ export interface InstallationTask {
   scheduledDate: string;
   leadSupervisor: string;
   teamMembers: string[];
-  status: 'Scheduled' | 'Site Prep' | 'In Progress' | 'Snag Resolution' | 'Completed & Approved';
+  status:
+  | "Scheduled"
+  | "Site Prep"
+  | "In Progress"
+  | "Snag Resolution"
+  | "Completed & Approved";
   itemsToInstall: string;
   siteChecklistComplete: boolean;
   snagsReported?: string;
@@ -312,7 +368,7 @@ export interface PurchaseBill {
   vatAmount: number;
   grandTotal: number;
   amountPaid: number;
-  paymentStatus: 'Paid' | 'Partial' | 'Unpaid';
+  paymentStatus: "Paid" | "Partial" | "Unpaid";
   paymentMethod?: string;
   notes?: string;
 }
@@ -330,6 +386,6 @@ export interface CommissionRecord {
   incentiveAmount: number;
   bonusAmount: number;
   totalCommission: number;
-  status: 'Pending Review' | 'Approved' | 'Paid';
+  status: "Pending Review" | "Approved" | "Paid";
   paidDate?: string;
 }

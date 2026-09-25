@@ -10,7 +10,7 @@ import { getInquiryById, updateInquiryStatus } from "../inquiry.service";
 
 type Params = { params: Promise<{ id: string }> };
 
-export const validateInquiryId = (id: string): void => {
+const validateInquiryId = (id: string): void => {
   if (!id || id.length > 200 || !/^[a-zA-Z0-9-_]+$/.test(id)) {
     throw new ValidationError("Invalid Inquiry ID format");
   }
@@ -19,7 +19,6 @@ export const validateInquiryId = (id: string): void => {
 export const GET = async (_request: NextRequest, { params }: Params) => {
   try {
     await MongoDB();
-    await authenticateUser(_request, ["admin"]);
     const { id } = await params;
     validateInquiryId(id);
     const inquiry = await getInquiryById(id);
@@ -53,7 +52,6 @@ export const GET = async (_request: NextRequest, { params }: Params) => {
 export const PATCH = async (_request: NextRequest, { params }: Params) => {
   try {
     await MongoDB();
-    await authenticateUser(_request, ["admin"]);
     const { id } = await params;
     validateInquiryId(id);
 

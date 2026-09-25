@@ -9,7 +9,7 @@ import { getOrderById, updateOrderStatus } from "../order.service";
 
 type Params = { params: Promise<{ id: string }> };
 
-export const validateOrderId = (id: string): void => {
+const validateOrderId = (id: string): void => {
   if (!id || id.length > 200 || !/^[a-zA-Z0-9-_]+$/.test(id)) {
     throw new ValidationError("Invalid Order ID format");
   }

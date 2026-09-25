@@ -40,7 +40,7 @@ const InquirySchema = new Schema<IInquiryDocument>(
     productName: { type: String, default: '' },
     productPrice: { type: Number },
     message: { type: String, default: '' },
-    items: { type: Array, default: [] },
+    items: { type: [], default: [] },
     totalAmount: { type: Number, default: 0 },
   },
   {
