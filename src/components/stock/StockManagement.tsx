@@ -1,4 +1,6 @@
-import React, { useState } from "react";
+"use client";
+import React, { useState, useEffect } from 'react';
+import Barcode from 'react-barcode';
 import {
   Boxes,
   AlertTriangle,
@@ -17,11 +19,13 @@ import {
   Building,
   DollarSign,
   TrendingUp,
-} from "lucide-react";
-import { useERP } from "../../context/ERPContext";
-import { Product, ProductCategory } from "../../types";
-import { formatCurrency, formatDate } from "../../utils/formatters";
-import { ImageDropZone } from "../features/protected/shared/ImageDropZone";
+  Printer,
+} from 'lucide-react';
+import { useERP } from '../../context/ERPContext';
+import { Product, ProductCategory } from '../../types';
+import { formatCurrency, formatDate } from '../../utils/formatters';
+import { PrintBarcodeModal } from './PrintBarcodeModal';
+import { ImageDropZone } from '../features/protected/shared/ImageDropZone';
 
 interface StockManagementProps {
   onOpenTagModal?: (product: Product) => void;
@@ -48,13 +52,16 @@ export const StockManagement: React.FC<StockManagementProps> = ({
   const [selectedBrand, setSelectedBrand] = useState("All");
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [onlyLowStock, setOnlyLowStock] = useState(false);
-  const [activeTab, setActiveTab] = useState<
-    "products" | "brands" | "movements"
-  >("products");
+  const [activeTab, setActiveTab] = useState<'products' | 'brands' | 'movements'>('products');
+
+  // Pagination state
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
 
   // Modals state
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
+  const [printLabelProduct, setPrintLabelProduct] = useState<Product | null>(null);
   const [isMovementModalOpen, setIsMovementModalOpen] = useState(false);
   const [movementTargetProduct, setMovementTargetProduct] =
     useState<Product | null>(null);
@@ -72,8 +79,8 @@ export const StockManagement: React.FC<StockManagementProps> = ({
   const [movementNotes, setMovementNotes] = useState("");
 
   // Extract unique brands & categories
-  const allBrands = Array.from(new Set(products.map((p) => p.brand)));
-  const allCategories = Array.from(new Set(products.map((p) => p.category)));
+  const allBrands = Array.from(new Set(products.map((p) => String(p.brand || 'Unbranded'))));
+  const allCategories = Array.from(new Set(products.map((p) => String(p.category || 'Uncategorized'))));
 
   // Brand-wise aggregation
   const brandStats = allBrands.map((brand) => {
@@ -107,17 +114,24 @@ export const StockManagement: React.FC<StockManagementProps> = ({
       p.sku.toLowerCase().includes(search.toLowerCase()) ||
       p.modelNumber.toLowerCase().includes(search.toLowerCase()) ||
       p.barcode.toLowerCase().includes(search.toLowerCase());
-    const matchesBrand = selectedBrand === "All" || p.brand === selectedBrand;
-    const matchesCat =
-      selectedCategory === "All" || p.category === selectedCategory;
-    const matchesLowStock = !onlyLowStock || p.currentStock <= p.minAlertStock;
+    const matchesBrand = selectedBrand === 'All' || p.brand === selectedBrand;
+    const matchesCat = selectedCategory === 'All' || p.category === selectedCategory;
+    const matchesLowStock = !onlyLowStock || (p.currentStock - (p.reservedStock || 0)) <= p.minAlertStock;
     return matchesSearch && matchesBrand && matchesCat && matchesLowStock;
   });
 
-  const handleOpenMovementModal = (
-    product: Product,
-    defaultType: "IN" | "OUT" = "IN",
-  ) => {
+  // Reset pagination on filter changes
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [search, selectedBrand, selectedCategory, onlyLowStock, activeTab]);
+
+  const totalPages = Math.ceil(filteredProducts.length / itemsPerPage);
+  const paginatedProducts = filteredProducts.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
+
+  const handleOpenMovementModal = (product: Product, defaultType: 'IN' | 'OUT' = 'IN') => {
     setMovementTargetProduct(product);
     setMovementType(defaultType);
     setMovementReason(
@@ -147,6 +161,21 @@ export const StockManagement: React.FC<StockManagementProps> = ({
       performedBy: movementStaff,
       notes: movementNotes,
     });
+
+    // Automatically update product stock in DB
+    if (movementType === 'OUT') {
+      const updates: any = {
+        currentStock: movementTargetProduct.currentStock - Number(movementQty)
+      };
+      if (movementReason === 'Website Order Dispatch') {
+        updates.reservedStock = Math.max(0, (movementTargetProduct.reservedStock || 0) - Number(movementQty));
+      }
+      updateProduct(movementTargetProduct.id, updates);
+    } else if (movementType === 'IN') {
+      updateProduct(movementTargetProduct.id, {
+        currentStock: movementTargetProduct.currentStock + Number(movementQty)
+      });
+    }
 
     setIsMovementModalOpen(false);
   };
@@ -363,9 +392,8 @@ export const StockManagement: React.FC<StockManagementProps> = ({
                       </td>
                     </tr>
                   ) : (
-                    filteredProducts.map((product) => {
-                      const isLowStock =
-                        product.currentStock <= product.minAlertStock;
+                    paginatedProducts.map((product) => {
+                      const isLowStock = product.currentStock <= product.minAlertStock;
                       const marginPct = (
                         ((product.sellingPrice - product.purchasePrice) /
                           product.sellingPrice) *
@@ -396,6 +424,17 @@ export const StockManagement: React.FC<StockManagementProps> = ({
                                   <span className="font-mono text-[10px] text-stone-400">
                                     {product.modelNumber}
                                   </span>
+                                </div>
+                                <div className="mt-1.5 opacity-80" style={{ transform: 'scale(0.8)', transformOrigin: 'left top' }}>
+                                  <Barcode 
+                                    value={product.sku} 
+                                    width={1.2} 
+                                    height={24} 
+                                    displayValue={false} 
+                                    margin={0} 
+                                    background="transparent" 
+                                    lineColor="#44403c"
+                                  />
                                 </div>
                               </div>
                             </div>
@@ -443,12 +482,15 @@ export const StockManagement: React.FC<StockManagementProps> = ({
                                   : "bg-emerald-50 border-emerald-200 text-emerald-800 font-semibold"
                               }`}
                             >
-                              <span className="text-xs">
-                                {product.currentStock} Units
-                              </span>
+                              <span className="text-xs">{product.currentStock - (product.reservedStock || 0)} Available</span>
                               <span className="text-[9px] font-normal opacity-80">
                                 Min: {product.minAlertStock}
                               </span>
+                              {(product.reservedStock || 0) > 0 && (
+                                <span className="text-[9px] font-semibold text-amber-600 mt-0.5">
+                                  {product.reservedStock} Reserved
+                                </span>
+                              )}
                             </div>
                           </td>
 
@@ -485,16 +527,25 @@ export const StockManagement: React.FC<StockManagementProps> = ({
                                 <ArrowUpRight className="w-3.5 h-3.5" />
                               </button>
 
-                              {/* Print Tag */}
+                              {/* Print Tag (Hang tags etc) */}
                               {onOpenTagModal && (
                                 <button
                                   onClick={() => onOpenTagModal(product)}
-                                  title="Print MRP & QR Tag"
+                                  title="Print MRP & QR Tag (Showroom)"
                                   className="p-1.5 rounded-md hover:bg-stone-200 text-stone-700 transition-colors"
                                 >
                                   <QrCode className="w-3.5 h-3.5" />
                                 </button>
                               )}
+
+                              {/* Print Warehouse Barcode Label */}
+                              <button
+                                onClick={() => setPrintLabelProduct(product)}
+                                title="Print Warehouse Barcode Sticker"
+                                className="p-1.5 rounded-md hover:bg-stone-200 text-stone-700 transition-colors"
+                              >
+                                <Printer className="w-3.5 h-3.5" />
+                              </button>
 
                               {/* Edit */}
                               <button
@@ -533,6 +584,61 @@ export const StockManagement: React.FC<StockManagementProps> = ({
                 </tbody>
               </table>
             </div>
+            
+            {/* Pagination Controls */}
+            {filteredProducts.length > itemsPerPage && (
+              <div className="flex items-center justify-between px-4 py-3 border-t border-stone-200 bg-stone-50">
+                <div className="text-xs text-stone-500">
+                  Showing <span className="font-medium text-stone-900">{(currentPage - 1) * itemsPerPage + 1}</span> to <span className="font-medium text-stone-900">{Math.min(currentPage * itemsPerPage, filteredProducts.length)}</span> of <span className="font-medium text-stone-900">{filteredProducts.length}</span> results
+                </div>
+                <div className="flex items-center gap-1">
+                  <button
+                    onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                    disabled={currentPage === 1}
+                    className="px-2.5 py-1.5 border border-stone-200 rounded-md text-xs font-medium bg-white text-stone-600 hover:bg-stone-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                  >
+                    Previous
+                  </button>
+                  <div className="flex items-center gap-1 mx-2">
+                    {Array.from({ length: totalPages }).map((_, i) => {
+                      // Show limited page numbers for cleaner UI
+                      if (
+                        totalPages > 7 && 
+                        i !== 0 && 
+                        i !== totalPages - 1 && 
+                        Math.abs(i + 1 - currentPage) > 1
+                      ) {
+                        if (i + 1 === currentPage - 2 || i + 1 === currentPage + 2) {
+                          return <span key={i} className="text-stone-400 text-xs px-1">...</span>;
+                        }
+                        return null;
+                      }
+
+                      return (
+                        <button
+                          key={i}
+                          onClick={() => setCurrentPage(i + 1)}
+                          className={`w-7 h-7 flex items-center justify-center rounded-md text-xs font-medium transition-colors ${
+                            currentPage === i + 1
+                              ? 'bg-amber-600 text-white'
+                              : 'bg-white border border-stone-200 text-stone-600 hover:bg-stone-50'
+                          }`}
+                        >
+                          {i + 1}
+                        </button>
+                      );
+                    })}
+                  </div>
+                  <button
+                    onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+                    disabled={currentPage === totalPages}
+                    className="px-2.5 py-1.5 border border-stone-200 rounded-md text-xs font-medium bg-white text-stone-600 hover:bg-stone-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                  >
+                    Next
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       )}
@@ -695,6 +801,7 @@ export const StockManagement: React.FC<StockManagementProps> = ({
         <ProductFormModal
           product={editingProduct}
           suppliers={suppliers}
+          productCount={products.length}
           onClose={() => {
             setIsAddModalOpen(false);
             setEditingProduct(null);
@@ -719,9 +826,8 @@ export const StockManagement: React.FC<StockManagementProps> = ({
               Record Stock Movement
             </h3>
             <p className="text-xs text-stone-500 mb-4">
-              {movementTargetProduct.name} ({movementTargetProduct.sku}) •
-              Current Stock:{" "}
-              <strong>{movementTargetProduct.currentStock}</strong>
+              {movementTargetProduct.name} ({movementTargetProduct.sku}) • Available: <strong>{movementTargetProduct.currentStock - (movementTargetProduct.reservedStock || 0)}</strong>
+              {(movementTargetProduct.reservedStock || 0) > 0 && ` (Total: ${movementTargetProduct.currentStock}, Reserved: ${movementTargetProduct.reservedStock})`}
             </p>
 
             <form onSubmit={handleSaveMovement} className="space-y-3.5 text-xs">
@@ -796,9 +902,8 @@ export const StockManagement: React.FC<StockManagementProps> = ({
                     ) : (
                       <>
                         <option value="Showroom Sale">Showroom Sale</option>
-                        <option value="Project Dispatch">
-                          Project Dispatch
-                        </option>
+                        <option value="Website Order Dispatch">Website Order Dispatch</option>
+                        <option value="Project Dispatch">Project Dispatch</option>
                         <option value="Damaged/Scrap">Damaged / Scrap</option>
                         <option value="Sample Display">Sample Display</option>
                       </>
@@ -864,6 +969,12 @@ export const StockManagement: React.FC<StockManagementProps> = ({
           </div>
         </div>
       )}
+
+      {/* MODAL: Print Barcode Label */}
+      <PrintBarcodeModal 
+        product={printLabelProduct} 
+        onClose={() => setPrintLabelProduct(null)} 
+      />
     </div>
   );
 };
@@ -872,6 +983,7 @@ export const StockManagement: React.FC<StockManagementProps> = ({
 interface ProductFormModalProps {
   product: Product | null;
   suppliers: any[];
+  productCount: number;
   onClose: () => void;
   onSave: (data: Omit<Product, "id">) => void;
 }
@@ -879,10 +991,14 @@ interface ProductFormModalProps {
 const ProductFormModal: React.FC<ProductFormModalProps> = ({
   product,
   suppliers,
+  productCount,
   onClose,
   onSave,
 }) => {
-  const [formData, setFormData] = useState<Omit<Product, "id">>({
+  // Generate sequential barcode for new products: LIV-00001, LIV-00002, ...
+  const nextBarcode = product?.barcode || `LIV-${String(productCount + 1).padStart(5, '0')}`;
+
+  const [formData, setFormData] = useState<Omit<Product, 'id'>>({
     sku: product?.sku || `LIV-SKU-${Date.now().toString().slice(-4)}`,
     name: product?.name || "",
     brand: product?.brand || "Livo Signature",
@@ -899,16 +1015,12 @@ const ProductFormModal: React.FC<ProductFormModalProps> = ({
     mrp: product?.mrp || 2400,
     currentStock: product?.currentStock || 2,
     minAlertStock: product?.minAlertStock || 2,
-    supplierId: product?.supplierId || suppliers[0]?.id || "sup-01",
-    supplierName:
-      product?.supplierName || suppliers[0]?.name || "Milano Artisan Works",
-    barcode:
-      product?.barcode || `LIV89201${Math.floor(1000 + Math.random() * 9000)}`,
+    supplierId: product?.supplierId || suppliers[0]?.id || 'sup-01',
+    supplierName: product?.supplierName || suppliers[0]?.name || 'Milano Artisan Works',
+    barcode: nextBarcode,
     warrantyYears: product?.warrantyYears || 5,
-    description: product?.description || "",
-    imageUrl:
-      product?.imageUrl ||
-      "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?auto=format&fit=crop&w=800&q=80",
+    description: product?.description || '',
+    imageUrl: product?.imageUrl || '',
     featuredInCatalogue: product?.featuredInCatalogue ?? true,
     specifications: product?.specifications || [
       "High-grade bespoke manufacture",
@@ -916,28 +1028,32 @@ const ProductFormModal: React.FC<ProductFormModalProps> = ({
     customizable: product?.customizable ?? true,
   });
 
+  const [isCustomCategory, setIsCustomCategory] = useState(false);
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     onSave(formData);
   };
 
   const categories: ProductCategory[] = [
-    "Sofa",
-    "Bed",
-    "Wardrobe",
-    "Kitchen",
-    "Kitchen accessories/hardware",
-    "Dining",
-    "Office furniture",
-    "Curtains/Parda",
-    "Carpet",
-    "Gypsum products",
-    "Home décor",
+    'Custom Closets & Storage',
+    'Towel',
+    'Coffee & Tea Tables',
+    'Study & Office',
+    'Premium Sofas',
+    'Luxury Bedsets',
+    'Kitchen',
+    'Accent Chairs',
+    'Mattress',
+    'Sofa',
+    'Dining',
+    'Home décor'
   ];
 
   return (
-    <div className="fixed inset-0 z-50 bg-stone-900/60 backdrop-blur-xs flex items-start justify-center p-4 overflow-y-auto">
-      <div className="bg-white rounded-xl shadow-2xl max-w-2xl w-full max-h-[calc(100vh-2rem)] overflow-y-auto p-6 border border-stone-200 my-4">
+    <div className="fixed inset-0 z-50 bg-stone-900/60 backdrop-blur-xs overflow-y-auto">
+      <div className="flex min-h-screen items-center justify-center p-4 py-10">
+        <div className="bg-white rounded-xl shadow-2xl max-w-2xl w-full p-6 border border-stone-200">
         <h3 className="text-lg font-serif font-bold text-stone-900 mb-1">
           {product
             ? "Edit Luxury Product"
@@ -1010,24 +1126,112 @@ const ProductFormModal: React.FC<ProductFormModalProps> = ({
                 className="w-full px-3 py-1.5 border border-stone-300 rounded-lg font-mono"
               />
             </div>
+          </div>
+
+          {/* Barcode Preview — staff sees the exact barcode before saving */}
+          <div className="p-3.5 rounded-lg bg-amber-50 border border-amber-200 flex flex-col sm:flex-row items-start sm:items-center gap-4">
+            <div className="shrink-0 bg-white p-2 rounded border border-amber-200 flex justify-center">
+              <Barcode
+                value={formData.barcode || 'LIV-00001'}
+                width={1.3}
+                height={44}
+                displayValue
+                fontSize={10}
+                margin={0}
+                background="transparent"
+                lineColor="#1c1917"
+              />
+            </div>
+            <div className="flex-1 space-y-1.5 w-full">
+              <div className="text-[11px] font-bold text-amber-800 uppercase tracking-wider">
+                Auto-Generated Barcode
+              </div>
+              <p className="text-[11px] text-stone-500">
+                This barcode will be printed on the product label and used by the scanner at POS.
+              </p>
+              <div>
+                <label className="block text-[10px] text-stone-600 font-medium mb-0.5">
+                  Override (use manufacturer barcode if the product already has one):
+                </label>
+                <input
+                  type="text"
+                  value={formData.barcode}
+                  onChange={(e) => setFormData({ ...formData, barcode: e.target.value })}
+                  className="w-full px-2.5 py-1.5 border border-amber-300 rounded text-xs font-mono bg-white focus:outline-none focus:border-amber-600"
+                  placeholder="e.g. LIV-00001 or manufacturer EAN"
+                />
+              </div>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-3.5">
+            <div>
+              <label className="block text-stone-700 font-medium mb-1">Catalogue Category</label>
+              {!isCustomCategory ? (
+                <select
+                  value={formData.category}
+                  onChange={(e) => {
+                    if (e.target.value === 'custom') {
+                      setIsCustomCategory(true);
+                      setFormData({ ...formData, category: '' });
+                    } else {
+                      setFormData({ ...formData, category: e.target.value as ProductCategory });
+                    }
+                  }}
+                  className="w-full px-3 py-1.5 border border-stone-300 rounded-lg"
+                >
+                  {categories.map((c) => (
+                    <option key={c} value={c}>
+                      {c}
+                    </option>
+                  ))}
+                  <option value="custom" className="text-amber-600 font-bold border-t border-stone-200 mt-1 pt-1">
+                    + Add Custom Category
+                  </option>
+                </select>
+              ) : (
+                <div className="flex gap-2">
+                  <input
+                    type="text"
+                    value={formData.category}
+                    onChange={(e) => setFormData({ ...formData, category: e.target.value as ProductCategory })}
+                    placeholder="Enter custom category"
+                    className="flex-1 px-3 py-1.5 border border-amber-300 ring-2 ring-amber-500/20 rounded-lg focus:outline-none"
+                    autoFocus
+                  />
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setIsCustomCategory(false);
+                      setFormData({ ...formData, category: categories[0] });
+                    }}
+                    className="px-2 py-1.5 text-stone-400 hover:text-stone-700 hover:bg-stone-100 rounded-lg transition-colors border border-stone-200"
+                    title="Cancel custom category"
+                  >
+                    X
+                  </button>
+                </div>
+              )}
+            </div>
 
             <div>
-              <label className="block text-stone-700 font-medium mb-1">
-                Catalogue Category
-              </label>
+              <label className="block text-stone-700 font-medium mb-1">Sanctuary / Room Space</label>
               <select
-                value={formData.category}
+                value={formData.room || "All Spaces"}
                 onChange={(e) =>
-                  setFormData({
-                    ...formData,
-                    category: e.target.value as ProductCategory,
-                  })
+                  setFormData({ ...formData, room: e.target.value })
                 }
                 className="w-full px-3 py-1.5 border border-stone-300 rounded-lg"
               >
-                {categories.map((c) => (
-                  <option key={c} value={c}>
-                    {c}
+                {[
+                  "Lounge & Living Room",
+                  "Bedroom Sanctuary",
+                  "Dining Hall",
+                  "Library & Office",
+                  "All Spaces"
+                ].map((r) => (
+                  <option key={r} value={r}>
+                    {r}
                   </option>
                 ))}
               </select>
@@ -1224,15 +1428,11 @@ const ProductFormModal: React.FC<ProductFormModalProps> = ({
           </div>
 
           <div>
-            <label className="block text-stone-700 font-medium mb-1">
-              Product Image
-            </label>
+            <label className="block text-stone-700 font-medium mb-1">Product Image</label>
             <ImageDropZone
               mode="single"
               value={formData.imageUrl ? [{ url: formData.imageUrl }] : []}
-              onChange={(images) =>
-                setFormData({ ...formData, imageUrl: images[0]?.url || "" })
-              }
+              onChange={(images) => setFormData({ ...formData, imageUrl: images[0]?.url || '' })}
             />
           </div>
 
@@ -1266,6 +1466,7 @@ const ProductFormModal: React.FC<ProductFormModalProps> = ({
             </button>
           </div>
         </form>
+      </div>
       </div>
     </div>
   );

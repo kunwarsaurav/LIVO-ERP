@@ -8,3 +8,7 @@ tsconfig.tsbuildinfo
 *.log
 .env*
 !.env.example
+cache
+.next/
+out/
+.vercel/

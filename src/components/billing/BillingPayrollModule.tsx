@@ -19,6 +19,7 @@ import {
   Sparkles,
 } from 'lucide-react';
 import { useERP } from '../../context/ERPContext';
+import { useGlobalScanner } from '../../hooks/useGlobalScanner';
 import { formatCurrency, formatDate, getStatusColor } from '../../utils/formatters';
 import {
   Product,
@@ -74,6 +75,7 @@ export const BillingPayrollModule: React.FC<BillingPayrollProps> = ({
   const [posCustomerId, setPosCustomerId] = useState(customers[0]?.id || '');
   const [posPaymentMethod, setPosPaymentMethod] = useState<'Cash' | 'Credit Card' | 'Bank Transfer'>('Credit Card');
   const [recentPosReceipt, setRecentPosReceipt] = useState<Invoice | null>(null);
+  const [scanError, setScanError] = useState<string | null>(null);
 
   // ==========================================
   // Quotation State & Modal
@@ -154,6 +156,24 @@ export const BillingPayrollModule: React.FC<BillingPayrollProps> = ({
     });
   };
 
+  // Hardware Scanner Integration for POS
+  useGlobalScanner({
+    isActive: activeTab === 'pos',
+    onScan: (scannedCode) => {
+      const foundProduct = products.find(
+        (p) => p.sku.toLowerCase() === scannedCode.toLowerCase() || p.barcode === scannedCode
+      );
+      if (foundProduct) {
+        addToCart(foundProduct);
+        setScanError(null);
+      } else {
+        console.warn(`Scanner: Product not found for code [${scannedCode}]`);
+        setScanError(`No product found for scanned code: "${scannedCode}"`);
+        setTimeout(() => setScanError(null), 3000);
+      }
+    },
+  });
+
   const updateCartQty = (productId: string, delta: number) => {
     setPosCart((prev) =>
       prev
@@ -172,7 +192,7 @@ export const BillingPayrollModule: React.FC<BillingPayrollProps> = ({
     const discounted = item.product.sellingPrice * (1 - item.discount / 100);
     return sum + discounted * item.quantity;
   }, 0);
-  const cartVat = Number((cartSubtotal * 0.05).toFixed(2));
+  const cartVat = Number((cartSubtotal * 0.05).toFixed(2)); // Nepal VAT 5%
   const cartGrandTotal = cartSubtotal + cartVat;
 
   const handleCompletePosSale = () => {
@@ -181,7 +201,7 @@ export const BillingPayrollModule: React.FC<BillingPayrollProps> = ({
 
     const newInvItems = posCart.map((item) => {
       const taxable = item.product.sellingPrice * item.quantity * (1 - item.discount / 100);
-      const vat = Number((taxable * 0.05).toFixed(2));
+      const vat = Number((taxable * 0.05).toFixed(2)); // Nepal VAT 5%
       return {
         productId: item.product.id,
         sku: item.product.sku,
@@ -203,9 +223,9 @@ export const BillingPayrollModule: React.FC<BillingPayrollProps> = ({
     const generatedInv: Invoice = {
       id: `inv-${Date.now()}`,
       invoiceNumber: invNumber,
-      customerId: cust.id,
-      customerName: cust.name,
-      customerAddress: cust.address || 'Dubai Showroom Walk-in',
+      customerId: cust?.id || 'walk-in-001',
+      customerName: cust?.name || 'Walk-in Customer',
+      customerAddress: cust?.address || 'Dubai Showroom Walk-in',
       date: today,
       dueDate: today,
       items: newInvItems,
@@ -221,6 +241,11 @@ export const BillingPayrollModule: React.FC<BillingPayrollProps> = ({
     addInvoice(generatedInv);
     setRecentPosReceipt(generatedInv);
     setPosCart([]);
+    
+    // Auto-trigger the A4 normal printer invoice formatting!
+    if (onPrintInvoice) {
+      onPrintInvoice(generatedInv);
+    }
   };
 
   // ==========================================
@@ -247,7 +272,7 @@ export const BillingPayrollModule: React.FC<BillingPayrollProps> = ({
     });
 
     const subtotal = items.reduce((sum, it) => sum + it.total, 0);
-    const vatAmount = Number((subtotal * 0.05).toFixed(2));
+    const vatAmount = Number((subtotal * 0.05).toFixed(2)); // Nepal VAT 5%
     const grandTotal = subtotal + vatAmount;
 
     const today = new Date();
@@ -448,8 +473,14 @@ export const BillingPayrollModule: React.FC<BillingPayrollProps> = ({
                   <option value="Home décor">Home décor</option>
                 </select>
               </div>
+              {/* Scan Error Banner */}
+              {scanError && (
+                <div className="flex items-center gap-2 px-3 py-2 bg-rose-50 border border-rose-200 rounded-lg text-xs text-rose-700 font-semibold">
+                  <span>⚠️</span>
+                  <span>{scanError}</span>
+                </div>
+              )}
 
-              {/* Product Grid */}
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 max-h-[520px] overflow-y-auto p-1">
                 {filteredPosProducts.map((product) => (
                   <div
@@ -508,6 +539,7 @@ export const BillingPayrollModule: React.FC<BillingPayrollProps> = ({
                   onChange={(e) => setPosCustomerId(e.target.value)}
                   className="w-full px-2.5 py-1.5 bg-stone-50 border border-stone-300 rounded text-xs font-medium text-stone-800"
                 >
+                  <option value="walk-in-001">Walk-in Customer (Default)</option>
                   {customers.map((c) => (
                     <option key={c.id} value={c.id}>
                       {c.name} {c.companyName ? `(${c.companyName})` : ''} - {c.phone}
@@ -573,7 +605,7 @@ export const BillingPayrollModule: React.FC<BillingPayrollProps> = ({
                       <span className="font-mono">{formatCurrency(cartSubtotal)}</span>
                     </div>
                     <div className="flex justify-between">
-                      <span>UAE VAT (5%)</span>
+                      <span>VAT (5%)</span>
                       <span className="font-mono">{formatCurrency(cartVat)}</span>
                     </div>
                     <div className="flex justify-between font-bold text-stone-900 text-base border-t border-stone-200 pt-2">
@@ -1713,8 +1745,17 @@ export const BillingPayrollModule: React.FC<BillingPayrollProps> = ({
       {/* MODAL: POS Receipt Preview */}
       {/* ========================================================================= */}
       {recentPosReceipt && (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-2xl max-w-sm w-full p-6 shadow-xl border border-stone-200 text-center font-mono">
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4 z-50 print:bg-white print:p-0">
+          <style>{`
+            @media print {
+              body * { visibility: hidden; }
+              #printable-pos-receipt, #printable-pos-receipt * { visibility: visible; }
+              #printable-pos-receipt { position: absolute; left: 0; top: 0; margin: 0; padding: 0; width: 100%; }
+              /* Hide the close/print buttons during print */
+              .receipt-actions { display: none !important; }
+            }
+          `}</style>
+          <div id="printable-pos-receipt" className="bg-white rounded-2xl max-w-sm w-full p-6 shadow-xl border border-stone-200 text-center font-mono print:border-none print:shadow-none print:p-2">
             <div className="border-b border-stone-300 pb-3">
               <h2 className="text-base font-bold text-stone-900 tracking-wider">LIVO LUXURY LIVING</h2>
               <p className="text-[11px] text-stone-500">Dubai Design District, Building 4</p>
@@ -1756,7 +1797,7 @@ export const BillingPayrollModule: React.FC<BillingPayrollProps> = ({
                 <span>{formatCurrency(recentPosReceipt.subtotal)}</span>
               </div>
               <div className="flex justify-between">
-                <span>VAT (5%):</span>
+                <span>VAT (15%):</span>
                 <span>{formatCurrency(recentPosReceipt.vatTotal)}</span>
               </div>
               <div className="flex justify-between text-sm font-bold pt-1 border-t border-stone-200">
@@ -1765,7 +1806,7 @@ export const BillingPayrollModule: React.FC<BillingPayrollProps> = ({
               </div>
             </div>
 
-            <div className="pt-4 flex gap-2">
+            <div className="pt-4 flex gap-2 receipt-actions">
               <button
                 onClick={() => setRecentPosReceipt(null)}
                 className="flex-1 py-2 bg-stone-100 hover:bg-stone-200 text-stone-700 text-xs font-semibold rounded-lg font-sans"

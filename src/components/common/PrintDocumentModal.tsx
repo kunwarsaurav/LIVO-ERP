@@ -2,7 +2,7 @@ import React from 'react';
 import { X, Printer, Download, CheckCircle2 } from 'lucide-react';
 import { Invoice, Quotation } from '../../types';
 import { formatCurrency, formatDate } from '../../utils/formatters';
-import { generateQRCodeSVG } from '../../utils/barcode';
+import { QRCodeSVG } from 'qrcode.react';
 
 interface PrintDocumentModalProps {
   document:
@@ -26,10 +26,7 @@ export const PrintDocumentModal: React.FC<PrintDocumentModalProps> = ({
   const inv = isInvoice ? (document.data as Invoice) : null;
   const quote = !isInvoice ? (document.data as Quotation) : null;
 
-  const qrSvg = generateQRCodeSVG(
-    `https://livofurniture.com/verify-doc?doc=${isInvoice ? inv?.invoiceNumber : quote?.quoteNumber}&trn=100349281900003`,
-    100
-  );
+  const qrValue = `https://livofurniture.com/verify-doc?doc=${isInvoice ? inv?.invoiceNumber : quote?.quoteNumber}&trn=100349281900003`;
 
   return (
     <div className="fixed inset-0 z-50 bg-stone-900/70 backdrop-blur-xs flex items-center justify-center p-4 overflow-y-auto print:p-0 print:bg-white print:static">
@@ -193,9 +190,12 @@ export const PrintDocumentModal: React.FC<PrintDocumentModalProps> = ({
           <div className="pt-4 border-t border-stone-200 flex flex-col md:flex-row justify-between items-start gap-6">
             {/* QR verification & Terms */}
             <div className="flex items-center gap-4">
-              <div
-                dangerouslySetInnerHTML={{ __html: qrSvg }}
-                className="[&>svg]:w-20 [&>svg]:h-20 p-1 border border-stone-300 rounded bg-white"
+              <QRCodeSVG
+                value={qrValue}
+                size={80}
+                level="M"
+                includeMargin
+                className="border border-stone-300 rounded bg-white"
               />
               <div className="space-y-0.5 text-[10px] text-stone-500 max-w-xs">
                 <div className="font-bold text-stone-700">Official Federal Tax Verification</div>

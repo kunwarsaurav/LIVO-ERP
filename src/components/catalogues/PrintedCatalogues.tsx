@@ -163,7 +163,7 @@ export const PrintedCatalogues: React.FC<PrintedCataloguesProps> = ({
             className="px-2.5 py-1.5 text-xs bg-stone-50 border border-stone-200 rounded-lg text-stone-700"
           >
             <option value="All">All Brands</option>
-            {Array.from(new Set(products.map((p) => p.brand))).map((b) => (
+            {Array.from(new Set(products.map((p) => String(p.brand || 'Unbranded')))).map((b) => (
               <option key={b} value={b}>
                 {b}
               </option>

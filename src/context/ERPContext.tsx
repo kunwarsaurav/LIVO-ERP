@@ -62,7 +62,8 @@ interface ERPContextType {
   updateCommissionStatus: (id: string, status: CommissionRecord['status']) => void;
   addLead: (lead: Omit<Lead, 'id' | 'leadNumber' | 'createdAt'>) => void;
   updateLeadStage: (id: string, stage: Lead['stage']) => void;
-  updateOrderStatus: (id: string, status: SalesOrder['productionStatus']) => void;
+  updateOrderStatus: (id: string, status: SalesO
+    rder['productionStatus']) => void;
   updateInstallationStatus: (id: string, status: InstallationTask['status'], snags?: string) => void;
   addFeedback: (fb: Omit<CustomerFeedback, 'id' | 'completionDate'>) => void;
   addSupplier: (sup: Omit<Supplier, 'id'>) => void;

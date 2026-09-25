@@ -2,19 +2,13 @@ import React, { useState } from 'react';
 import {
   QrCode,
   Printer,
-  Sparkles,
-  Layers,
   Award,
-  CheckCircle2,
-  Sliders,
-  Tag,
-  Copy,
-  ExternalLink,
 } from 'lucide-react';
+import Barcode from 'react-barcode';
+import { QRCodeSVG } from 'qrcode.react';
 import { useERP } from '../../context/ERPContext';
 import { Product } from '../../types';
 import { formatCurrency } from '../../utils/formatters';
-import { generateBarcodeSVG, generateQRCodeSVG } from '../../utils/barcode';
 
 interface ProductTagSystemProps {
   initialSelectedProduct?: Product;
@@ -40,9 +34,8 @@ export const ProductTagSystem: React.FC<ProductTagSystemProps> = ({
   const [batchCategory, setBatchCategory] = useState<string>('All');
   const [isBatchMode, setIsBatchMode] = useState(false);
 
-  const barcodeSvg = selectedProduct?.sku ? generateBarcodeSVG(selectedProduct.sku, 240, 50) : '';
-  const qrSvg = selectedProduct?.sku
-    ? generateQRCodeSVG(`https://livofurniture.com/verify?sku=${selectedProduct.sku}&serial=${selectedProduct.barcode}`, 110)
+  const qrValue = selectedProduct?.barcode
+    ? `https://livofurniture.com/verify?barcode=${selectedProduct.barcode}&sku=${selectedProduct.sku}`
     : '';
 
   const batchProducts = products.filter(
@@ -53,8 +46,34 @@ export const ProductTagSystem: React.FC<ProductTagSystemProps> = ({
     window.print();
   };
 
+  // Print CSS injected inline — isolates the tag from the rest of the app UI
+  const printStyles = `
+    @media print {
+      @page { size: A5 portrait; margin: 8mm; }
+      body * { visibility: hidden !important; }
+      #printable-tag, #printable-tag * { visibility: visible !important; }
+      #printable-tag {
+        position: fixed !important;
+        top: 0 !important;
+        left: 0 !important;
+        width: 148mm !important;
+        box-shadow: none !important;
+        border: 1px solid #ccc !important;
+        border-radius: 0 !important;
+        margin: 0 !important;
+      }
+      #batch-print-grid { display: none !important; }
+    }
+    @media print.batch-mode {
+      #printable-tag { display: none !important; }
+      #batch-print-grid, #batch-print-grid * { visibility: visible !important; }
+    }
+  `;
+
   return (
     <div className="space-y-6">
+      {/* Print isolation CSS */}
+      <style dangerouslySetInnerHTML={{ __html: printStyles }} />
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
@@ -319,20 +338,29 @@ export const ProductTagSystem: React.FC<ProductTagSystemProps> = ({
 
               {/* Barcode & QR Code Section */}
               <div className="pt-2 border-t border-stone-200 flex items-center justify-between gap-4">
-                {showBarcode && (
-                  <div className="flex-1">
-                    <div
-                      dangerouslySetInnerHTML={{ __html: barcodeSvg }}
-                      className="[&>svg]:w-full [&>svg]:h-auto flex justify-center"
+                {showBarcode && selectedProduct?.barcode && (
+                  <div className="flex-1 flex justify-center">
+                    <Barcode
+                      value={selectedProduct.barcode}
+                      width={1.4}
+                      height={48}
+                      displayValue
+                      fontSize={10}
+                      margin={0}
+                      background="transparent"
+                      lineColor="#1c1917"
                     />
                   </div>
                 )}
 
                 {showQR && (
                   <div className="flex flex-col items-center shrink-0">
-                    <div
-                      dangerouslySetInnerHTML={{ __html: qrSvg }}
-                      className="[&>svg]:w-14 [&>svg]:h-14 border border-stone-300 p-0.5 rounded bg-white"
+                    <QRCodeSVG
+                      value={qrValue || 'https://livofurniture.com'}
+                      size={56}
+                      level="M"
+                      includeMargin
+                      className="border border-stone-300 p-0.5 rounded bg-white"
                     />
                     <span className="text-[8px] text-stone-500 mt-1 uppercase tracking-wider font-mono">
                       Scan Certificate
@@ -389,12 +417,9 @@ export const ProductTagSystem: React.FC<ProductTagSystemProps> = ({
           </div>
 
           {/* Grid of Printable Cards */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {batchProducts.map((p) => {
-              const bCode = generateBarcodeSVG(p.sku, 200, 44);
-              const qCode = generateQRCodeSVG(`https://livofurniture.com/verify?sku=${p.sku}`, 80);
-
-              return (
+          <div id="batch-print-grid" className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {batchProducts.map((p) => (
+              (
                 <div
                   key={p.id}
                   className="bg-white border-2 border-stone-800 rounded-xl p-4 shadow-sm text-stone-900 space-y-2.5 relative"
@@ -445,14 +470,25 @@ export const ProductTagSystem: React.FC<ProductTagSystemProps> = ({
                     </div>
                   </div>
 
-                  <div className="flex items-center justify-between pt-1">
-                    <div
-                      dangerouslySetInnerHTML={{ __html: bCode }}
-                      className="[&>svg]:w-36 [&>svg]:h-auto"
-                    />
-                    <div
-                      dangerouslySetInnerHTML={{ __html: qCode }}
-                      className="[&>svg]:w-10 [&>svg]:h-10 border border-stone-200 p-0.5 rounded"
+                  <div className="flex items-center justify-between pt-1 gap-2">
+                    <div className="flex-1 flex justify-center">
+                      <Barcode
+                        value={p.barcode}
+                        width={1.1}
+                        height={36}
+                        displayValue
+                        fontSize={8}
+                        margin={0}
+                        background="transparent"
+                        lineColor="#1c1917"
+                      />
+                    </div>
+                    <QRCodeSVG
+                      value={`https://livofurniture.com/verify?barcode=${p.barcode}&sku=${p.sku}`}
+                      size={40}
+                      level="M"
+                      includeMargin
+                      className="border border-stone-200 p-0.5 rounded shrink-0"
                     />
                   </div>
 
@@ -460,8 +496,8 @@ export const ProductTagSystem: React.FC<ProductTagSystemProps> = ({
                     {p.warrantyYears}-Year Warranty • Verified Serial: {p.barcode}
                   </div>
                 </div>
-              );
-            })}
+              ))
+            )}
           </div>
         </div>
       )}

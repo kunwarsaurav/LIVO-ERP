@@ -1,15 +1,4 @@
-export type ProductCategory =
-  | 'Sofa'
-  | 'Bed'
-  | 'Wardrobe'
-  | 'Kitchen'
-  | 'Kitchen accessories/hardware'
-  | 'Dining'
-  | 'Office furniture'
-  | 'Curtains/Parda'
-  | 'Carpet'
-  | 'Gypsum products'
-  | 'Home décor';
+export type ProductCategory = string;
 
 export interface Product {
   id: string;
@@ -18,6 +7,7 @@ export interface Product {
   brand: string;
   category: ProductCategory;
   subCategory?: string;
+  room?: string;
   modelNumber: string;
   sizeDimensions: string;
   colorFinish: string;
@@ -27,6 +17,7 @@ export interface Product {
   sellingPrice: number;
   mrp: number;
   currentStock: number;
+  reservedStock?: number;
   minAlertStock: number;
   supplierId: string;
   supplierName: string;

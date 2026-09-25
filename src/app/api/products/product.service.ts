@@ -6,7 +6,24 @@ const productFilter = (id: string) =>
   mongoose.isValidObjectId(id) ? { $or: [{ id }, { _id: id }] } : { id };
 
 export const createProduct = async (product: CreateProductInput) => {
-  return ProductModel.create(product as IProductDocument);
+  // Map ERP fields to Website-compatible fields automatically
+  const mappedProduct = {
+    ...product,
+    price: product.sellingPrice,
+    originalPrice: product.mrp,
+    images: product.imageUrl ? [product.imageUrl] : [],
+    dimensions: product.sizeDimensions || "",
+    inStock: (product.currentStock || 0) > 0,
+    room: product.room || "All Spaces",
+    id: product.sku || product.id,
+    warranty: product.warrantyYears ? `${product.warrantyYears} Years` : undefined,
+    colors: product.colorFinish ? [`${product.colorFinish}|#000000`] : [],
+    materials: product.material ? [product.material] : [],
+    features: product.specifications || [],
+    reservedStock: 0,
+  };
+  
+  return ProductModel.create(mappedProduct as unknown as IProductDocument);
 };
 
 export const getAllProducts = async (search?: string) => {
@@ -19,18 +36,55 @@ export const getAllProducts = async (search?: string) => {
         ],
       }
     : {};
-  return ProductModel.find(filter).sort({ createdAt: -1 });
+  const products = await ProductModel.find(filter).sort({ createdAt: -1 }).lean();
+  
+  // Map Website fields backwards into ERP fields so website-added products show up properly in the ERP
+  return products.map(p => ({
+    ...p,
+    sellingPrice: p.sellingPrice || p.price || 0,
+    mrp: p.mrp || p.originalPrice || 0,
+    imageUrl: p.imageUrl || (p.images && p.images.length > 0 ? p.images[0] : ""),
+    sizeDimensions: p.sizeDimensions || p.dimensions || "",
+    currentStock: p.currentStock !== undefined ? p.currentStock : (p.inStock ? 5 : 0),
+    sku: p.sku || p.id || p._id?.toString(),
+    barcode: p.barcode || p.sku || p.id || p._id?.toString()
+  }));
 };
 
 export const getProductById = async (id: string) => {
-  return ProductModel.findOne(productFilter(id));
+  const p = await ProductModel.findOne(productFilter(id)).lean();
+  if (!p) return null;
+  return {
+    ...p,
+    sellingPrice: p.sellingPrice || p.price || 0,
+    mrp: p.mrp || p.originalPrice || 0,
+    imageUrl: p.imageUrl || (p.images && p.images.length > 0 ? p.images[0] : ""),
+    sizeDimensions: p.sizeDimensions || p.dimensions || "",
+    currentStock: p.currentStock !== undefined ? p.currentStock : (p.inStock ? 5 : 0),
+    sku: p.sku || p.id || p._id?.toString(),
+    barcode: p.barcode || p.sku || p.id || p._id?.toString()
+  };
 };
 
 export const updateProductById = async (
   id: string,
   validatedData: Partial<CreateProductInput>,
 ) => {
-  return ProductModel.findOneAndUpdate(productFilter(id), validatedData, {
+  // Map ERP fields to Website-compatible fields during updates too
+  const mappedUpdate: any = { ...validatedData };
+  if (validatedData.sellingPrice !== undefined) mappedUpdate.price = validatedData.sellingPrice;
+  if (validatedData.mrp !== undefined) mappedUpdate.originalPrice = validatedData.mrp;
+  if (validatedData.imageUrl !== undefined) mappedUpdate.images = validatedData.imageUrl ? [validatedData.imageUrl] : [];
+  if (validatedData.sizeDimensions !== undefined) mappedUpdate.dimensions = validatedData.sizeDimensions;
+  if (validatedData.currentStock !== undefined) mappedUpdate.inStock = validatedData.currentStock > 0;
+  if (validatedData.room !== undefined) mappedUpdate.room = validatedData.room;
+  if (validatedData.sku !== undefined) mappedUpdate.id = validatedData.sku;
+  if (validatedData.warrantyYears !== undefined) mappedUpdate.warranty = validatedData.warrantyYears ? `${validatedData.warrantyYears} Years` : undefined;
+  if (validatedData.colorFinish !== undefined) mappedUpdate.colors = validatedData.colorFinish ? [`${validatedData.colorFinish}|#000000`] : [];
+  if (validatedData.material !== undefined) mappedUpdate.materials = validatedData.material ? [validatedData.material] : [];
+  if (validatedData.specifications !== undefined) mappedUpdate.features = validatedData.specifications || [];
+
+  return ProductModel.findOneAndUpdate(productFilter(id), mappedUpdate, {
     returnDocument: "after",
     runValidators: true,
   });
