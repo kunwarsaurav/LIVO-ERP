@@ -27,6 +27,7 @@ export interface Product {
   sellingPrice: number;
   mrp: number;
   currentStock: number;
+  reservedStock?: number;
   minAlertStock: number;
   supplierId: string;
   supplierName: string;

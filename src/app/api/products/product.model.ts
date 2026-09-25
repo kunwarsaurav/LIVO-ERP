@@ -33,6 +33,7 @@ const ProductSchema = new Schema<IProductDocument>(
     sellingPrice: { type: Number, default: 0 },
     mrp: { type: Number, default: 0 },
     currentStock: { type: Number, default: 0 },
+    reservedStock: { type: Number, default: 0 },
     minAlertStock: { type: Number, default: 0 },
     supplierId: { type: String, default: "" },
     supplierName: { type: String, default: "" },

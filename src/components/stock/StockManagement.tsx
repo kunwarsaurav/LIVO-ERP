@@ -97,7 +97,7 @@ export const StockManagement: React.FC<StockManagementProps> = ({ onOpenTagModal
       p.barcode.toLowerCase().includes(search.toLowerCase());
     const matchesBrand = selectedBrand === 'All' || p.brand === selectedBrand;
     const matchesCat = selectedCategory === 'All' || p.category === selectedCategory;
-    const matchesLowStock = !onlyLowStock || p.currentStock <= p.minAlertStock;
+    const matchesLowStock = !onlyLowStock || (p.currentStock - (p.reservedStock || 0)) <= p.minAlertStock;
     return matchesSearch && matchesBrand && matchesCat && matchesLowStock;
   });
 
@@ -125,6 +125,21 @@ export const StockManagement: React.FC<StockManagementProps> = ({ onOpenTagModal
       performedBy: movementStaff,
       notes: movementNotes,
     });
+
+    // Automatically update product stock in DB
+    if (movementType === 'OUT') {
+      const updates: any = {
+        currentStock: movementTargetProduct.currentStock - Number(movementQty)
+      };
+      if (movementReason === 'Website Order Dispatch') {
+        updates.reservedStock = Math.max(0, (movementTargetProduct.reservedStock || 0) - Number(movementQty));
+      }
+      updateProduct(movementTargetProduct.id, updates);
+    } else if (movementType === 'IN') {
+      updateProduct(movementTargetProduct.id, {
+        currentStock: movementTargetProduct.currentStock + Number(movementQty)
+      });
+    }
 
     setIsMovementModalOpen(false);
   };
@@ -397,10 +412,15 @@ export const StockManagement: React.FC<StockManagementProps> = ({ onOpenTagModal
                                   : 'bg-emerald-50 border-emerald-200 text-emerald-800 font-semibold'
                               }`}
                             >
-                              <span className="text-xs">{product.currentStock} Units</span>
+                              <span className="text-xs">{product.currentStock - (product.reservedStock || 0)} Available</span>
                               <span className="text-[9px] font-normal opacity-80">
                                 Min: {product.minAlertStock}
                               </span>
+                              {(product.reservedStock || 0) > 0 && (
+                                <span className="text-[9px] font-semibold text-amber-600 mt-0.5">
+                                  {product.reservedStock} Reserved
+                                </span>
+                              )}
                             </div>
                           </td>
 
@@ -644,7 +664,8 @@ export const StockManagement: React.FC<StockManagementProps> = ({ onOpenTagModal
               Record Stock Movement
             </h3>
             <p className="text-xs text-stone-500 mb-4">
-              {movementTargetProduct.name} ({movementTargetProduct.sku}) • Current Stock: <strong>{movementTargetProduct.currentStock}</strong>
+              {movementTargetProduct.name} ({movementTargetProduct.sku}) • Available: <strong>{movementTargetProduct.currentStock - (movementTargetProduct.reservedStock || 0)}</strong>
+              {(movementTargetProduct.reservedStock || 0) > 0 && ` (Total: ${movementTargetProduct.currentStock}, Reserved: ${movementTargetProduct.reservedStock})`}
             </p>
 
             <form onSubmit={handleSaveMovement} className="space-y-3.5 text-xs">
@@ -711,6 +732,7 @@ export const StockManagement: React.FC<StockManagementProps> = ({ onOpenTagModal
                     ) : (
                       <>
                         <option value="Showroom Sale">Showroom Sale</option>
+                        <option value="Website Order Dispatch">Website Order Dispatch</option>
                         <option value="Project Dispatch">Project Dispatch</option>
                         <option value="Damaged/Scrap">Damaged / Scrap</option>
                         <option value="Sample Display">Sample Display</option>

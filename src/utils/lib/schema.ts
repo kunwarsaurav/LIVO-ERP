@@ -16,6 +16,7 @@ export const ProductSchema = z.object({
   sellingPrice: z.coerce.number().default(0),
   mrp: z.coerce.number().default(0),
   currentStock: z.coerce.number().default(0),
+  reservedStock: z.coerce.number().default(0),
   minAlertStock: z.coerce.number().default(0),
   supplierId: z.string().optional().default(""),
   supplierName: z.string().optional().default(""),
