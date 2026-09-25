@@ -184,7 +184,7 @@ export const PrintedCatalogues: React.FC<PrintedCataloguesProps> = ({
                 {/* Photo showcase */}
                 <div className="relative h-64 w-full overflow-hidden bg-stone-100">
                   <img
-                    src={p.imageUrl}
+                    src={p.imageUrl || 'https://images.unsplash.com/photo-1555041469-a586c61ea9bc?auto=format&fit=crop&w=800&q=80'}
                     alt={p.name}
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                     referrerPolicy="no-referrer"
@@ -293,7 +293,7 @@ export const PrintedCatalogues: React.FC<PrintedCataloguesProps> = ({
                   <tr key={p.id} className="hover:bg-stone-50">
                     <td className="py-2.5 px-4">
                       <img
-                        src={p.imageUrl}
+                        src={p.imageUrl || 'https://images.unsplash.com/photo-1555041469-a586c61ea9bc?auto=format&fit=crop&w=800&q=80'}
                         alt={p.name}
                         className="w-12 h-12 object-cover rounded-md border border-stone-200 bg-stone-100"
                         referrerPolicy="no-referrer"
@@ -361,7 +361,7 @@ export const PrintedCatalogues: React.FC<PrintedCataloguesProps> = ({
               >
                 <div className="h-56 w-full rounded-lg overflow-hidden bg-stone-100">
                   <img
-                    src={p.imageUrl}
+                    src={p.imageUrl || 'https://images.unsplash.com/photo-1555041469-a586c61ea9bc?auto=format&fit=crop&w=800&q=80'}
                     alt={p.name}
                     className="w-full h-full object-cover"
                     referrerPolicy="no-referrer"

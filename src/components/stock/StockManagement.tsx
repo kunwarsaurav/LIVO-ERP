@@ -363,7 +363,7 @@ export const StockManagement: React.FC<StockManagementProps> = ({ onOpenTagModal
                           <td className="py-3 px-4">
                             <div className="flex items-center gap-3">
                               <img
-                                src={product.imageUrl}
+                                src={product.imageUrl || 'https://images.unsplash.com/photo-1555041469-a586c61ea9bc?auto=format&fit=crop&w=800&q=80'}
                                 alt={product.name}
                                 className="w-11 h-11 rounded-lg object-cover border border-stone-200 shrink-0"
                                 referrerPolicy="no-referrer"

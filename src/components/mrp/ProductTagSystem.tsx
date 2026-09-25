@@ -28,6 +28,10 @@ export const ProductTagSystem: React.FC<ProductTagSystemProps> = ({
   const [showQR, setShowQR] = useState(true);
   const [showMrpStrike, setShowMrpStrike] = useState(true);
   const [showWarranty, setShowWarranty] = useState(true);
+  const [showSkuCode, setShowSkuCode] = useState(true);
+  const [showModelNumber, setShowModelNumber] = useState(true);
+  const [showDimensions, setShowDimensions] = useState(true);
+  const [showColorFinish, setShowColorFinish] = useState(true);
   const [customTagline, setCustomTagline] = useState('Bespoke Italian Craftsmanship');
 
   // Batch print mode
@@ -204,6 +208,48 @@ export const ProductTagSystem: React.FC<ProductTagSystemProps> = ({
                 />
                 <span>Show Official Warranty Badge</span>
               </label>
+
+              <div className="h-px w-full bg-stone-200 my-2"></div>
+              
+              <label className="flex items-center gap-2 cursor-pointer text-stone-700">
+                <input
+                  type="checkbox"
+                  checked={showSkuCode}
+                  onChange={(e) => setShowSkuCode(e.target.checked)}
+                  className="rounded text-amber-600 focus:ring-amber-500"
+                />
+                <span>Show SKU Code</span>
+              </label>
+
+              <label className="flex items-center gap-2 cursor-pointer text-stone-700">
+                <input
+                  type="checkbox"
+                  checked={showModelNumber}
+                  onChange={(e) => setShowModelNumber(e.target.checked)}
+                  className="rounded text-amber-600 focus:ring-amber-500"
+                />
+                <span>Show Model Number</span>
+              </label>
+
+              <label className="flex items-center gap-2 cursor-pointer text-stone-700">
+                <input
+                  type="checkbox"
+                  checked={showDimensions}
+                  onChange={(e) => setShowDimensions(e.target.checked)}
+                  className="rounded text-amber-600 focus:ring-amber-500"
+                />
+                <span>Show Dimensions / Size</span>
+              </label>
+
+              <label className="flex items-center gap-2 cursor-pointer text-stone-700">
+                <input
+                  type="checkbox"
+                  checked={showColorFinish}
+                  onChange={(e) => setShowColorFinish(e.target.checked)}
+                  className="rounded text-amber-600 focus:ring-amber-500"
+                />
+                <span>Show Colour / Finish</span>
+              </label>
             </div>
 
             <div>
@@ -278,36 +324,46 @@ export const ProductTagSystem: React.FC<ProductTagSystemProps> = ({
               </div>
 
               {/* Specs Grid */}
-              <div className="bg-stone-50/80 p-3 rounded-lg border border-stone-200 text-[11px] space-y-1.5 mb-4">
-                <div className="flex justify-between">
-                  <span className="text-stone-500 font-medium">SKU Code:</span>
-                  <span className="font-mono font-bold text-stone-900">{selectedProduct.sku}</span>
+              {(showSkuCode || showModelNumber || showDimensions || showColorFinish || selectedProduct.material) && (
+                <div className="bg-stone-50/80 p-3 rounded-lg border border-stone-200 text-[11px] space-y-1.5 mb-4">
+                  {showSkuCode && (
+                    <div className="flex justify-between">
+                      <span className="text-stone-500 font-medium">SKU Code:</span>
+                      <span className="font-mono font-bold text-stone-900">{selectedProduct.sku}</span>
+                    </div>
+                  )}
+                  {showModelNumber && (
+                    <div className="flex justify-between">
+                      <span className="text-stone-500 font-medium">Model Number:</span>
+                      <span className="font-mono text-stone-800">{selectedProduct.modelNumber}</span>
+                    </div>
+                  )}
+                  {showDimensions && (
+                    <div className="flex justify-between">
+                      <span className="text-stone-500 font-medium">Dimensions / Size:</span>
+                      <span className="font-medium text-stone-800 text-right max-w-[200px] truncate">
+                        {selectedProduct.sizeDimensions}
+                      </span>
+                    </div>
+                  )}
+                  {showColorFinish && (
+                    <div className="flex justify-between">
+                      <span className="text-stone-500 font-medium">Colour / Finish:</span>
+                      <span className="font-medium text-stone-800 text-right max-w-[200px] truncate">
+                        {selectedProduct.colorFinish}
+                      </span>
+                    </div>
+                  )}
+                  {selectedProduct.material && (
+                    <div className="flex justify-between">
+                      <span className="text-stone-500 font-medium">Material:</span>
+                      <span className="font-medium text-stone-800 text-right max-w-[200px] truncate">
+                        {selectedProduct.material}
+                      </span>
+                    </div>
+                  )}
                 </div>
-                <div className="flex justify-between">
-                  <span className="text-stone-500 font-medium">Model Number:</span>
-                  <span className="font-mono text-stone-800">{selectedProduct.modelNumber}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-stone-500 font-medium">Dimensions / Size:</span>
-                  <span className="font-medium text-stone-800 text-right max-w-[200px] truncate">
-                    {selectedProduct.sizeDimensions}
-                  </span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-stone-500 font-medium">Colour / Finish:</span>
-                  <span className="font-medium text-stone-800 text-right max-w-[200px] truncate">
-                    {selectedProduct.colorFinish}
-                  </span>
-                </div>
-                {selectedProduct.material && (
-                  <div className="flex justify-between">
-                    <span className="text-stone-500 font-medium">Material:</span>
-                    <span className="font-medium text-stone-800 text-right max-w-[200px] truncate">
-                      {selectedProduct.material}
-                    </span>
-                  </div>
-                )}
-              </div>
+              )}
 
               {/* Pricing Section */}
               <div className="bg-stone-900 text-white p-3.5 rounded-lg mb-4 flex items-center justify-between">
