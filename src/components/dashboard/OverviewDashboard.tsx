@@ -365,7 +365,8 @@ export const OverviewDashboard: React.FC<OverviewDashboardProps> = ({ onNavigate
                   <div>
                     <div className="font-semibold text-xs text-stone-900">{ld.clientName}</div>
                     <div className="text-[10px] text-stone-500">
-                      {ld.clientType} • {ld.spaceSizeSqFt.toLocaleString()} sq.ft
+                      {ld.clientType || 'Design Inquiry'}
+                      {ld.spaceSizeSqFt ? ` • ${ld.spaceSizeSqFt.toLocaleString()} sq.ft` : ''}
                     </div>
                   </div>
                   <div className="text-right">

@@ -318,6 +318,55 @@ export interface SalesOrder {
   updatedAt?: string;
 }
 
+export interface OrderDetailProduct {
+  _id?: string;
+  id?: string;
+  name?: string;
+  category?: string;
+  room?: string;
+  price?: number;
+  description?: string;
+  longDescription?: string;
+  images?: string[];
+  materials?: string[];
+  colors?: string[];
+  dimensions?: string;
+  warranty?: string;
+  leadTime?: string;
+  features?: string[];
+  isCustomizable?: boolean;
+  currentStock?: number;
+  reservedStock?: number;
+}
+
+export interface OrderDetailItem {
+  product?: OrderDetailProduct;
+  name?: string;
+  sku?: string;
+  quantity: number;
+  selectedColor?: string;
+  selectedMaterial?: string;
+  dimensions?: string;
+  finish?: string;
+}
+
+export type OrderDetails = Omit<SalesOrder, "items"> & {
+  userId?: string;
+  shippingAddress?: string;
+  items: OrderDetailItem[];
+};
+
+export interface Showroom {
+  id: string;
+  name: string;
+  room: string;
+  image: string;
+  description: string;
+  piecesFeatured?: string[];
+  createdAt?: string;
+  updatedAt?: string;
+}
+
 export interface InstallationTask {
   id: string;
   orderId: string;

@@ -1,14 +1,12 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Users,
   Compass,
   PhoneCall,
   ClipboardList,
-  Wrench,
   Star,
   Plus,
   Search,
-  CheckCircle2,
   Clock,
   Calendar,
   ArrowRight,
@@ -17,11 +15,15 @@ import {
   UserCheck,
   Package,
   Mail,
+  Eye,
+  X,
+  ImageOff,
 } from "lucide-react";
 import { useERP } from "../../context/ERPContext";
 import {
   Lead,
   SalesOrder,
+  OrderDetails,
   InstallationTask,
   CustomerFeedback,
 } from "../../types";
@@ -34,16 +36,16 @@ export const SalesCRMModule: React.FC = () => {
   const {
     leads,
     orders,
-    installations,
+    showrooms,
+    showroomsError,
     feedback,
     addLead,
     updateLeadStage,
-    updateInstallationStatus,
     addFeedback,
   } = useERP();
 
   const [activeTab, setActiveTab] = useState<
-    "leads" | "orders" | "installations" | "feedback"
+    "leads" | "orders" | "showrooms" | "feedback"
   >("leads");
   const [orderSearch, setOrderSearch] = useState("");
 
@@ -62,6 +64,20 @@ export const SalesCRMModule: React.FC = () => {
           ),
       )
     : orders;
+
+  // Pagination
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [orderSearch, orders]);
+
+  const totalOrderPages = Math.ceil(filteredOrders.length / itemsPerPage);
+  const paginatedOrders = filteredOrders.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage,
+  );
 
   // New Lead Modal
   const [isLeadModalOpen, setIsLeadModalOpen] = useState(false);
@@ -99,6 +115,11 @@ export const SalesCRMModule: React.FC = () => {
   );
   const [feedbackRating, setFeedbackRating] = useState(5);
   const [feedbackReview, setFeedbackReview] = useState("");
+
+  // Order Details Modal
+  const [orderForDetails, setOrderForDetails] = useState<OrderDetails | null>(
+    null,
+  );
 
   const handleSaveLead = (e: React.FormEvent) => {
     e.preventDefault();
@@ -215,15 +236,14 @@ export const SalesCRMModule: React.FC = () => {
           {orders.length})
         </button>
         <button
-          onClick={() => setActiveTab("installations")}
+          onClick={() => setActiveTab("showrooms")}
           className={`pb-2.5 border-b-2 transition-all flex items-center gap-1.5 ${
-            activeTab === "installations"
+            activeTab === "showrooms"
               ? "border-amber-600 text-amber-800"
               : "border-transparent hover:text-stone-800"
           }`}
         >
-          <Wrench className="w-3.5 h-3.5" /> Site Installation Coordination (
-          {installations.length})
+          <Building className="w-3.5 h-3.5" /> Showroom Showcase ({showrooms.length})
         </button>
         <button
           onClick={() => setActiveTab("feedback")}
@@ -522,7 +542,7 @@ export const SalesCRMModule: React.FC = () => {
                     </td>
                   </tr>
                 )}
-                {filteredOrders.map((ord) => (
+                {paginatedOrders.map((ord) => (
                   <tr key={ord.id} className="hover:bg-stone-50">
                     <td className="py-3 px-4">
                       <div className="font-mono font-bold text-stone-900">
@@ -568,116 +588,208 @@ export const SalesCRMModule: React.FC = () => {
                       {formatDate(ord.targetDeliveryDate)}
                     </td>
 
-                    <td className="py-3 px-4 text-center">
-                      <span
-                        className={`inline-flex px-2 py-0.5 rounded text-[10px] font-semibold border ${getStatusColor(ord.status)}`}
-                      >
-                        {ord.status?.toUpperCase()}
-                      </span>
+                    <td className="py-3 px-4">
+                      <div className="flex items-center justify-center gap-1.5">
+                        <button
+                          type="button"
+                          onClick={() =>
+                            setOrderForDetails(ord as unknown as OrderDetails)
+                          }
+                          title="View order details"
+                          aria-label={`View details for order ${ord.id}`}
+                          className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-semibold border border-stone-200 bg-white text-stone-600 hover:bg-stone-100 hover:text-stone-900 transition-colors"
+                        >
+                          <Eye className="w-3 h-3" />
+                          Details
+                        </button>
+                        <span
+                          className={`inline-flex px-2 py-0.5 rounded text-[10px] font-semibold border ${getStatusColor(ord.status)}`}
+                        >
+                          {ord.status?.toUpperCase()}
+                        </span>
+                      </div>
                     </td>
                   </tr>
                 ))}
               </tbody>
             </table>
           </div>
+
+          {/* Pagination Controls */}
+          {filteredOrders.length > itemsPerPage && (
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 px-4 py-3 border-t border-stone-200 bg-stone-50">
+              <div className="text-xs text-stone-500">
+                Showing{" "}
+                <span className="font-medium text-stone-900">
+                  {(currentPage - 1) * itemsPerPage + 1}
+                </span>{" "}
+                to{" "}
+                <span className="font-medium text-stone-900">
+                  {Math.min(
+                    currentPage * itemsPerPage,
+                    filteredOrders.length,
+                  )}
+                </span>{" "}
+                of{" "}
+                <span className="font-medium text-stone-900">
+                  {filteredOrders.length}
+                </span>{" "}
+                results
+              </div>
+              <div className="flex items-center gap-1">
+                <button
+                  onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                  disabled={currentPage === 1}
+                  className="px-2.5 py-1.5 border border-stone-200 rounded-md text-xs font-medium bg-white text-stone-600 hover:bg-stone-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                >
+                  Previous
+                </button>
+                <div className="flex items-center gap-1 mx-2">
+                  {Array.from({ length: totalOrderPages }).map((_, i) => {
+                    if (
+                      totalOrderPages > 7 &&
+                      i !== 0 &&
+                      i !== totalOrderPages - 1 &&
+                      Math.abs(i + 1 - currentPage) > 1
+                    ) {
+                      if (
+                        i + 1 === currentPage - 2 ||
+                        i + 1 === currentPage + 2
+                      ) {
+                        return (
+                          <span
+                            key={i}
+                            className="text-stone-400 text-xs px-1"
+                          >
+                            ...
+                          </span>
+                        );
+                      }
+                      return null;
+                    }
+
+                    return (
+                      <button
+                        key={i}
+                        onClick={() => setCurrentPage(i + 1)}
+                        className={`w-7 h-7 flex items-center justify-center rounded-md text-xs font-medium transition-colors ${
+                          currentPage === i + 1
+                            ? "bg-amber-600 text-white"
+                            : "bg-white border border-stone-200 text-stone-600 hover:bg-stone-50"
+                        }`}
+                      >
+                        {i + 1}
+                      </button>
+                    );
+                  })}
+                </div>
+                <button
+                  onClick={() =>
+                    setCurrentPage((p) => Math.min(totalOrderPages, p + 1))
+                  }
+                  disabled={currentPage === totalOrderPages}
+                  className="px-2.5 py-1.5 border border-stone-200 rounded-md text-xs font-medium bg-white text-stone-600 hover:bg-stone-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                >
+                  Next
+                </button>
+              </div>
+            </div>
+          )}
         </div>
       )}
 
-      {/* TAB 3: SITE INSTALLATION COORDINATION */}
-      {activeTab === "installations" && (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-          {installations.map((inst) => (
-            <div
-              key={inst.id}
-              className="bg-white rounded-xl border border-stone-200 p-5 shadow-xs hover:border-amber-400 transition-colors space-y-3"
-            >
-              <div className="flex items-start justify-between">
-                <div>
-                  <span className="text-[10px] font-mono uppercase tracking-wider text-amber-800 bg-amber-50 px-2 py-0.5 rounded border border-amber-200">
-                    Order Ref: {inst.orderNumber}
-                  </span>
-                  <h4 className="font-serif font-bold text-stone-900 text-sm mt-1">
-                    {inst.clientName}
-                  </h4>
-                  <div className="text-xs text-stone-500">
-                    {inst.siteAddress}
+      {/* TAB 3: SHOWROOM SHOWCASE */}
+      {activeTab === "showrooms" && (
+        <div className="space-y-4">
+          <div className="flex items-center justify-between gap-3">
+            <p className="text-xs text-stone-500">
+              Curated showroom settings published to the public catalogue.
+            </p>
+            <span className="text-xs text-stone-500">
+              {showrooms.length} Showroom{showrooms.length === 1 ? "" : "s"}
+            </span>
+          </div>
+
+          {showroomsError && showrooms.length === 0 && (
+            <div className="flex flex-col items-center gap-2 py-10 text-center text-stone-400 bg-white rounded-xl border border-stone-200">
+              <Package className="w-8 h-8 text-stone-300" />
+              <span className="text-xs font-medium text-stone-500">
+                Showrooms could not be loaded.
+              </span>
+              <span className="text-[10px] max-w-xs">
+                The showroom endpoint requires an authenticated admin session.
+              </span>
+            </div>
+          )}
+
+          {!showroomsError && showrooms.length === 0 && (
+            <div className="flex flex-col items-center gap-2 py-10 text-center text-stone-400 bg-white rounded-xl border border-stone-200">
+              <Building className="w-8 h-8 text-stone-300" />
+              <span className="text-xs font-medium text-stone-500">
+                No showrooms published yet.
+              </span>
+              <span className="text-[10px] max-w-xs">
+                Showroom scenes created in the admin will appear here.
+              </span>
+            </div>
+          )}
+
+          {showrooms.length > 0 && (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {showrooms.map((room) => (
+                <div
+                  key={room.id}
+                  className="bg-white rounded-xl border border-stone-200 shadow-xs hover:border-amber-400 transition-colors overflow-hidden flex flex-col"
+                >
+                  <div className="aspect-video bg-stone-100 overflow-hidden relative">
+                    {room.image ? (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img
+                        src={room.image}
+                        alt={room.name}
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center">
+                        <ImageOff className="w-6 h-6 text-stone-300" />
+                      </div>
+                    )}
+                    <span className="absolute top-2 left-2 px-2 py-0.5 rounded text-[10px] font-semibold uppercase tracking-wider text-amber-800 bg-amber-50/95 border border-amber-200">
+                      {room.room}
+                    </span>
+                  </div>
+
+                  <div className="p-4 flex flex-col flex-1 gap-2">
+                    <h4 className="font-serif font-bold text-stone-900 text-sm">
+                      {room.name}
+                    </h4>
+                    <p className="text-xs text-stone-600 leading-relaxed">
+                      {room.description}
+                    </p>
+
+                    {room.piecesFeatured && room.piecesFeatured.length > 0 && (
+                      <div className="mt-auto pt-2 border-t border-stone-100">
+                        <span className="text-[10px] text-stone-400 uppercase font-bold block mb-1.5">
+                          Pieces Featured ({room.piecesFeatured.length})
+                        </span>
+                        <div className="flex flex-wrap gap-1.5">
+                          {room.piecesFeatured.map((piece) => (
+                            <span
+                              key={piece}
+                              className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-semibold border border-stone-200 bg-stone-50 text-stone-600"
+                            >
+                              <Package className="w-2.5 h-2.5 text-amber-700" />
+                              {piece}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                    )}
                   </div>
                 </div>
-
-                <span
-                  className={`px-2 py-0.5 rounded text-[10px] font-semibold border ${getStatusColor(inst.status)}`}
-                >
-                  {inst.status}
-                </span>
-              </div>
-
-              {/* Items description */}
-              <div className="text-xs text-stone-700 bg-stone-50 p-2.5 rounded-lg border border-stone-200">
-                <span className="text-[10px] text-stone-400 block uppercase font-bold">
-                  Scope / Items
-                </span>
-                {inst.itemsToInstall}
-              </div>
-
-              {/* Team & Site Checklist */}
-              <div className="grid grid-cols-2 gap-2 text-xs bg-stone-50 p-3 rounded-lg border border-stone-200">
-                <div>
-                  <span className="text-[10px] text-stone-400 block uppercase">
-                    Site Supervisor
-                  </span>
-                  <span className="font-medium text-stone-800">
-                    {inst.leadSupervisor}
-                  </span>
-                </div>
-                <div>
-                  <span className="text-[10px] text-stone-400 block uppercase">
-                    Scheduled Date
-                  </span>
-                  <span className="font-medium text-stone-800">
-                    {formatDate(inst.scheduledDate)}
-                  </span>
-                </div>
-                <div>
-                  <span className="text-[10px] text-stone-400 block uppercase">
-                    Installation Crew
-                  </span>
-                  <span className="text-stone-700">
-                    {inst.teamMembers.join(", ")}
-                  </span>
-                </div>
-                <div>
-                  <span className="text-[10px] text-stone-400 block uppercase">
-                    Checklist Verified
-                  </span>
-                  <span className="font-medium text-emerald-700">
-                    {inst.siteChecklistComplete
-                      ? "Passed (Walls & Floor Protected)"
-                      : "Pending"}
-                  </span>
-                </div>
-              </div>
-
-              {/* Snags & Status Update Button */}
-              <div className="pt-2 border-t border-stone-100 flex items-center justify-between">
-                <span className="text-[11px] text-stone-500">
-                  {inst.snagsReported
-                    ? `Snags: ${inst.snagsReported}`
-                    : "No snags reported"}
-                </span>
-                {inst.status !== "Completed & Approved" && (
-                  <button
-                    onClick={() =>
-                      updateInstallationStatus(inst.id, "Completed & Approved")
-                    }
-                    className="px-2.5 py-1 bg-stone-900 hover:bg-stone-800 text-white rounded text-[10px] font-semibold flex items-center gap-1"
-                  >
-                    <CheckCircle2 className="w-3 h-3 text-emerald-400" />
-                    Sign-off Handover
-                  </button>
-                )}
-              </div>
+              ))}
             </div>
-          ))}
+          )}
         </div>
       )}
 
@@ -1012,6 +1124,231 @@ export const SalesCRMModule: React.FC = () => {
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* MODAL: Order Details */}
+      {orderForDetails && (
+        <div
+          className="fixed inset-0 z-50 bg-stone-900/60 backdrop-blur-xs flex items-center justify-center p-4"
+          onClick={() => setOrderForDetails(null)}
+        >
+          <div
+            className="bg-white rounded-xl shadow-xl max-w-3xl w-full border border-stone-200 max-h-[90vh] flex flex-col"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-start justify-between gap-3 p-4 border-b border-stone-200">
+              <div className="min-w-0">
+                <h3 className="text-base font-serif font-bold text-stone-900">
+                  Order Details — {orderForDetails.orderNumber || orderForDetails.id}
+                </h3>
+                <p className="text-xs text-stone-500 mt-0.5 truncate">
+                  Placed {formatDate(orderForDetails.orderDate || orderForDetails.createdAt)}
+                  {" · "}
+                  {orderForDetails.customerName}
+                </p>
+              </div>
+              <div className="flex items-center gap-2 shrink-0">
+                <span
+                  className={`inline-flex px-2 py-0.5 rounded text-[10px] font-semibold border ${getStatusColor(orderForDetails.status)}`}
+                >
+                  {orderForDetails.status?.toUpperCase()}
+                </span>
+                <button
+                  type="button"
+                  onClick={() => setOrderForDetails(null)}
+                  title="Close"
+                  aria-label="Close order details"
+                  className="p-1 rounded text-stone-400 hover:text-stone-700 hover:bg-stone-100 transition-colors"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
+            </div>
+
+            <div className="p-4 overflow-y-auto space-y-5 text-xs">
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                {[
+                  { label: "Order #", value: orderForDetails.orderNumber || orderForDetails.id },
+                  { label: "Customer", value: orderForDetails.customerName },
+                  { label: "Phone", value: orderForDetails.customerPhone },
+                  { label: "Email", value: orderForDetails.customerEmail },
+                  {
+                    label: "Shipping Address",
+                    value: orderForDetails.deliveryAddress || orderForDetails.shippingAddress,
+                  },
+                  { label: "Order Value", value: formatCurrency(orderForDetails.totalAmount) },
+                  {
+                    label: "Advance Paid",
+                    value:
+                      orderForDetails.amountPaid != null
+                        ? formatCurrency(orderForDetails.amountPaid)
+                        : "—",
+                  },
+                  {
+                    label: "Target Delivery",
+                    value: formatDate(orderForDetails.targetDeliveryDate),
+                  },
+                ].map((field) => (
+                  <div key={field.label} className="min-w-0">
+                    <div className="text-[10px] uppercase tracking-wider font-semibold text-stone-400">
+                      {field.label}
+                    </div>
+                    <div className="text-stone-800 font-medium break-words">
+                      {field.value || "—"}
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              <div>
+                <h4 className="text-[10px] uppercase tracking-wider font-semibold text-stone-400 mb-2">
+                  Products ({orderForDetails.items.length})
+                </h4>
+
+                {orderForDetails.items.length === 0 ? (
+                  <div className="py-8 text-center text-stone-400 border border-dashed border-stone-200 rounded-lg">
+                    <Package className="w-7 h-7 mx-auto mb-1.5 text-stone-300" />
+                    <span className="text-xs font-medium text-stone-500">
+                      No products on this order.
+                    </span>
+                  </div>
+                ) : (
+                  <div className="space-y-2.5">
+                    {orderForDetails.items.map((item, idx) => {
+                      const product = item.product;
+                      const image = product?.images?.[0];
+                      const unitPrice = Number(product?.price ?? 0);
+
+                      return (
+                        <div
+                          key={`${product?.id ?? product?._id ?? item.sku ?? idx}-${idx}`}
+                          className="flex gap-3 p-3 border border-stone-200 rounded-lg bg-stone-50/50"
+                        >
+                          <div className="w-16 h-16 shrink-0 rounded-md border border-stone-200 bg-white overflow-hidden flex items-center justify-center">
+                            {image ? (
+                              // eslint-disable-next-line @next/next/no-img-element
+                              <img
+                                src={image}
+                                alt={product?.name || "Product image"}
+                                className="w-full h-full object-cover"
+                              />
+                            ) : (
+                              <ImageOff className="w-5 h-5 text-stone-300" />
+                            )}
+                          </div>
+
+                          <div className="flex-1 min-w-0 space-y-1.5">
+                            <div className="flex items-start justify-between gap-3">
+                              <div className="min-w-0">
+                                <div className="font-semibold text-stone-900">
+                                  {product?.name || item.name || "Unnamed product"}
+                                </div>
+                                <div className="text-[10px] text-stone-400 font-mono">
+                                  {product?.id || item.sku || "—"}
+                                </div>
+                              </div>
+                              <div className="text-right shrink-0 font-mono">
+                                <div className="font-bold text-stone-900">
+                                  {formatCurrency(unitPrice * item.quantity)}
+                                </div>
+                                <div className="text-[10px] text-stone-400">
+                                  {formatCurrency(unitPrice)} × {item.quantity}
+                                </div>
+                              </div>
+                            </div>
+
+                            {product?.description && (
+                              <p className="text-[11px] text-stone-600 leading-relaxed">
+                                {product.description}
+                              </p>
+                            )}
+
+                            <div className="flex flex-wrap items-center gap-1.5">
+                              {product?.category && (
+                                <span className="inline-flex px-1.5 py-0.5 rounded text-[10px] font-semibold border border-stone-200 bg-white text-stone-600">
+                                  {product.category}
+                                </span>
+                              )}
+                              {product?.room && (
+                                <span className="inline-flex px-1.5 py-0.5 rounded text-[10px] font-semibold border border-stone-200 bg-white text-stone-600">
+                                  {product.room}
+                                </span>
+                              )}
+                              {item.selectedColor && (
+                                <span className="inline-flex px-1.5 py-0.5 rounded text-[10px] font-semibold border border-stone-200 bg-white text-stone-600">
+                                  Color: {item.selectedColor}
+                                </span>
+                              )}
+                              {item.selectedMaterial && (
+                                <span className="inline-flex px-1.5 py-0.5 rounded text-[10px] font-semibold border border-stone-200 bg-white text-stone-600">
+                                  Material: {item.selectedMaterial}
+                                </span>
+                              )}
+                            </div>
+
+                            <div className="grid grid-cols-2 md:grid-cols-3 gap-x-4 gap-y-1 text-[10px] text-stone-500">
+                              {product?.dimensions && (
+                                <div>
+                                  <span className="text-stone-400">Dimensions: </span>
+                                  {product.dimensions}
+                                </div>
+                              )}
+                              {product?.warranty && (
+                                <div>
+                                  <span className="text-stone-400">Warranty: </span>
+                                  {product.warranty}
+                                </div>
+                              )}
+                              {product?.leadTime && (
+                                <div>
+                                  <span className="text-stone-400">Lead Time: </span>
+                                  {product.leadTime}
+                                </div>
+                              )}
+                              {product?.currentStock != null && (
+                                <div>
+                                  <span className="text-stone-400">Stock: </span>
+                                  {product.currentStock}
+                                </div>
+                              )}
+                            </div>
+
+                            {product?.longDescription && (
+                              <details className="text-[11px] text-stone-500">
+                                <summary className="cursor-pointer font-medium text-stone-600">
+                                  Full description
+                                </summary>
+                                <p className="mt-1 leading-relaxed">
+                                  {product.longDescription}
+                                </p>
+                              </details>
+                            )}
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
+            </div>
+
+            <div className="flex items-center justify-between gap-3 p-4 border-t border-stone-200 bg-stone-50 rounded-b-xl">
+              <div className="text-xs text-stone-500">
+                Order total{" "}
+                <span className="font-mono font-bold text-stone-900 text-sm">
+                  {formatCurrency(orderForDetails.totalAmount)}
+                </span>
+              </div>
+              <button
+                type="button"
+                onClick={() => setOrderForDetails(null)}
+                className="px-3 py-1.5 rounded-lg border border-stone-300 text-stone-600 hover:bg-stone-50"
+              >
+                Close
+              </button>
+            </div>
           </div>
         </div>
       )}

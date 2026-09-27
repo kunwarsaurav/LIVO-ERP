@@ -495,7 +495,7 @@ export const StockManagement: React.FC<StockManagementProps> = ({
                           </td>
 
                           <td className="py-3 px-3 text-stone-600">
-                            <div className="truncate max-w-[140px] font-medium">
+                            <div className="truncate max-w-35 font-medium">
                               {product.supplierName}
                             </div>
                             <div className="text-[10px] text-stone-500">

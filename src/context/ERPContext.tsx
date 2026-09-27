@@ -18,6 +18,7 @@ import {
   Lead,
   SalesOrder,
   InstallationTask,
+  Showroom,
   CustomerFeedback,
   PurchaseBill,
   CommissionRecord,
@@ -41,6 +42,8 @@ interface ERPContextType {
   leads: Lead[];
   orders: SalesOrder[];
   installations: InstallationTask[];
+  showrooms: Showroom[];
+  showroomsError: boolean;
   feedback: CustomerFeedback[];
 
   addProduct: (product: Omit<Product, 'id'>) => void;
@@ -78,6 +81,23 @@ interface ERPContextType {
 
 const ERPContext = createContext<ERPContextType | undefined>(undefined);
 
+// The only backend for leads is /inquiries, which persists `name`/`status` and has
+// no clientName/clientType/spaceSizeSqFt/budgetEst/stage columns. Normalize so every
+// consumer sees one Lead shape regardless of which endpoint served the row.
+const normalizeLead = (raw: Lead): Lead => {
+  const status = raw.stage ?? raw.status;
+  const clientName = raw.clientName ?? raw.name;
+  const total = raw.totalAmount ?? raw.productPrice;
+  return {
+    ...raw,
+    name: clientName,
+    clientName: clientName || 'Direct Inquiry',
+    stage: status,
+    status: status ?? 'pending',
+    budgetEst: raw.budgetEst ?? total ?? 0,
+  };
+};
+
 export const ERPProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const queryClient = useQueryClient();
 
@@ -99,19 +119,9 @@ export const ERPProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const { data: leadsResponse } = useQuery<Lead[] | { data?: Lead[] }>({
     queryKey: ['leads'],
     queryFn: async () => {
-      try {
-        const response = await api.get('/inquiries?limit=200');
-        const list = Array.isArray(response.data) ? response.data : response.data?.data ?? [];
-        if (list && list.length > 0) return list;
-      } catch (err) {
-        console.warn('Failed fetching /inquiries, falling back to /leads', err);
-      }
-      try {
-        const fallback = await api.get('/leads');
-        return Array.isArray(fallback.data) ? fallback.data : fallback.data?.data ?? [];
-      } catch {
-        return [];
-      }
+      const response = await api.get('/inquiries?limit=200');
+      const list = Array.isArray(response.data) ? response.data : response.data?.data ?? [];
+      return list.map(normalizeLead);
     },
   });
   const leads = Array.isArray(leadsResponse) ? leadsResponse : leadsResponse?.data ?? [];
@@ -124,6 +134,19 @@ export const ERPProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   });
   const orders = Array.isArray(ordersResponse) ? ordersResponse : ordersResponse?.data ?? [];
   const { data: installations = [] } = useQuery<InstallationTask[]>({ queryKey: ['installations'], queryFn: async () => (await api.get('/installations')).data });
+  // GET /showrooms is admin-gated (JWT cookie + redis session). Treat any failure
+  // as "no data" so the CRM module keeps rendering instead of throwing.
+  const { data: showrooms = [], isError: showroomsError } = useQuery<Showroom[]>({
+    queryKey: ['showrooms'],
+    queryFn: async () => {
+      try {
+        const response = await api.get('/showrooms?limit=200');
+        return Array.isArray(response.data) ? response.data : response.data?.data ?? [];
+      } catch {
+        return [];
+      }
+    },
+  });
   const { data: feedback = [] } = useQuery<CustomerFeedback[]>({ queryKey: ['feedback'], queryFn: async () => (await api.get('/feedback')).data });
 
   // Generic mutation creator
@@ -271,6 +294,8 @@ export const ERPProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         leads,
         orders,
         installations,
+        showrooms,
+        showroomsError,
         feedback,
         addProduct,
         updateProduct,

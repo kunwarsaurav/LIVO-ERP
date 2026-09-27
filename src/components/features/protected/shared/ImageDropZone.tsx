@@ -3,11 +3,11 @@
 import { ImagePlus, Link2, Loader2, Plus, UploadCloud, X } from "lucide-react";
 import * as React from "react";
 
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { useImageUpload } from "./useImageUpload";
 import type { ImageUploadError, ImageUploadResult } from "./image-type";
 import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 
 interface UploadedImageValue {
   url: string;
