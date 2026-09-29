@@ -1,12 +1,20 @@
 import { NextRequest, NextResponse } from "next/server";
 import { ZodError } from "zod";
 
-import MongoDB from "@/lib/mongodb";
-import { NotFoundError, UnauthorizedError, ValidationError } from "@/lib/errors";
-import { authenticateUser } from "@/middlewares/authenticateUser";
+import {
+  NotFoundError,
+  UnauthorizedError,
+  ValidationError,
+} from "@/lib/errors";
 
-import { UpdateInquiryStatusSchema } from "../inquirySchema";
+import { inquiryStatusUpdateSchema } from "@/lib/utils/schema";
 import { getInquiryById, updateInquiryStatus } from "../inquiry.service";
+
+
+
+/* ==========================================================================
+   POSTGRESQL ROUTE HANDLERS (USING RAW SQL SERVICE)
+   ========================================================================== */
 
 type Params = { params: Promise<{ id: string }> };
 
@@ -18,7 +26,6 @@ const validateInquiryId = (id: string): void => {
 
 export const GET = async (_request: NextRequest, { params }: Params) => {
   try {
-    await MongoDB();
     const { id } = await params;
     validateInquiryId(id);
     const inquiry = await getInquiryById(id);
@@ -51,15 +58,16 @@ export const GET = async (_request: NextRequest, { params }: Params) => {
 
 export const PATCH = async (_request: NextRequest, { params }: Params) => {
   try {
-    await MongoDB();
     const { id } = await params;
     validateInquiryId(id);
 
     const body = await _request.json();
-    const parsed = UpdateInquiryStatusSchema.safeParse(body);
+    const parsed = inquiryStatusUpdateSchema.safeParse(body);
     if (!parsed.success) {
       return NextResponse.json(
-        { message: parsed.error.issues.map((issue) => issue.message).join(", ") },
+        {
+          message: parsed.error.issues.map((issue) => issue.message).join(", "),
+        },
         { status: 400 },
       );
     }
@@ -70,15 +78,6 @@ export const PATCH = async (_request: NextRequest, { params }: Params) => {
       { status: 200 },
     );
   } catch (error) {
-    const mongoError = error as {
-      code?: number;
-    } | null;
-    if (mongoError?.code === 11000) {
-      return NextResponse.json(
-        { message: "An inquiry with this identifier already exists." },
-        { status: 409 },
-      );
-    }
     if (error instanceof ZodError) {
       return NextResponse.json(
         { message: error.issues.map((err) => err.message).join(", ") },

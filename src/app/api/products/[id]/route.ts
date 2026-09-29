@@ -1,14 +1,19 @@
 import { NextRequest, NextResponse } from "next/server";
 import { ZodError } from "zod";
 
-import MongoDB from "@/lib/mongodb";
 import {
   deleteProductById,
   getProductById,
   updateProductById,
 } from "../product.service";
-import { ProductSchema } from "@/lib/schema";
+import { productUpdateSchema } from "@/lib/utils/schema";
 import { ValidationError } from "@/lib/errors";
+
+
+
+/* ==========================================================================
+   POSTGRESQL ROUTE HANDLERS (USING RAW SQL SERVICE)
+   ========================================================================== */
 
 type Params = { params: Promise<{ id: string }> };
 
@@ -20,7 +25,6 @@ const validateProductId = (id: string): void => {
 
 export const GET = async (request: NextRequest, { params }: Params) => {
   try {
-    await MongoDB();
     const { id } = await params;
     validateProductId(id);
     const product = await getProductById(id);
@@ -58,12 +62,11 @@ const updateProduct = async (
   params: Promise<{ id: string }>,
 ) => {
   try {
-    await MongoDB();
     const { id } = await params;
     validateProductId(id);
 
     const body = await request.json();
-    const validatedData = ProductSchema.partial().safeParse(body);
+    const validatedData = productUpdateSchema.safeParse(body);
     if (!validatedData.success) {
       return NextResponse.json(
         { success: false, error: validatedData.error.message },
@@ -106,7 +109,6 @@ const updateProduct = async (
 
 export const DELETE = async (request: NextRequest, { params }: Params) => {
   try {
-    await MongoDB();
     const { id } = await params;
     validateProductId(id);
     const product = await getProductById(id);

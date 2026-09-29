@@ -7,7 +7,10 @@
     "dev": "next dev --webpack",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "db:init": "node scratch/init-pg.js",
+    "db:migrate": "node scripts/migrate-mongodb-to-postgres.mjs",
+    "db:migrate:dry": "node scripts/migrate-mongodb-to-postgres.mjs --dry-run"
   },
   "dependencies": {
     "@google/genai": "^2.4.0",
@@ -24,6 +27,7 @@
     "mongoose": "^9.10.2",
     "motion": "^12.23.24",
     "next": "^16.3.6",
+    "pg": "^8.23.0",
     "postcss": "^8.5.28",
     "qrcode.react": "^4.2.0",
     "react": "^19.3.0",
@@ -39,6 +43,7 @@
     "@types/express": "^4.17.21",
     "@types/jsonwebtoken": "^9.0.10",
     "@types/node": "^22.14.0",
+    "@types/pg": "^8.23.1",
     "@types/react": "^19.3.0",
     "@types/react-dom": "^19.3.0",
     "autoprefixer": "^10.4.21",

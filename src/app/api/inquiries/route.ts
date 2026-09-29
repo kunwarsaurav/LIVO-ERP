@@ -1,15 +1,18 @@
 import { NextRequest, NextResponse } from "next/server";
 
-import MongoDB from "@/lib/mongodb";
 import { NotFoundError, UnauthorizedError, ValidationError } from "@/lib/errors";
 import { pagination } from "@/lib/utils/pagination";
-import { authenticateUser } from "@/middlewares/authenticateUser";
 
 import { getAllInquiries } from "./inquiry.service";
 
+
+
+/* ==========================================================================
+   POSTGRESQL ROUTE HANDLER (USING RAW SQL SERVICE)
+   ========================================================================== */
+
 export const GET = async (request: NextRequest) => {
   try {
-    await MongoDB();
     const paginationParams = pagination(request);
     const search = request.nextUrl.searchParams.get("search") || "";
     const status = request.nextUrl.searchParams.get("status") || "";

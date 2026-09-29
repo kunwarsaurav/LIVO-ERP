@@ -1,5 +1,4 @@
 import { NextResponse, NextRequest } from "next/server";
-import MongoDB from "@/lib/mongodb";
 import {
   deleteImageById,
   getImageById,
@@ -12,12 +11,17 @@ import {
 } from "@/lib/errors";
 import { validateIdParams } from "@/lib/idParamsSchema";
 
+
+
+/* ==========================================================================
+   POSTGRESQL ROUTE HANDLERS (USING RAW SQL SERVICE)
+   ========================================================================== */
+
 export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> },
 ) {
   try {
-    await MongoDB();
     const { id } = await params;
     validateIdParams(id, "Image");
     const image = await getImageById(id);
@@ -42,7 +46,6 @@ export async function DELETE(
   { params }: { params: Promise<{ id: string }> },
 ) {
   try {
-    await MongoDB();
     const { id } = await params;
     validateIdParams(id, "Image");
     const image = await deleteImageById(id);
@@ -71,7 +74,6 @@ export async function PATCH(
   { params }: { params: Promise<{ id: string }> },
 ) {
   try {
-    await MongoDB();
     const { id } = await params;
     validateIdParams(id, "Image");
     const formData = await request.formData();
