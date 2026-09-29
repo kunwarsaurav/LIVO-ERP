@@ -9,6 +9,7 @@ import { QRCodeSVG } from 'qrcode.react';
 import { useERP } from '../../context/ERPContext';
 import { Product } from '../../types';
 import { formatCurrency } from '../../utils/formatters';
+import { ProductImage } from '../common/ProductImage';
 
 interface ProductTagSystemProps {
   initialSelectedProduct?: Product;
@@ -267,6 +268,15 @@ export const ProductTagSystem: React.FC<ProductTagSystemProps> = ({
                 </div>
               </div>
 
+              {/* Product Photo (images[0] -> image_url -> fallback) */}
+              <div className="mb-3 overflow-hidden rounded-lg border border-stone-200 bg-stone-50">
+                <ProductImage
+                  product={selectedProduct}
+                  alt={selectedProduct.name}
+                  className="w-full h-40 object-cover"
+                />
+              </div>
+
               {/* Brand & Product Name */}
               <div className="mb-3">
                 <div className="text-[10px] font-mono tracking-wider uppercase text-amber-900 font-bold">
@@ -434,6 +444,12 @@ export const ProductTagSystem: React.FC<ProductTagSystemProps> = ({
                       Haute Living Atelier
                     </div>
                   </div>
+
+                  <ProductImage
+                    product={p}
+                    alt={p.name}
+                    className="w-full h-24 object-cover rounded border border-stone-200"
+                  />
 
                   <div>
                     <div className="text-[9px] font-mono text-amber-900 font-bold">{p.brand}</div>

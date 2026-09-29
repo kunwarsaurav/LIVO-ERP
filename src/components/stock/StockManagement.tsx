@@ -23,7 +23,9 @@ import {
 } from 'lucide-react';
 import { useERP } from '../../context/ERPContext';
 import { Product, ProductCategory } from '../../types';
-import { formatCurrency, formatDate, getProductImage } from '../../utils/formatters';
+import { formatCurrency, formatDate } from '../../utils/formatters';
+import { getProductImages } from '../../utils/images';
+import { ProductImage } from '../common/ProductImage';
 import { PrintBarcodeModal } from './PrintBarcodeModal';
 import { ImageDropZone } from '../features/protected/shared/ImageDropZone';
 
@@ -407,18 +409,11 @@ export const StockManagement: React.FC<StockManagementProps> = ({
                         >
                           <td className="py-3 px-4">
                             <div className="flex items-center gap-3">
-                    {product.image?.[0] || (product as any).imageUrl ? (
-                      <img
-                        src={product.image?.[0] || (product as any).imageUrl}
-                                  alt={product.name}
-                                  className="w-11 h-11 rounded-lg object-cover border border-stone-200 shrink-0"
-                                  referrerPolicy="no-referrer"
-                                />
-                              ) : (
-                                <div className="w-11 h-11 rounded-lg bg-stone-100 border border-stone-200 flex items-center justify-center text-stone-400 shrink-0">
-                                  <Boxes className="w-5 h-5" />
-                                </div>
-                              )}
+                              <ProductImage
+                                product={product}
+                                alt={product.name}
+                                className="w-11 h-11 rounded-lg object-cover border border-stone-200 shrink-0"
+                              />
                               <div>
                                 <div className="font-semibold text-stone-900">
                                   {product.name}
@@ -1006,6 +1001,9 @@ const ProductFormModal: React.FC<ProductFormModalProps> = ({
   // Generate sequential barcode for new products: LIV-00001, LIV-00002, ...
   const nextBarcode = product?.barcode || `LIV-${String(productCount + 1).padStart(5, '0')}`;
 
+  // images[] -> image[] -> image_url -> imageUrl (never the placeholder)
+  const existingImages = getProductImages(product);
+
   const [formData, setFormData] = useState<Omit<Product, 'id'>>({
     sku: product?.sku || `LIV-SKU-${Date.now().toString().slice(-4)}`,
     name: product?.name || "",
@@ -1028,7 +1026,8 @@ const ProductFormModal: React.FC<ProductFormModalProps> = ({
     barcode: nextBarcode,
     warrantyYears: product?.warrantyYears || 5,
     description: product?.description || '',
-    image: product?.image || [],
+    images: existingImages,
+    imageUrl: existingImages[0] || '',
     featuredInCatalogue: product?.featuredInCatalogue ?? true,
     specifications: product?.specifications || [
       "High-grade bespoke manufacture",
@@ -1437,15 +1436,22 @@ const ProductFormModal: React.FC<ProductFormModalProps> = ({
 
           <div>
             <label className="block text-stone-700 font-medium mb-1">Product Image</label>
+            <p className="text-xs text-stone-500 mb-1.5">
+              Upload a file or paste an image URL. The first image is used as the
+              cover (<code>image_url</code>); all of them are saved in{' '}
+              <code>images</code>.
+            </p>
             <ImageDropZone
               mode="multiple"
-              value={formData.image.map((url) => ({ url }))}
-              onChange={(images) =>
+              value={(formData.images || []).map((url) => ({ url }))}
+              onChange={(images) => {
+                const urls = images.map((i) => i.url).filter(Boolean);
                 setFormData({
                   ...formData,
-                  image: images.map((i) => i.url).filter(Boolean),
-                })
-              }
+                  images: urls,
+                  imageUrl: urls[0] || '',
+                });
+              }}
             />
           </div>
 

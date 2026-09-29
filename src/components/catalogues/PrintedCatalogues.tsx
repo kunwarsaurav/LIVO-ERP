@@ -5,7 +5,6 @@ import {
   Download,
   Search,
   Filter,
-  Layers,
   Sparkles,
   ChevronRight,
   Plus,
@@ -14,7 +13,8 @@ import {
 } from 'lucide-react';
 import { useERP } from '../../context/ERPContext';
 import { Product, ProductCategory } from '../../types';
-import { formatCurrency, getProductImage } from '../../utils/formatters';
+import { formatCurrency } from '../../utils/formatters';
+import { ProductImage } from '../common/ProductImage';
 
 interface PrintedCataloguesProps {
   onSelectProductForTag?: (product: Product) => void;
@@ -183,21 +183,12 @@ export const PrintedCatalogues: React.FC<PrintedCataloguesProps> = ({
               <div>
                 {/* Photo showcase */}
                 <div className="relative h-64 w-full overflow-hidden bg-stone-100 flex items-center justify-center">
-                  {(() => {
-                        const imgSrc = getProductImage(p);
-                        return imgSrc ? (
-                          <img
-                            src={imgSrc}
-                            alt={p.name}
-                            className="w-12 h-12 object-cover rounded-md border border-stone-200 bg-stone-100"
-                            referrerPolicy="no-referrer"
-                          />
-                        ) : (
-                          <div className="w-12 h-12 rounded-md border border-stone-200 bg-stone-100 flex items-center justify-center text-stone-400">
-                            <Layers className="w-5 h-5" />
-                          </div>
-                        );
-                      })()}
+                  <ProductImage
+                    product={p}
+                    alt={p.name}
+                    className="w-full h-full object-cover"
+                  />
+
 
                   <div className="flex justify-between py-1">
                     <span className="text-stone-500">Warranty:</span>
@@ -259,18 +250,11 @@ export const PrintedCatalogues: React.FC<PrintedCataloguesProps> = ({
                 {filteredProducts.map((p) => (
                   <tr key={p.id} className="hover:bg-stone-50">
                     <td className="py-2.5 px-4">
-                      {p.image?.[0] || (p as any).imageUrl ? (
-                        <img
-                          src={p.image?.[0] || (p as any).imageUrl}
-                          alt={p.name}
-                          className="w-12 h-12 object-cover rounded-md border border-stone-200 bg-stone-100"
-                          referrerPolicy="no-referrer"
-                        />
-                      ) : (
-                        <div className="w-12 h-12 rounded-md border border-stone-200 bg-stone-100 flex items-center justify-center text-stone-400">
-                          <Layers className="w-5 h-5" />
-                        </div>
-                      )}
+                      <ProductImage
+                        product={p}
+                        alt={p.name}
+                        className="w-12 h-12 object-cover rounded-md border border-stone-200 bg-stone-100"
+                      />
                     </td>
                     <td className="py-2.5 px-3">
                       <span className="text-[10px] font-semibold px-2 py-0.5 rounded bg-stone-100 text-stone-700">
@@ -333,16 +317,11 @@ export const PrintedCatalogues: React.FC<PrintedCataloguesProps> = ({
                 className="bg-white rounded-xl border border-stone-300 p-6 shadow-sm space-y-4"
               >
                 <div className="h-56 w-full rounded-lg overflow-hidden bg-stone-100 flex items-center justify-center">
-                  {p.image?.[0] || (p as any).imageUrl ? (
-                    <img
-                      src={p.image?.[0] || (p as any).imageUrl}
-                      alt={p.name}
-                      className="w-full h-full object-cover"
-                      referrerPolicy="no-referrer"
-                    />
-                  ) : (
-                    <Layers className="w-12 h-12 text-stone-300" />
-                  )}
+                  <ProductImage
+                    product={p}
+                    alt={p.name}
+                    className="w-full h-full object-cover"
+                  />
                 </div>
 
                 <div className="border-b border-stone-200 pb-3">

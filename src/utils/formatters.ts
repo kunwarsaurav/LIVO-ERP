@@ -66,25 +66,3 @@ export function getStatusColor(status: string): string {
   }
 }
 
-/**
- * Returns the primary product image URL:
- * Checks image_url / imageUrl first if it has text;
- * if empty, checks image string[] or images string[].
- */
-export function getProductImage(product?: any): string {
-  if (!product) return '';
-  const singleUrl = product.image_url || product.imageUrl;
-  if (typeof singleUrl === 'string' && singleUrl.trim() !== '') {
-    return singleUrl.trim();
-  }
-  if (Array.isArray(product.image) && product.image.length > 0) {
-    const first = product.image.find((url: any) => typeof url === 'string' && url.trim() !== '');
-    if (first) return first.trim();
-  }
-  if (Array.isArray(product.images) && product.images.length > 0) {
-    const first = product.images.find((url: any) => typeof url === 'string' && url.trim() !== '');
-    if (first) return first.trim();
-  }
-  return '';
-}
-

@@ -5,14 +5,15 @@ import * as React from "react";
 
 import { useImageUpload } from "./useImageUpload";
 import type { ImageUploadError, ImageUploadResult } from "./image-type";
+import { PRODUCT_IMAGE_FALLBACK } from "@/utils/images";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
 interface UploadedImageValue {
   url: string;
-  imageId?: string;
-  _id?: string;
+  id?: string;
+  cloudinaryPublicId?: string;
 }
 
 interface ImageDropZoneProps {
@@ -271,6 +272,11 @@ export function ImageDropZone({
                 src={image.url}
                 alt={`Uploaded image ${index + 1}`}
                 className="aspect-square w-full object-cover"
+                referrerPolicy="no-referrer"
+                onError={(event) => {
+                  if (event.currentTarget.src.endsWith(PRODUCT_IMAGE_FALLBACK)) return;
+                  event.currentTarget.src = PRODUCT_IMAGE_FALLBACK;
+                }}
               />
               <span className="absolute top-2 left-2 rounded bg-black/60 px-2 py-0.5 text-[10px] font-medium text-white">
                 Image {index + 1}
@@ -283,9 +289,9 @@ export function ImageDropZone({
               >
                 <X className="size-4" />
               </button>
-              {image.imageId && (
+              {image.id && (
                 <span className="absolute bottom-2 left-2 max-w-[70%] truncate rounded bg-black/60 px-2 py-0.5 text-[10px] text-white">
-                  {image.imageId}
+                  {image.id}
                 </span>
               )}
             </div>

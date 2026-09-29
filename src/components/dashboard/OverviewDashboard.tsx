@@ -15,7 +15,8 @@ import {
   Building,
 } from 'lucide-react';
 import { useERP } from '../../context/ERPContext';
-import { formatCurrency, formatDate, getStatusColor, getProductImage } from '../../utils/formatters';
+import { formatCurrency, formatDate, getStatusColor } from '../../utils/formatters';
+import { ProductImage } from '../common/ProductImage';
 import { NavTab } from '../layout/Sidebar';
 
 interface OverviewDashboardProps {
@@ -197,18 +198,11 @@ export const OverviewDashboard: React.FC<OverviewDashboardProps> = ({ onNavigate
                 {lowStockItems.map((prod) => (
                   <div key={prod.id} className="p-4 flex items-center justify-between gap-4 hover:bg-stone-50 transition-colors">
                     <div className="flex items-center gap-3">
-                      {prod.image?.[0] || (prod as any).imageUrl ? (
-                        <img
-                          src={prod.image?.[0] || (prod as any).imageUrl}
-                          alt={prod.name}
-                          className="w-12 h-12 rounded-lg object-cover border border-stone-200 shrink-0"
-                          referrerPolicy="no-referrer"
-                        />
-                      ) : (
-                        <div className="w-12 h-12 rounded-lg bg-stone-100 border border-stone-200 flex items-center justify-center text-stone-400 shrink-0">
-                          <Boxes className="w-5 h-5" />
-                        </div>
-                      )}
+                      <ProductImage
+                        product={prod}
+                        alt={prod.name}
+                        className="w-12 h-12 rounded-lg object-cover border border-stone-200 shrink-0"
+                      />
                       <div>
                         <div className="flex items-center gap-2">
                           <span className="text-xs font-mono font-medium text-amber-700 bg-amber-50 px-1.5 py-0.5 rounded border border-amber-200">
