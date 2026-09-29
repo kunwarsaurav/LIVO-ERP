@@ -12,3 +12,13 @@ cache
 .next/
 out/
 .vercel/
+
+# Local MongoDB backend snapshot — never commit (may hold live credentials)
+/backend-backup/
+
+# MongoDB to PostgreSQL migration files
+MONGODB_TO_POSTGRES_MIGRATION_REPORT.md
+migrate-model.js
+migrate.js
+scratch/
+scripts/

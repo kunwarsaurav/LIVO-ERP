@@ -1,9 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { ZodError } from "zod";
 
-import MongoDB from "@/lib/mongodb";
 import { pagination } from "@/lib/utils/pagination";
-import { ShowroomSchema, CreateShowroomInput } from "@/lib/schema";
+import { showroomSchema } from "@/lib/utils/schema";
 import { createShowroom, getAllShowrooms } from "./showroom.service";
 import { authenticateUser } from "@/middlewares/authenticateUser";
 import {
@@ -12,12 +11,15 @@ import {
   ValidationError,
 } from "@/lib/errors";
 
+/* ==========================================================================
+   POSTGRESQL ROUTE HANDLERS (USING RAW SQL SERVICE)
+   ========================================================================== */
+
 export const POST = async (request: NextRequest) => {
   try {
     await authenticateUser(request, ["admin"]);
-    await MongoDB();
     const body = await request.json();
-    const validatedBody = ShowroomSchema.parse(body);
+    const validatedBody = showroomSchema.parse(body);
 
     const id =
       validatedBody.id?.trim() ||
@@ -28,26 +30,22 @@ export const POST = async (request: NextRequest) => {
         "-" +
         Date.now().toString().slice(-4);
 
-    const newShowroomData: CreateShowroomInput = {
+    const showroom = await createShowroom({
       ...validatedBody,
       id,
-    };
+    });
 
-    const showroom = await createShowroom(newShowroomData);
     return NextResponse.json(
       { message: "Showroom created successfully", data: showroom },
       { status: 201 },
     );
   } catch (error) {
-    const mongoError = error as {
-      code?: number;
-      keyValue?: Record<string, string>;
-    } | null;
-    if (mongoError?.code === 11000) {
-      const duplicatedField = Object.keys(mongoError.keyValue ?? {})[0];
+    const pgError = error as { code?: string; detail?: string } | null;
+    if (pgError?.code === "23505") {
       return NextResponse.json(
         {
-          message: `A showroom with this ${duplicatedField} already exists.`,
+          message:
+            pgError.detail || "A showroom with this identifier already exists.",
         },
         { status: 409 },
       );
@@ -76,9 +74,6 @@ export const POST = async (request: NextRequest) => {
 
 export const GET = async (request: NextRequest) => {
   try {
-    await MongoDB();
-    // NOTE: Auth temporarily disabled so the ERP dashboard can read showrooms.
-    // Re-enable with: await authenticateUser(request, ["admin"]);
     const paginationParams = pagination(request);
     const search = request.nextUrl.searchParams.get("search") || "";
     const room = request.nextUrl.searchParams.get("room") || "";

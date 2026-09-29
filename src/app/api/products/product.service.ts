@@ -1,107 +1,155 @@
-import { ProductModel, IProductDocument } from "./product.model";
-import { CreateProductInput } from "@/lib/schema";
-import mongoose from "mongoose";
+import { db } from "@/utils/lib/database";
+import {
+  PRODUCT_TABLE,
+  productInputToRow,
+  productRowToEntity,
+  productUpdateToRow,
+} from "@/lib/utils/schema";
+import type {
+  CreateProductInput,
+  Product,
+  ProductRow,
+  UpdateProductInput,
+} from "@/lib/utils/types";
 
-const productFilter = (id: string) =>
-  mongoose.isValidObjectId(id) ? { $or: [{ id }, { _id: id }] } : { id };
 
-export const createProduct = async (product: CreateProductInput) => {
-  // Map ERP fields to Website-compatible fields automatically
-  const mappedProduct = {
-    ...product,
-    price: product.sellingPrice,
-    originalPrice: product.mrp,
-    images: product.imageUrl ? [product.imageUrl] : [],
-    dimensions: product.sizeDimensions || "",
-    inStock: (product.currentStock || 0) > 0,
-    room: product.room || "All Spaces",
-    id: product.sku || product.id,
-    warranty: product.warrantyYears ? `${product.warrantyYears} Years` : undefined,
-    colors: product.colorFinish ? [`${product.colorFinish}|#000000`] : [],
-    materials: product.material ? [product.material] : [],
-    features: product.specifications || [],
-    reservedStock: 0,
-  };
-  
-  return ProductModel.create(mappedProduct as unknown as IProductDocument);
+
+/* ==========================================================================
+   POSTGRESQL RAW SQL IMPLEMENTATION (WITHOUT ORM)
+   ========================================================================== */
+
+/**
+ * Inserts a new product into PostgreSQL using raw SQL.
+ */
+export const createProduct = async (
+  productInput: CreateProductInput,
+): Promise<Product> => {
+  const row = productInputToRow(productInput);
+  const keys = Object.keys(row);
+  const columns = keys.map((key) => `"${key}"`).join(", ");
+  const placeholders = keys.map((_, index) => `$${index + 1}`).join(", ");
+  const values = Object.values(row);
+
+  const query = `
+    INSERT INTO "${PRODUCT_TABLE}" (${columns})
+    VALUES (${placeholders})
+    RETURNING *;
+  `;
+
+  const result = await db.query<ProductRow>(query, values);
+  return productRowToEntity(result.rows[0]);
 };
 
-export const getAllProducts = async (search?: string) => {
-  const filter = search
-    ? {
-        $or: [
-          { name: { $regex: search, $options: "i" } },
-          { sku: { $regex: search, $options: "i" } },
-          { brand: { $regex: search, $options: "i" } },
-        ],
-      }
-    : {};
-  const products = await ProductModel.find(filter).sort({ createdAt: -1 }).lean();
-  
-  // Map Website fields backwards into ERP fields so website-added products show up properly in the ERP
-  return products.map(p => ({
-    ...p,
-    sellingPrice: p.sellingPrice || p.price || 0,
-    mrp: p.mrp || p.originalPrice || 0,
-    imageUrl: p.imageUrl || (p.images && p.images.length > 0 ? p.images[0] : ""),
-    sizeDimensions: p.sizeDimensions || p.dimensions || "",
-    currentStock: p.currentStock !== undefined ? p.currentStock : (p.inStock ? 5 : 0),
-    sku: p.sku || p.id || p._id?.toString(),
-    barcode: p.barcode || p.sku || p.id || p._id?.toString()
-  }));
+/**
+ * Retrieves all products with optional case-insensitive search using raw SQL.
+ */
+export const getAllProducts = async (search?: string): Promise<Product[]> => {
+  let query = `SELECT * FROM "${PRODUCT_TABLE}"`;
+  const values: unknown[] = [];
+
+  if (search && search.trim()) {
+    values.push(`%${search.trim()}%`);
+    query += `
+      WHERE "name" ILIKE $1
+         OR "sku" ILIKE $1
+         OR "brand" ILIKE $1
+         OR "category" ILIKE $1
+    `;
+  }
+
+  query += ` ORDER BY "created_at" DESC;`;
+
+  const result = await db.query<ProductRow>(query, values);
+  return result.rows.map(productRowToEntity);
 };
 
-export const getProductById = async (id: string) => {
-  const p = await ProductModel.findOne(productFilter(id)).lean();
-  if (!p) return null;
-  return {
-    ...p,
-    sellingPrice: p.sellingPrice || p.price || 0,
-    mrp: p.mrp || p.originalPrice || 0,
-    imageUrl: p.imageUrl || (p.images && p.images.length > 0 ? p.images[0] : ""),
-    sizeDimensions: p.sizeDimensions || p.dimensions || "",
-    currentStock: p.currentStock !== undefined ? p.currentStock : (p.inStock ? 5 : 0),
-    sku: p.sku || p.id || p._id?.toString(),
-    barcode: p.barcode || p.sku || p.id || p._id?.toString()
-  };
+/**
+ * Retrieves a product by ID or legacyMongoId using raw SQL.
+ */
+export const getProductById = async (id: string): Promise<Product | null> => {
+  const query = `
+    SELECT * FROM "${PRODUCT_TABLE}"
+    WHERE "id" = $1 OR "legacy_mongo_id" = $1
+    LIMIT 1;
+  `;
+
+  const result = await db.query<ProductRow>(query, [id]);
+  if (result.rows.length === 0) return null;
+
+  return productRowToEntity(result.rows[0]);
 };
 
+/**
+ * Updates a product by ID using raw SQL parameterization.
+ */
 export const updateProductById = async (
   id: string,
-  validatedData: Partial<CreateProductInput>,
-) => {
-  // Map ERP fields to Website-compatible fields during updates too
-  const mappedUpdate: any = { ...validatedData };
-  if (validatedData.sellingPrice !== undefined) mappedUpdate.price = validatedData.sellingPrice;
-  if (validatedData.mrp !== undefined) mappedUpdate.originalPrice = validatedData.mrp;
-  if (validatedData.imageUrl !== undefined) mappedUpdate.images = validatedData.imageUrl ? [validatedData.imageUrl] : [];
-  if (validatedData.sizeDimensions !== undefined) mappedUpdate.dimensions = validatedData.sizeDimensions;
-  if (validatedData.currentStock !== undefined) mappedUpdate.inStock = validatedData.currentStock > 0;
-  if (validatedData.room !== undefined) mappedUpdate.room = validatedData.room;
-  if (validatedData.sku !== undefined) mappedUpdate.id = validatedData.sku;
-  if (validatedData.warrantyYears !== undefined) mappedUpdate.warranty = validatedData.warrantyYears ? `${validatedData.warrantyYears} Years` : undefined;
-  if (validatedData.colorFinish !== undefined) mappedUpdate.colors = validatedData.colorFinish ? [`${validatedData.colorFinish}|#000000`] : [];
-  if (validatedData.material !== undefined) mappedUpdate.materials = validatedData.material ? [validatedData.material] : [];
-  if (validatedData.specifications !== undefined) mappedUpdate.features = validatedData.specifications || [];
+  validatedData: UpdateProductInput,
+): Promise<Product | null> => {
+  const row = productUpdateToRow(validatedData);
+  const keys = Object.keys(row);
 
-  return ProductModel.findOneAndUpdate(productFilter(id), mappedUpdate, {
-    returnDocument: "after",
-    runValidators: true,
-  });
+  if (keys.length === 0) {
+    return getProductById(id);
+  }
+
+  const setClauses = keys.map((key, index) => `"${key}" = $${index + 1}`);
+  const values = Object.values(row);
+
+  // Add updatedAt timestamp
+  setClauses.push(`"updated_at" = NOW()`);
+
+  // Target identifier parameter
+  const idPlaceholderIndex = values.length + 1;
+  values.push(id);
+
+  const query = `
+    UPDATE "${PRODUCT_TABLE}"
+    SET ${setClauses.join(", ")}
+    WHERE "id" = $${idPlaceholderIndex} OR "legacy_mongo_id" = $${idPlaceholderIndex}
+    RETURNING *;
+  `;
+
+  const result = await db.query<ProductRow>(query, values);
+  if (result.rows.length === 0) return null;
+
+  return productRowToEntity(result.rows[0]);
 };
 
-export const deleteProductById = async (id: string) => {
-  return ProductModel.findOneAndDelete(productFilter(id));
+/**
+ * Deletes a product by ID or legacyMongoId using raw SQL.
+ */
+export const deleteProductById = async (
+  id: string,
+): Promise<Product | null> => {
+  const query = `
+    DELETE FROM "${PRODUCT_TABLE}"
+    WHERE "id" = $1 OR "legacy_mongo_id" = $1
+    RETURNING *;
+  `;
+
+  const result = await db.query<ProductRow>(query, [id]);
+  if (result.rows.length === 0) return null;
+
+  return productRowToEntity(result.rows[0]);
 };
 
+/**
+ * Validates whether all given product IDs exist in PostgreSQL using raw SQL.
+ */
 export const validateProductsByIds = async (
   ids: string[],
 ): Promise<boolean> => {
   const uniqueIds = Array.from(new Set(ids));
-  const foundProducts = await ProductModel.countDocuments({
-    $or: [{ id: { $in: uniqueIds } }, { _id: { $in: uniqueIds } }],
-  });
-  return uniqueIds.length === foundProducts;
-};
+  if (uniqueIds.length === 0) return true;
 
-export type { IProductDocument };
+  const query = `
+    SELECT COUNT(DISTINCT "id") as count
+    FROM "${PRODUCT_TABLE}"
+    WHERE "id" = ANY($1::text[]) OR "legacy_mongo_id" = ANY($1::text[]);
+  `;
+
+  const result = await db.query<{ count: string }>(query, [uniqueIds]);
+  const count = parseInt(result.rows[0]?.count || "0", 10);
+  return count === uniqueIds.length;
+};

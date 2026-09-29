@@ -1,15 +1,17 @@
 import { NextRequest, NextResponse } from "next/server";
 import { ZodError } from "zod";
-import MongoDB from "@/lib/mongodb";
 import { getAllImages, uploadImage } from "./image.service";
 import {
-  NotFoundError,
   ValidationError,
 } from "@/lib/errors";
 
+
+/* ==========================================================================
+   POSTGRESQL ROUTE HANDLERS (USING RAW SQL SERVICE)
+   ========================================================================== */
+
 export const POST = async (request: NextRequest) => {
   try {
-    await MongoDB();
     const formData = await request.formData();
     const file = formData.get("file") as File;
 
@@ -27,7 +29,7 @@ export const POST = async (request: NextRequest) => {
       { status: 201 },
     );
   } catch (error) {
-    console.log("error 500", error);
+    console.error("Image upload error:", error);
     if (error instanceof ValidationError) {
       return NextResponse.json({ message: error.message }, { status: 400 });
     }
@@ -50,12 +52,11 @@ export const POST = async (request: NextRequest) => {
 
 export const GET = async () => {
   try {
-    await MongoDB();
-    const image = await getAllImages();
+    const images = await getAllImages();
     return NextResponse.json(
       {
         message: "Images Fetched Successfully",
-        data: image,
+        data: images,
       },
       { status: 200 },
     );

@@ -1,8 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { ZodError } from "zod";
 
-import MongoDB from "@/lib/mongodb";
-import { ShowroomSchema } from "@/lib/schema";
+import { showroomSchema } from "@/lib/utils/schema";
 import {
   deleteShowroomById,
   getShowroomById,
@@ -10,6 +9,12 @@ import {
 } from "../showroom.service";
 import { authenticateUser } from "@/middlewares/authenticateUser";
 import { UnauthorizedError, ValidationError } from "@/lib/errors";
+
+
+
+/* ==========================================================================
+   POSTGRESQL ROUTE HANDLERS (USING RAW SQL SERVICE)
+   ========================================================================== */
 
 type Params = { params: Promise<{ id: string }> };
 
@@ -21,7 +26,6 @@ export const validateShowroomId = (id: string): void => {
 
 export const GET = async (request: NextRequest, { params }: Params) => {
   try {
-    await MongoDB();
     await authenticateUser(request, ["admin"]);
     const { id } = await params;
     validateShowroomId(id);
@@ -52,12 +56,11 @@ export const GET = async (request: NextRequest, { params }: Params) => {
 
 export const PATCH = async (request: NextRequest, { params }: Params) => {
   try {
-    await MongoDB();
     await authenticateUser(request, ["admin"]);
     const { id } = await params;
     validateShowroomId(id);
     const body = await request.json();
-    const validatedData = ShowroomSchema.partial().safeParse(body);
+    const validatedData = showroomSchema.partial().safeParse(body);
     if (!validatedData.success) {
       return NextResponse.json(
         { success: false, error: validatedData.error.message },
@@ -103,7 +106,6 @@ export const PATCH = async (request: NextRequest, { params }: Params) => {
 
 export const DELETE = async (request: NextRequest, { params }: Params) => {
   try {
-    await MongoDB();
     await authenticateUser(request, ["admin"]);
     const { id } = await params;
     validateShowroomId(id);

@@ -1,38 +1,33 @@
 import { NextRequest, NextResponse } from "next/server";
 import { ZodError } from "zod";
 import { createProduct, getAllProducts } from "./product.service";
-import MongoDB from "@/lib/mongodb";
-import { CreateProductInput, ProductSchema } from "@/lib/schema";
+import { productSchema } from "@/lib/utils/schema";
 import { ValidationError } from "@/lib/errors";
+
+
+
+/* ==========================================================================
+   POSTGRESQL ROUTE HANDLERS (USING RAW SQL SERVICE)
+   ========================================================================== */
 
 export const POST = async (request: NextRequest) => {
   try {
-    await MongoDB();
     const body = await request.json();
-    const validatedBody = ProductSchema.parse(body);
-    // Generate unique ID if not supplied
-    const id = validatedBody.id?.trim() || `prod-${Date.now()}`;
+    const validatedBody = productSchema.parse(body);
 
-    const newProductData: CreateProductInput = {
-      ...validatedBody,
-      id,
-    };
-
-    const product = await createProduct(newProductData);
+    const product = await createProduct(validatedBody);
     return NextResponse.json(
       { message: "Product created successfully", data: product },
       { status: 201 },
     );
   } catch (error) {
-    const mongoError = error as {
-      code?: number;
-      keyValue?: Record<string, string>;
-    } | null;
-    if (mongoError?.code === 11000) {
-      const duplicatedField = Object.keys(mongoError.keyValue ?? {})[0];
+    const pgError = error as { code?: string; detail?: string } | null;
+    // PostgreSQL 23505 = unique_violation
+    if (pgError?.code === "23505") {
       return NextResponse.json(
         {
-          message: `A product with this ${duplicatedField} already exists.`,
+          message:
+            pgError.detail || "A product with this identifier already exists.",
         },
         { status: 409 },
       );
@@ -58,7 +53,6 @@ export const POST = async (request: NextRequest) => {
 
 export const GET = async (request: NextRequest) => {
   try {
-    await MongoDB();
     const search = request.nextUrl.searchParams.get("search") || "";
     const data = await getAllProducts(search);
     return NextResponse.json(data, { status: 200 });

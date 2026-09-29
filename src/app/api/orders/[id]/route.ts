@@ -1,11 +1,16 @@
 import { NextRequest, NextResponse } from "next/server";
 import { ZodError } from "zod";
 
-import MongoDB from "@/lib/mongodb";
 import { NotFoundError, ValidationError } from "@/lib/errors";
 
-import { UpdateOrderStatusSchema } from "../orderSchema";
+import { orderStatusUpdateSchema } from "@/lib/utils/schema";
 import { getOrderById, updateOrderStatus } from "../order.service";
+
+
+
+/* ==========================================================================
+   POSTGRESQL ROUTE HANDLERS (USING RAW SQL SERVICE)
+   ========================================================================== */
 
 type Params = { params: Promise<{ id: string }> };
 
@@ -17,15 +22,11 @@ const validateOrderId = (id: string): void => {
 
 export const GET = async (_request: NextRequest, { params }: Params) => {
   try {
-    await MongoDB();
     const { id } = await params;
     validateOrderId(id);
     const order = await getOrderById(id);
     if (!order) {
-      return NextResponse.json(
-        { message: "Order not found" },
-        { status: 404 },
-      );
+      return NextResponse.json({ message: "Order not found" }, { status: 404 });
     }
     return NextResponse.json(
       { message: "Order fetched successfully", data: order },
@@ -47,15 +48,16 @@ export const GET = async (_request: NextRequest, { params }: Params) => {
 
 export const PATCH = async (_request: NextRequest, { params }: Params) => {
   try {
-    await MongoDB();
     const { id } = await params;
     validateOrderId(id);
 
     const body = await _request.json();
-    const parsed = UpdateOrderStatusSchema.safeParse(body);
+    const parsed = orderStatusUpdateSchema.safeParse(body);
     if (!parsed.success) {
       return NextResponse.json(
-        { message: parsed.error.issues.map((issue) => issue.message).join(", ") },
+        {
+          message: parsed.error.issues.map((issue) => issue.message).join(", "),
+        },
         { status: 400 },
       );
     }
@@ -66,15 +68,6 @@ export const PATCH = async (_request: NextRequest, { params }: Params) => {
       { status: 200 },
     );
   } catch (error) {
-    const mongoError = error as {
-      code?: number;
-    } | null;
-    if (mongoError?.code === 11000) {
-      return NextResponse.json(
-        { message: "An order with this identifier already exists." },
-        { status: 409 },
-      );
-    }
     if (error instanceof ZodError) {
       return NextResponse.json(
         { message: error.issues.map((err) => err.message).join(", ") },
