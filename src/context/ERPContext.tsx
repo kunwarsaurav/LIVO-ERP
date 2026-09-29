@@ -18,6 +18,7 @@ import {
   Lead,
   SalesOrder,
   InstallationTask,
+  Showroom,
   CustomerFeedback,
   PurchaseBill,
   CommissionRecord,
@@ -41,6 +42,8 @@ interface ERPContextType {
   leads: Lead[];
   orders: SalesOrder[];
   installations: InstallationTask[];
+  showrooms: Showroom[];
+  showroomsError: boolean;
   feedback: CustomerFeedback[];
 
   addProduct: (product: Omit<Product, 'id'>) => void;
@@ -62,7 +65,7 @@ interface ERPContextType {
   updateCommissionStatus: (id: string, status: CommissionRecord['status']) => void;
   addLead: (lead: Omit<Lead, 'id' | 'leadNumber' | 'createdAt'>) => void;
   updateLeadStage: (id: string, stage: Lead['stage']) => void;
-  updateOrderStatus: (id: string, status: SalesOrder['productionStatus']) => void;
+  // updateOrderStatus: (id: string, status: SalesOrder['productionStatus']) => void;
   updateInstallationStatus: (id: string, status: InstallationTask['status'], snags?: string) => void;
   addFeedback: (fb: Omit<CustomerFeedback, 'id' | 'completionDate'>) => void;
   addSupplier: (sup: Omit<Supplier, 'id'>) => void;
@@ -77,6 +80,23 @@ interface ERPContextType {
 }
 
 const ERPContext = createContext<ERPContextType | undefined>(undefined);
+
+// The only backend for leads is /inquiries, which persists `name`/`status` and has
+// no clientName/clientType/spaceSizeSqFt/budgetEst/stage columns. Normalize so every
+// consumer sees one Lead shape regardless of which endpoint served the row.
+const normalizeLead = (raw: Lead): Lead => {
+  const status = raw.stage ?? raw.status;
+  const clientName = raw.clientName ?? raw.name;
+  const total = raw.totalAmount ?? raw.productPrice;
+  return {
+    ...raw,
+    name: clientName,
+    clientName: clientName || 'Direct Inquiry',
+    stage: status,
+    status: status ?? 'pending',
+    budgetEst: raw.budgetEst ?? total ?? 0,
+  };
+};
 
 export const ERPProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const queryClient = useQueryClient();
@@ -96,9 +116,37 @@ export const ERPProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const { data: attendance = [] } = useQuery<AttendanceRecord[]>({ queryKey: ['attendance'], queryFn: async () => (await api.get('/attendance')).data });
   const { data: payroll = [] } = useQuery<PayrollRecord[]>({ queryKey: ['payroll'], queryFn: async () => (await api.get('/payroll')).data });
   const { data: commissions = [] } = useQuery<CommissionRecord[]>({ queryKey: ['commissions'], queryFn: async () => (await api.get('/commissions')).data });
-  const { data: leads = [] } = useQuery<Lead[]>({ queryKey: ['leads'], queryFn: async () => (await api.get('/leads')).data });
-  const { data: orders = [] } = useQuery<SalesOrder[]>({ queryKey: ['orders'], queryFn: async () => (await api.get('/orders')).data });
+  const { data: leadsResponse } = useQuery<Lead[] | { data?: Lead[] }>({
+    queryKey: ['leads'],
+    queryFn: async () => {
+      const response = await api.get('/inquiries?limit=200');
+      const list = Array.isArray(response.data) ? response.data : response.data?.data ?? [];
+      return list.map(normalizeLead);
+    },
+  });
+  const leads = Array.isArray(leadsResponse) ? leadsResponse : leadsResponse?.data ?? [];
+  const { data: ordersResponse } = useQuery<SalesOrder[] | { data?: SalesOrder[] }>({
+    queryKey: ['orders'],
+    queryFn: async () => {
+      const response = await api.get('/orders?limit=200');
+      return Array.isArray(response.data) ? response.data : response.data?.data ?? [];
+    },
+  });
+  const orders = Array.isArray(ordersResponse) ? ordersResponse : ordersResponse?.data ?? [];
   const { data: installations = [] } = useQuery<InstallationTask[]>({ queryKey: ['installations'], queryFn: async () => (await api.get('/installations')).data });
+  // GET /showrooms is admin-gated (JWT cookie + redis session). Treat any failure
+  // as "no data" so the CRM module keeps rendering instead of throwing.
+  const { data: showrooms = [], isError: showroomsError } = useQuery<Showroom[]>({
+    queryKey: ['showrooms'],
+    queryFn: async () => {
+      try {
+        const response = await api.get('/showrooms?limit=200');
+        return Array.isArray(response.data) ? response.data : response.data?.data ?? [];
+      } catch {
+        return [];
+      }
+    },
+  });
   const { data: feedback = [] } = useQuery<CustomerFeedback[]>({ queryKey: ['feedback'], queryFn: async () => (await api.get('/feedback')).data });
 
   // Generic mutation creator
@@ -122,7 +170,7 @@ export const ERPProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const addQuotationMut = createMutation('/quotations', 'quotations');
   const updateQuotationMut = createMutation('/quotations', 'quotations', 'put');
   const convertQuoteMut = useMutation({
-    mutationFn: async (quoteId: string) => (await api.post(`/quotations/${quoteId}/convert`)).data,
+    mutationFn: async (quoteId: string) => (await api.post(`/quotations/${quoteId}/convert`,{})).data,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['quotations'] });
       queryClient.invalidateQueries({ queryKey: ['orders'] });
@@ -158,8 +206,22 @@ export const ERPProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   });
   const addLeadMut = createMutation('/leads', 'leads');
   const updateLeadStageMut = useMutation({
-    mutationFn: async ({ id, stage }: { id: string, stage: string }) => (await api.put(`/leads/${id}/stage`, { stage })).data,
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['leads'] })
+    mutationFn: async ({ id, stage }: { id: string, stage: string }) => {
+      const normStatus = stage.toLowerCase();
+      try {
+        return (await api.patch(`/inquiries/${id}`, { status: normStatus })).data;
+      } catch {
+        try {
+          return (await api.put(`/leads/${id}/stage`, { stage })).data;
+        } catch {
+          return (await api.put(`/inquiries/${id}`, { status: normStatus })).data;
+        }
+      }
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['leads'] });
+      queryClient.invalidateQueries({ queryKey: ['inquiries'] });
+    }
   });
   const updateOrderStatusMut = useMutation({
     mutationFn: async ({ id, status }: { id: string, status: string }) => (await api.put(`/orders/${id}/status`, { status })).data,
@@ -174,7 +236,7 @@ export const ERPProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const addDeliveryMut = createMutation('/deliveries', 'deliveries');
 
   const resetAllDataMut = useMutation({
-    mutationFn: async () => (await api.post('/system/reset')).data,
+    mutationFn: async () => (await api.post('/system/reset',{})).data,
     onSuccess: () => queryClient.invalidateQueries()
   });
 
@@ -198,7 +260,7 @@ export const ERPProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const updateCommissionStatus = (id: string, status: CommissionRecord['status']) => updateCommissionStatusMut.mutate({ id, status });
   const addLead = (l: Omit<Lead, 'id' | 'leadNumber' | 'createdAt'>) => addLeadMut.mutate(l);
   const updateLeadStage = (id: string, stage: Lead['stage']) => updateLeadStageMut.mutate({ id, stage });
-  const updateOrderStatus = (id: string, status: SalesOrder['productionStatus']) => updateOrderStatusMut.mutate({ id, status });
+  // const updateOrderStatus = (id: string, status: SalesOrder['status']) => updateOrderStatusMut.mutate({ id, status });
   const updateInstallationStatus = (id: string, status: InstallationTask['status'], snags?: string) => updateInstallationStatusMut.mutate({ id, status, snags });
   const addFeedback = (fb: Omit<CustomerFeedback, 'id' | 'completionDate'>) => addFeedbackMut.mutate(fb);
   const addSupplier = (sup: Omit<Supplier, 'id'>) => addSupplierMut.mutate(sup);
@@ -232,6 +294,8 @@ export const ERPProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         leads,
         orders,
         installations,
+        showrooms,
+        showroomsError,
         feedback,
         addProduct,
         updateProduct,
@@ -252,7 +316,7 @@ export const ERPProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         updateCommissionStatus,
         addLead,
         updateLeadStage,
-        updateOrderStatus,
+        // updateOrderStatus,
         updateInstallationStatus,
         addFeedback,
         addSupplier,

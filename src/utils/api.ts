@@ -28,6 +28,7 @@ const api = {
   get: (endpoint: string) => request(endpoint, { method: 'GET' }),
   post: (endpoint: string, body?: any) => request(endpoint, { method: 'POST', body: body ? JSON.stringify(body) : undefined }),
   put: (endpoint: string, body?: any) => request(endpoint, { method: 'PUT', body: body ? JSON.stringify(body) : undefined }),
+  patch: (endpoint: string, body?: any) => request(endpoint, { method: 'PATCH', body: body ? JSON.stringify(body) : undefined }),
   delete: (endpoint: string) => request(endpoint, { method: 'DELETE' }),
 };
 

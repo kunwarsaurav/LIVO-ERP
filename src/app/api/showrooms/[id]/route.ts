@@ -2,39 +2,44 @@ import { NextRequest, NextResponse } from "next/server";
 import { ZodError } from "zod";
 
 import MongoDB from "@/lib/mongodb";
+import { ShowroomSchema } from "@/lib/schema";
 import {
-  deleteProductById,
-  getProductById,
-  updateProductById,
-} from "../product.service";
-import { ProductSchema } from "@/lib/schema";
-import { ValidationError } from "@/lib/errors";
+  deleteShowroomById,
+  getShowroomById,
+  updateShowroomById,
+} from "../showroom.service";
+import { authenticateUser } from "@/middlewares/authenticateUser";
+import { UnauthorizedError, ValidationError } from "@/lib/errors";
 
 type Params = { params: Promise<{ id: string }> };
 
-const validateProductId = (id: string): void => {
+export const validateShowroomId = (id: string): void => {
   if (!id || id.length > 200 || !/^[a-zA-Z0-9-_]+$/.test(id)) {
-    throw new ValidationError("Invalid Product ID format");
+    throw new ValidationError("Invalid Showroom ID format");
   }
 };
 
 export const GET = async (request: NextRequest, { params }: Params) => {
   try {
     await MongoDB();
+    await authenticateUser(request, ["admin"]);
     const { id } = await params;
-    validateProductId(id);
-    const product = await getProductById(id);
-    if (!product) {
+    validateShowroomId(id);
+    const showroom = await getShowroomById(id);
+    if (!showroom) {
       return NextResponse.json(
-        { message: "Product not found" },
+        { message: "Showroom not found" },
         { status: 404 },
       );
     }
     return NextResponse.json(
-      { message: "Product fetched successfully", data: product },
+      { message: "Showroom fetched successfully", data: showroom },
       { status: 200 },
     );
   } catch (error) {
+    if (error instanceof UnauthorizedError) {
+      return NextResponse.json({ message: error.message }, { status: 401 });
+    }
     if (error instanceof ValidationError) {
       return NextResponse.json({ message: error.message }, { status: 400 });
     }
@@ -46,24 +51,13 @@ export const GET = async (request: NextRequest, { params }: Params) => {
 };
 
 export const PATCH = async (request: NextRequest, { params }: Params) => {
-  return updateProduct(request, params);
-};
-
-export const PUT = async (request: NextRequest, { params }: Params) => {
-  return updateProduct(request, params);
-};
-
-const updateProduct = async (
-  request: NextRequest,
-  params: Promise<{ id: string }>,
-) => {
   try {
     await MongoDB();
+    await authenticateUser(request, ["admin"]);
     const { id } = await params;
-    validateProductId(id);
-
+    validateShowroomId(id);
     const body = await request.json();
-    const validatedData = ProductSchema.partial().safeParse(body);
+    const validatedData = ShowroomSchema.partial().safeParse(body);
     if (!validatedData.success) {
       return NextResponse.json(
         { success: false, error: validatedData.error.message },
@@ -71,17 +65,17 @@ const updateProduct = async (
       );
     }
 
-    const product = await getProductById(id);
-    if (!product) {
+    const showroom = await getShowroomById(id);
+    if (!showroom) {
       return NextResponse.json(
-        { message: "Product not found" },
+        { message: "Showroom not found" },
         { status: 404 },
       );
     }
 
-    const updatedProduct = await updateProductById(id, validatedData.data);
+    const updatedShowroom = await updateShowroomById(id, validatedData.data);
     return NextResponse.json(
-      { message: "Product updated successfully", data: updatedProduct },
+      { message: "Showroom updated successfully", data: updatedShowroom },
       { status: 200 },
     );
   } catch (error) {
@@ -93,6 +87,9 @@ const updateProduct = async (
         { message: combinedErrorMessage },
         { status: 400 },
       );
+    }
+    if (error instanceof UnauthorizedError) {
+      return NextResponse.json({ message: error.message }, { status: 401 });
     }
     if (error instanceof ValidationError) {
       return NextResponse.json({ message: error.message }, { status: 400 });
@@ -107,22 +104,26 @@ const updateProduct = async (
 export const DELETE = async (request: NextRequest, { params }: Params) => {
   try {
     await MongoDB();
+    await authenticateUser(request, ["admin"]);
     const { id } = await params;
-    validateProductId(id);
-    const product = await getProductById(id);
-    if (!product) {
+    validateShowroomId(id);
+    const showroom = await getShowroomById(id);
+    if (!showroom) {
       return NextResponse.json(
-        { message: "Product not found" },
+        { message: "Showroom not found" },
         { status: 404 },
       );
     }
 
-    await deleteProductById(id);
+    await deleteShowroomById(id);
     return NextResponse.json(
-      { message: "Product deleted successfully" },
+      { message: "Showroom deleted successfully" },
       { status: 200 },
     );
   } catch (error) {
+    if (error instanceof UnauthorizedError) {
+      return NextResponse.json({ message: error.message }, { status: 401 });
+    }
     if (error instanceof ValidationError) {
       return NextResponse.json({ message: error.message }, { status: 400 });
     }

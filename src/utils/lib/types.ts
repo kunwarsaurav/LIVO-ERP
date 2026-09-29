@@ -25,3 +25,12 @@ export interface Product {
   subtitle: string;
   room?: ProductRoom;
 }
+
+export interface ShowroomItem {
+  id: string;
+  name: string;
+  room: string;
+  image: string;
+  description: string;
+  piecesFeatured: string[];
+}
