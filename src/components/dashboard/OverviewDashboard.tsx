@@ -16,6 +16,7 @@ import {
 } from 'lucide-react';
 import { useERP } from '../../context/ERPContext';
 import { formatCurrency, formatDate, getStatusColor } from '../../utils/formatters';
+import { ProductImage } from '../common/ProductImage';
 import { NavTab } from '../layout/Sidebar';
 
 interface OverviewDashboardProps {
@@ -197,11 +198,10 @@ export const OverviewDashboard: React.FC<OverviewDashboardProps> = ({ onNavigate
                 {lowStockItems.map((prod) => (
                   <div key={prod.id} className="p-4 flex items-center justify-between gap-4 hover:bg-stone-50 transition-colors">
                     <div className="flex items-center gap-3">
-                      <img
-                        src={prod.imageUrl}
+                      <ProductImage
+                        product={prod}
                         alt={prod.name}
                         className="w-12 h-12 rounded-lg object-cover border border-stone-200 shrink-0"
-                        referrerPolicy="no-referrer"
                       />
                       <div>
                         <div className="flex items-center gap-2">

@@ -9,6 +9,7 @@ import { QRCodeSVG } from 'qrcode.react';
 import { useERP } from '../../context/ERPContext';
 import { Product } from '../../types';
 import { formatCurrency } from '../../utils/formatters';
+import { ProductImage } from '../common/ProductImage';
 
 interface ProductTagSystemProps {
   initialSelectedProduct?: Product;
@@ -310,6 +311,15 @@ export const ProductTagSystem: React.FC<ProductTagSystemProps> = ({
                 </div>
               </div>
 
+              {/* Product Photo (images[0] -> image_url -> fallback) */}
+              <div className="mb-3 overflow-hidden rounded-lg border border-stone-200 bg-stone-50">
+                <ProductImage
+                  product={selectedProduct}
+                  alt={selectedProduct.name}
+                  className="w-full h-40 object-cover"
+                />
+              </div>
+
               {/* Brand & Product Name */}
               <div className="mb-3">
                 <div className="text-[10px] font-mono tracking-wider uppercase text-amber-900 font-bold">
@@ -488,6 +498,12 @@ export const ProductTagSystem: React.FC<ProductTagSystemProps> = ({
                     </div>
                   </div>
 
+                  <ProductImage
+                    product={p}
+                    alt={p.name}
+                    className="w-full h-24 object-cover rounded border border-stone-200"
+                  />
+
                   <div>
                     <div className="text-[9px] font-mono text-amber-900 font-bold">{p.brand}</div>
                     <h4 className="font-serif font-bold text-xs text-stone-900 line-clamp-1">
@@ -525,16 +541,18 @@ export const ProductTagSystem: React.FC<ProductTagSystemProps> = ({
 
                   <div className="flex items-center justify-between pt-1 gap-2">
                     <div className="flex-1 flex justify-center">
-                      <Barcode
-                        value={p.barcode}
-                        width={1.1}
-                        height={36}
-                        displayValue
-                        fontSize={8}
-                        margin={0}
-                        background="transparent"
-                        lineColor="#1c1917"
-                      />
+                      {(p.barcode || p.sku) && (
+                        <Barcode
+                          value={p.barcode || p.sku}
+                          width={1.1}
+                          height={36}
+                          displayValue
+                          fontSize={8}
+                          margin={0}
+                          background="transparent"
+                          lineColor="#1c1917"
+                        />
+                      )}
                     </div>
                     <QRCodeSVG
                       value={`https://livofurniture.com/verify?barcode=${p.barcode}&sku=${p.sku}`}

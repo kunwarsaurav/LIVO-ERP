@@ -245,7 +245,7 @@ export const productSchema = z.object({
   barcode: optionalText(),
   warrantyYears: integer.default(PRODUCT_WARRANTY_YEARS_DEFAULT),
   description: optionalText(),
-  imageUrl: optionalText(),
+  imageUrl: z.string().trim().optional(),
   images: writeTextArray.optional(),
   featuredInCatalogue: flag(true),
   specifications: writeTextArray,
@@ -563,6 +563,8 @@ export function productInputToRow(input: CreateProductInput) {
   const sellingPrice = input.sellingPrice ?? 0;
   const mrp = input.mrp ?? 0;
   const currentStock = input.currentStock ?? 0;
+  const imageUrl = input.imageUrl || (input.images?.length ? input.images[0] : "");
+  const images = input.images?.length ? input.images : (imageUrl ? [imageUrl] : []);
 
   return {
     id: input.id ?? generateBusinessId(),
@@ -587,15 +589,11 @@ export function productInputToRow(input: CreateProductInput) {
     barcode: input.barcode ?? input.sku ?? "",
     warranty_years: input.warrantyYears ?? PRODUCT_WARRANTY_YEARS_DEFAULT,
     description: input.description ?? "",
-    image_url: input.imageUrl ?? "",
+    image_url: imageUrl,
     featured_in_catalogue: input.featuredInCatalogue ?? true,
     customizable: input.customizable ?? true,
     specifications: input.specifications ?? [],
-    images: input.images?.length
-      ? input.images
-      : input.imageUrl
-        ? [input.imageUrl]
-        : [],
+    images,
     price: input.price ?? sellingPrice,
     original_price: input.originalPrice ?? mrp,
     dimensions: input.dimensions ?? input.sizeDimensions ?? "",
@@ -644,7 +642,9 @@ export function productUpdateToRow(input: UpdateProductInput) {
   assign("legacy_mongo_id", input.legacyMongoId);
 
   if (input.images !== undefined) {
-    row.images = input.images.length ? input.images : input.imageUrl ? [input.imageUrl] : [];
+    row.images = input.images.length ? input.images : (input.imageUrl ? [input.imageUrl] : []);
+  } else if (input.imageUrl !== undefined) {
+    row.images = [input.imageUrl];
   }
   if (input.sellingPrice !== undefined) {
     row.selling_price = input.sellingPrice;

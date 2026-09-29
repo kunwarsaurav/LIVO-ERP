@@ -5,7 +5,6 @@ import {
   Download,
   Search,
   Filter,
-  Layers,
   Sparkles,
   ChevronRight,
   Plus,
@@ -15,6 +14,7 @@ import {
 import { useERP } from '../../context/ERPContext';
 import { Product, ProductCategory } from '../../types';
 import { formatCurrency } from '../../utils/formatters';
+import { ProductImage } from '../common/ProductImage';
 
 interface PrintedCataloguesProps {
   onSelectProductForTag?: (product: Product) => void;
@@ -182,55 +182,13 @@ export const PrintedCatalogues: React.FC<PrintedCataloguesProps> = ({
             >
               <div>
                 {/* Photo showcase */}
-                <div className="relative h-64 w-full overflow-hidden bg-stone-100">
-                  <img
-                    src={p.imageUrl || 'https://images.unsplash.com/photo-1555041469-a586c61ea9bc?auto=format&fit=crop&w=800&q=80'}
+                <div className="relative h-64 w-full overflow-hidden bg-stone-100 flex items-center justify-center">
+                  <ProductImage
+                    product={p}
                     alt={p.name}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                    referrerPolicy="no-referrer"
+                    className="w-full h-full object-cover"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-stone-900/60 via-transparent to-transparent opacity-60"></div>
 
-                  <span className="absolute top-3 left-3 text-[10px] font-mono font-bold uppercase tracking-wider bg-stone-900/90 text-amber-300 px-2 py-0.5 rounded backdrop-blur-xs">
-                    {p.brand}
-                  </span>
-
-                  <span className="absolute top-3 right-3 text-[10px] font-semibold bg-white/95 text-stone-900 px-2 py-0.5 rounded shadow-xs">
-                    {p.category}
-                  </span>
-
-                  <div className="absolute bottom-3 left-3 right-3 text-white">
-                    <div className="text-[10px] font-mono text-stone-300">Model: {p.modelNumber}</div>
-                    <h3 className="font-serif font-bold text-base leading-tight drop-shadow-xs">
-                      {p.name}
-                    </h3>
-                  </div>
-                </div>
-
-                {/* Specs breakdown */}
-                <div className="p-4 space-y-2 text-xs">
-                  <div className="flex justify-between py-1 border-b border-stone-100">
-                    <span className="text-stone-500">Dimensions:</span>
-                    <span className="font-medium text-stone-800 text-right max-w-[170px] truncate">
-                      {p.sizeDimensions}
-                    </span>
-                  </div>
-
-                  <div className="flex justify-between py-1 border-b border-stone-100">
-                    <span className="text-stone-500">Colour & Finish:</span>
-                    <span className="font-medium text-stone-800 text-right max-w-[170px] truncate">
-                      {p.colorFinish}
-                    </span>
-                  </div>
-
-                  {p.material && (
-                    <div className="flex justify-between py-1 border-b border-stone-100">
-                      <span className="text-stone-500">Material Swatch:</span>
-                      <span className="font-medium text-stone-800 text-right max-w-[170px] truncate">
-                        {p.material}
-                      </span>
-                    </div>
-                  )}
 
                   <div className="flex justify-between py-1">
                     <span className="text-stone-500">Warranty:</span>
@@ -292,11 +250,10 @@ export const PrintedCatalogues: React.FC<PrintedCataloguesProps> = ({
                 {filteredProducts.map((p) => (
                   <tr key={p.id} className="hover:bg-stone-50">
                     <td className="py-2.5 px-4">
-                      <img
-                        src={p.imageUrl || 'https://images.unsplash.com/photo-1555041469-a586c61ea9bc?auto=format&fit=crop&w=800&q=80'}
+                      <ProductImage
+                        product={p}
                         alt={p.name}
                         className="w-12 h-12 object-cover rounded-md border border-stone-200 bg-stone-100"
-                        referrerPolicy="no-referrer"
                       />
                     </td>
                     <td className="py-2.5 px-3">
@@ -359,12 +316,11 @@ export const PrintedCatalogues: React.FC<PrintedCataloguesProps> = ({
                 key={p.id}
                 className="bg-white rounded-xl border border-stone-300 p-6 shadow-sm space-y-4"
               >
-                <div className="h-56 w-full rounded-lg overflow-hidden bg-stone-100">
-                  <img
-                    src={p.imageUrl || 'https://images.unsplash.com/photo-1555041469-a586c61ea9bc?auto=format&fit=crop&w=800&q=80'}
+                <div className="h-56 w-full rounded-lg overflow-hidden bg-stone-100 flex items-center justify-center">
+                  <ProductImage
+                    product={p}
                     alt={p.name}
                     className="w-full h-full object-cover"
-                    referrerPolicy="no-referrer"
                   />
                 </div>
 

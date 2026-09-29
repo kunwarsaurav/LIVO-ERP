@@ -1,11 +1,15 @@
 export type ImageUploadMode = "single" | "multiple";
 
+/** Mirrors MediaImage returned by POST /api/image. */
 export interface ImageUploadResult {
-  _id: string;
+  id: string;
+  legacyMongoId: string | null;
+  cloudinaryPublicId: string;
   url: string;
-  imageId: string;
   mimeType: string;
-  size: number;
+  sizeBytes: number;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface ImageUploadError {

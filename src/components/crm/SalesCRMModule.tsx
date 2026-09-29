@@ -32,6 +32,7 @@ import {
   formatDate,
   getStatusColor,
 } from "../../utils/formatters";
+import { ProductImage } from "../common/ProductImage";
 export const SalesCRMModule: React.FC = () => {
   const {
     leads,
@@ -573,7 +574,7 @@ export const SalesCRMModule: React.FC = () => {
                     </td>
 
                     <td className="py-3 px-3 text-stone-700">
-                      {ord.items.length} Custom Pieces ({ord.projectType})
+                      {ord.items?.length || 0} Custom Pieces ({ord.projectType})
                     </td>
 
                     <td className="py-3 px-3 text-right font-mono font-bold text-stone-900">
@@ -1218,7 +1219,6 @@ export const SalesCRMModule: React.FC = () => {
                   <div className="space-y-2.5">
                     {orderForDetails.items.map((item, idx) => {
                       const product = item.product;
-                      const image = product?.images?.[0];
                       const unitPrice = Number(product?.price ?? 0);
 
                       return (
@@ -1227,16 +1227,11 @@ export const SalesCRMModule: React.FC = () => {
                           className="flex gap-3 p-3 border border-stone-200 rounded-lg bg-stone-50/50"
                         >
                           <div className="w-16 h-16 shrink-0 rounded-md border border-stone-200 bg-white overflow-hidden flex items-center justify-center">
-                            {image ? (
-                              // eslint-disable-next-line @next/next/no-img-element
-                              <img
-                                src={image}
-                                alt={product?.name || "Product image"}
-                                className="w-full h-full object-cover"
-                              />
-                            ) : (
-                              <ImageOff className="w-5 h-5 text-stone-300" />
-                            )}
+                            <ProductImage
+                              product={product}
+                              alt={product?.name || "Product image"}
+                              className="w-full h-full object-cover"
+                            />
                           </div>
 
                           <div className="flex-1 min-w-0 space-y-1.5">

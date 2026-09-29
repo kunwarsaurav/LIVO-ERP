@@ -1,7 +1,7 @@
 import { ImageValidationError } from "@/lib/errors";
 import { fileTypeFromBuffer } from "file-type";
 
-const ALLOWED_IMAGE_TYPES = ["image/png", "image/jpg", "image/jpeg", "image/webp"];
+const ALLOWED_IMAGE_TYPES = ["image/png", "image/jpeg", "image/webp"];
 const MAX_FILE_SIZE = 5 * 1024 * 1024; //5MB
 
 export const validateImageFile = async (file: File, options?: { maxFileSize?: number }) => {

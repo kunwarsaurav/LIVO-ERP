@@ -17,11 +17,11 @@ import {
   Check,
   Calendar,
   Sparkles,
-  ImageOff,
 } from 'lucide-react';
 import { useERP } from '../../context/ERPContext';
 import { useGlobalScanner } from '../../hooks/useGlobalScanner';
 import { formatCurrency, formatDate, getStatusColor } from '../../utils/formatters';
+import { ProductImage } from '../common/ProductImage';
 import {
   Product,
   Customer,
@@ -508,17 +508,11 @@ export const POSBillingModule: React.FC<BillingPayrollProps> = ({
                     className="bg-white border border-stone-200 hover:border-stone-900 rounded-lg p-2.5 flex flex-col justify-between cursor-pointer transition-all hover:shadow-md group"
                   >
                     <div className="aspect-video bg-stone-100 rounded mb-2 overflow-hidden relative">
-                      {product.imageUrl ? (
-                        <img
-                          src={product.imageUrl}
-                          alt={product.name}
-                          className="w-full h-full object-cover group-hover:scale-105 transition-transform"
-                        />
-                      ) : (
-                        <div className="w-full h-full flex items-center justify-center">
-                          <ImageOff className="w-5 h-5 text-stone-300" />
-                        </div>
-                      )}
+                      <ProductImage
+                        product={product}
+                        alt={product.name}
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform"
+                      />
                       <span className="absolute top-1 right-1 bg-stone-900/80 text-white text-[9px] px-1 rounded">
                         {product.currentStock} in stock
                       </span>

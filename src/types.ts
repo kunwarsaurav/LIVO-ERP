@@ -23,7 +23,10 @@ export interface Product {
   barcode: string;
   warrantyYears: number;
   description: string;
-  imageUrl: string;
+  image?: string[];
+  images?: string[];
+  image_url?: string;
+  imageUrl?: string;
   featuredInCatalogue: boolean;
   specifications?: string[];
   customizable?: boolean;
