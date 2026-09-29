@@ -19,7 +19,8 @@ export type NavTab =
   | 'dashboard'
   | 'stock'
   | 'accounting'
-  | 'billing'
+  | 'pos'
+  | 'hr'
   | 'mrp'
   | 'catalogue'
   | 'suppliers'
@@ -59,11 +60,18 @@ export const Sidebar: React.FC<SidebarProps> = ({ currentTab, onSelectTab }) => 
       badgeColor: 'bg-stone-100 text-stone-700',
     },
     {
-      id: 'billing' as NavTab,
-      label: 'Billing & Payroll',
+      id: 'pos' as NavTab,
+      label: 'POS & Billing',
       icon: CreditCard,
       badge: pendingQuotes > 0 ? `${pendingQuotes} quotes` : null,
       badgeColor: 'bg-blue-50 text-blue-700 border-blue-200',
+    },
+    {
+      id: 'hr' as NavTab,
+      label: 'HR & Payroll',
+      icon: Clock,
+      badge: null,
+      badgeColor: 'bg-indigo-50 text-indigo-700 border-indigo-200',
     },
     {
       id: 'mrp' as NavTab,

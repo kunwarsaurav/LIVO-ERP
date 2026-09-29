@@ -38,7 +38,7 @@ interface BillingPayrollProps {
   onPrintQuotation?: (quotation: Quotation) => void;
 }
 
-export const BillingPayrollModule: React.FC<BillingPayrollProps> = ({
+export const POSBillingModule: React.FC<BillingPayrollProps> = ({
   onPrintInvoice,
   onPrintQuotation,
 }) => {
@@ -62,10 +62,8 @@ export const BillingPayrollModule: React.FC<BillingPayrollProps> = ({
     updateCommissionStatus,
   } = useERP();
 
-  // Exactly matching user's requested 7 Billing & Payroll sections
-  const [activeTab, setActiveTab] = useState<
-    'pos' | 'quotation' | 'invoice' | 'customers' | 'attendance' | 'payroll' | 'commission'
-  >('pos');
+  // Exactly matching user's requested 7 POS & Billing Dashboard sections
+  const [activeTab, setActiveTab] = useState<'pos' | 'quotation' | 'invoice' | 'customers'>('pos');
 
   // ==========================================
   // POS State
@@ -365,12 +363,12 @@ export const BillingPayrollModule: React.FC<BillingPayrollProps> = ({
         <div>
           <div className="flex items-center gap-2">
             <span className="text-xs font-semibold px-2.5 py-0.5 rounded bg-stone-900 text-stone-100">
-              Module 4
+              Sales & POS
             </span>
-            <h1 className="text-2xl font-bold text-stone-900 tracking-tight">Billing & Payroll</h1>
+            <h1 className="text-2xl font-bold text-stone-900 tracking-tight">POS & Billing Dashboard</h1>
           </div>
           <p className="text-sm text-stone-500 mt-1">
-            Showroom POS, Quotations, Invoices, Customer Database, Attendance, Payroll, and Sales Commissions.
+            Showroom POS, Quotations, Invoices, and Customer Database.
           </p>
         </div>
 
@@ -402,9 +400,9 @@ export const BillingPayrollModule: React.FC<BillingPayrollProps> = ({
           { id: 'quotation', label: 'Quotation', badge: quotations.length, icon: FileText },
           { id: 'invoice', label: 'Invoice', badge: invoices.length, icon: Receipt },
           { id: 'customers', label: 'Customer Database', badge: customers.length, icon: Users2 },
-          { id: 'attendance', label: 'Employee Attendance', badge: 'Daily', icon: CalendarCheck2 },
-          { id: 'payroll', label: 'Salary / Payroll', badge: `${employees.length} Staff`, icon: DollarSign },
-          { id: 'commission', label: 'Commission / Incentives', badge: commissions.length, icon: Award },
+          
+          
+          
         ].map((tab) => {
           const Icon = tab.icon;
           return (
@@ -962,321 +960,6 @@ export const BillingPayrollModule: React.FC<BillingPayrollProps> = ({
                         </td>
                       </tr>
                     ))}
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* ========================================================================= */}
-      {/* 5. EMPLOYEE ATTENDANCE TAB */}
-      {/* ========================================================================= */}
-      {activeTab === 'attendance' && (
-        <div className="space-y-6">
-          <div className="flex flex-col sm:flex-row items-center justify-between gap-3 bg-white p-4 rounded-xl border border-stone-200">
-            <div className="flex items-center gap-3">
-              <span className="text-xs font-bold text-stone-600 uppercase">Attendance Date:</span>
-              <input
-                type="date"
-                value={attendanceDate}
-                onChange={(e) => setAttendanceDate(e.target.value)}
-                className="px-3 py-1.5 border border-stone-300 rounded-lg text-xs font-semibold text-stone-800"
-              />
-            </div>
-            <button
-              onClick={() => setIsAttendanceModalOpen(true)}
-              className="flex items-center gap-1.5 px-3.5 py-2 bg-stone-900 text-white rounded-lg text-xs font-semibold hover:bg-stone-800"
-            >
-              <Plus className="w-4 h-4" />
-              <span>Mark Staff Attendance</span>
-            </button>
-          </div>
-
-          {/* Attendance Cards KPI */}
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-            <div className="bg-white p-4 rounded-xl border border-stone-200 shadow-sm">
-              <span className="text-xs font-medium text-stone-500 uppercase">Present in Showroom</span>
-              <div className="text-xl font-bold text-emerald-700 mt-1">
-                {attendance.filter((a) => a.status === 'Present').length}
-              </div>
-            </div>
-            <div className="bg-white p-4 rounded-xl border border-stone-200 shadow-sm">
-              <span className="text-xs font-medium text-stone-500 uppercase">On-Site Client Visits</span>
-              <div className="text-xl font-bold text-blue-700 mt-1">
-                {attendance.filter((a) => a.status === 'On-Site').length}
-              </div>
-            </div>
-            <div className="bg-white p-4 rounded-xl border border-stone-200 shadow-sm">
-              <span className="text-xs font-medium text-stone-500 uppercase">On Leave / Half Day</span>
-              <div className="text-xl font-bold text-amber-700 mt-1">
-                {attendance.filter((a) => a.status === 'Leave' || a.status === 'Half Day').length}
-              </div>
-            </div>
-            <div className="bg-white p-4 rounded-xl border border-stone-200 shadow-sm">
-              <span className="text-xs font-medium text-stone-500 uppercase">Total Logged Overtime</span>
-              <div className="text-xl font-bold text-stone-900 mt-1">
-                {attendance.reduce((sum, a) => sum + (a.overtimeHours || 0), 0)} hrs
-              </div>
-            </div>
-          </div>
-
-          {/* Attendance Log Table */}
-          <div className="bg-white rounded-xl border border-stone-200 shadow-sm overflow-hidden">
-            <div className="p-4 border-b border-stone-200 bg-stone-50/50">
-              <h3 className="text-sm font-bold text-stone-900">Attendance Register</h3>
-            </div>
-            <div className="overflow-x-auto">
-              <table className="w-full text-left text-sm">
-                <thead className="bg-stone-100/75 text-stone-700 font-semibold text-xs border-b border-stone-200">
-                  <tr>
-                    <th className="py-3 px-4">Employee</th>
-                    <th className="py-3 px-4">Date</th>
-                    <th className="py-3 px-4">Check-In</th>
-                    <th className="py-3 px-4">Check-Out</th>
-                    <th className="py-3 px-4 text-center">Overtime Hours</th>
-                    <th className="py-3 px-4 text-center">Status</th>
-                    <th className="py-3 px-4">Notes / Location</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-stone-200 text-xs">
-                  {attendance.map((rec) => (
-                    <tr key={rec.id} className="hover:bg-stone-50/80">
-                      <td className="py-3 px-4 font-bold text-stone-900">{rec.employeeName}</td>
-                      <td className="py-3 px-4 text-stone-500">{formatDate(rec.date)}</td>
-                      <td className="py-3 px-4 font-mono">{rec.checkIn}</td>
-                      <td className="py-3 px-4 font-mono">{rec.checkOut}</td>
-                      <td className="py-3 px-4 text-center font-bold text-stone-800">{rec.overtimeHours || 0} hrs</td>
-                      <td className="py-3 px-4 text-center">
-                        <span className={`inline-flex px-2 py-0.5 rounded text-[10px] font-semibold ${
-                          rec.status === 'Present' ? 'bg-emerald-100 text-emerald-800' :
-                          rec.status === 'On-Site' ? 'bg-blue-100 text-blue-800' :
-                          rec.status === 'Leave' ? 'bg-rose-100 text-rose-800' : 'bg-amber-100 text-amber-800'
-                        }`}>
-                          {rec.status}
-                        </span>
-                      </td>
-                      <td className="py-3 px-4 text-stone-500 truncate max-w-xs">{rec.notes || 'Normal Showroom Shift'}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* ========================================================================= */}
-      {/* 6. SALARY / PAYROLL TAB */}
-      {/* ========================================================================= */}
-      {activeTab === 'payroll' && (
-        <div className="space-y-6">
-          <div className="flex flex-col sm:flex-row items-center justify-between gap-3 bg-white p-4 rounded-xl border border-stone-200">
-            <div className="flex items-center gap-3">
-              <span className="text-xs font-bold text-stone-600 uppercase">Payroll Month:</span>
-              <select
-                value={payrollMonth}
-                onChange={(e) => setPayrollMonth(e.target.value)}
-                className="px-3 py-1.5 bg-stone-50 border border-stone-300 rounded-lg text-xs font-semibold text-stone-800"
-              >
-                <option value="September 2026">September 2026</option>
-                <option value="August 2026">August 2026</option>
-                <option value="July 2026">July 2026</option>
-              </select>
-            </div>
-            <button
-              onClick={() => processPayroll(payrollMonth)}
-              className="flex items-center gap-1.5 px-4 py-2 bg-stone-900 text-white rounded-lg text-xs font-semibold hover:bg-stone-800 transition-colors shadow-sm"
-            >
-              <Sparkles className="w-4 h-4" />
-              <span>Process Monthly Payroll</span>
-            </button>
-          </div>
-
-          {/* Payroll KPI Cards */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            <div className="bg-white p-4 rounded-xl border border-stone-200 shadow-sm">
-              <span className="text-xs font-medium text-stone-500 uppercase">Total Net Payroll</span>
-              <div className="text-xl font-bold text-stone-900 mt-1">{formatCurrency(totalPayrollAmount)}</div>
-              <p className="text-xs text-stone-400 mt-1">Disbursed to staff bank accounts</p>
-            </div>
-            <div className="bg-white p-4 rounded-xl border border-stone-200 shadow-sm">
-              <span className="text-xs font-medium text-stone-500 uppercase">Base Salary Total</span>
-              <div className="text-xl font-bold text-stone-900 mt-1">
-                {formatCurrency(payroll.reduce((a, b) => a + b.baseSalary, 0))}
-              </div>
-            </div>
-            <div className="bg-white p-4 rounded-xl border border-stone-200 shadow-sm">
-              <span className="text-xs font-medium text-stone-500 uppercase">Sales Commissions</span>
-              <div className="text-xl font-bold text-emerald-700 mt-1">
-                {formatCurrency(payroll.reduce((a, b) => a + (b.salesCommission || 0), 0))}
-              </div>
-            </div>
-            <div className="bg-white p-4 rounded-xl border border-stone-200 shadow-sm">
-              <span className="text-xs font-medium text-stone-500 uppercase">Employees on Payroll</span>
-              <div className="text-xl font-bold text-stone-900 mt-1">{employees.length} Staff</div>
-            </div>
-          </div>
-
-          {/* Payroll Register Table */}
-          <div className="bg-white rounded-xl border border-stone-200 shadow-sm overflow-hidden">
-            <div className="p-4 border-b border-stone-200 bg-stone-50/50 flex items-center justify-between">
-              <h3 className="text-sm font-bold text-stone-900">Payroll Register - {payrollMonth}</h3>
-              <button
-                onClick={() => window.print()}
-                className="flex items-center gap-1.5 px-3 py-1 bg-stone-100 hover:bg-stone-200 text-stone-700 border border-stone-300 rounded text-xs font-semibold"
-              >
-                <Printer className="w-3.5 h-3.5" />
-                <span>Export Payslips</span>
-              </button>
-            </div>
-
-            <div className="overflow-x-auto">
-              <table className="w-full text-left text-sm">
-                <thead className="bg-stone-100/75 text-stone-700 font-semibold text-xs border-b border-stone-200">
-                  <tr>
-                    <th className="py-3 px-4">Employee</th>
-                    <th className="py-3 px-4">Designation</th>
-                    <th className="py-3 px-4 text-right">Base Salary</th>
-                    <th className="py-3 px-4 text-right">Allowances</th>
-                    <th className="py-3 px-4 text-right">Overtime</th>
-                    <th className="py-3 px-4 text-right">Commission</th>
-                    <th className="py-3 px-4 text-right">Deductions</th>
-                    <th className="py-3 px-4 text-right">Net Pay</th>
-                    <th className="py-3 px-4 text-center">Status</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-stone-200 text-xs">
-                  {payroll.map((pay) => (
-                    <tr key={pay.id} className="hover:bg-stone-50/80">
-                      <td className="py-3 px-4 font-bold text-stone-900">{pay.employeeName}</td>
-                      <td className="py-3 px-4 text-stone-600">{pay.designation}</td>
-                      <td className="py-3 px-4 text-right font-mono">{formatCurrency(pay.baseSalary)}</td>
-                      <td className="py-3 px-4 text-right font-mono">{formatCurrency(pay.allowances)}</td>
-                      <td className="py-3 px-4 text-right font-mono text-emerald-700">{formatCurrency(pay.overtimePay)}</td>
-                      <td className="py-3 px-4 text-right font-mono text-emerald-700">{formatCurrency(pay.salesCommission)}</td>
-                      <td className="py-3 px-4 text-right font-mono text-rose-600">({formatCurrency(pay.deductions)})</td>
-                      <td className="py-3 px-4 text-right font-bold text-stone-900">{formatCurrency(pay.netPay)}</td>
-                      <td className="py-3 px-4 text-center">
-                        <span className="inline-flex px-2 py-0.5 rounded text-[10px] font-semibold bg-emerald-100 text-emerald-800">
-                          {pay.status}
-                        </span>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* ========================================================================= */}
-      {/* 7. COMMISSION / INCENTIVES TAB */}
-      {/* ========================================================================= */}
-      {activeTab === 'commission' && (
-        <div className="space-y-6">
-          {/* Commission Summary KPI Cards */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            <div className="bg-white p-4 rounded-xl border border-stone-200 shadow-sm">
-              <span className="text-xs font-medium text-stone-500 uppercase">Total Incentive Pool</span>
-              <div className="text-xl font-bold text-stone-900 mt-1">{formatCurrency(totalCommissionPool)}</div>
-              <p className="text-xs text-stone-400 mt-1">Earned this cycle</p>
-            </div>
-            <div className="bg-white p-4 rounded-xl border border-stone-200 shadow-sm">
-              <span className="text-xs font-medium text-stone-500 uppercase">Top Performer</span>
-              <div className="text-xl font-bold text-emerald-800 mt-1">Elena Rostova</div>
-              <p className="text-xs text-emerald-600 mt-1">140% Quota Attainment</p>
-            </div>
-            <div className="bg-white p-4 rounded-xl border border-stone-200 shadow-sm">
-              <span className="text-xs font-medium text-stone-500 uppercase">Average Target Attainment</span>
-              <div className="text-xl font-bold text-blue-800 mt-1">124%</div>
-              <p className="text-xs text-blue-600 mt-1">Across design & sales consultants</p>
-            </div>
-            <div className="bg-white p-4 rounded-xl border border-stone-200 shadow-sm">
-              <span className="text-xs font-medium text-stone-500 uppercase">Commission Model</span>
-              <div className="text-xl font-bold text-stone-900 mt-1">2.0% - 2.5%</div>
-              <p className="text-xs text-stone-400 mt-1">+ Milestone completion bonuses</p>
-            </div>
-          </div>
-
-          {/* Commission Table */}
-          <div className="bg-white rounded-xl border border-stone-200 shadow-sm overflow-hidden">
-            <div className="p-4 border-b border-stone-200 bg-stone-50/50 flex items-center justify-between">
-              <div>
-                <h3 className="text-sm font-bold text-stone-900">Sales Consultant & Designer Incentive Roster</h3>
-                <p className="text-xs text-stone-500">Transparent performance commission tracking and payout approvals</p>
-              </div>
-            </div>
-
-            <div className="overflow-x-auto">
-              <table className="w-full text-left text-sm">
-                <thead className="bg-stone-100/75 text-stone-700 font-semibold text-xs border-b border-stone-200">
-                  <tr>
-                    <th className="py-3 px-4">Consultant / Designer</th>
-                    <th className="py-3 px-4">Role</th>
-                    <th className="py-3 px-4 text-right">Sales Target</th>
-                    <th className="py-3 px-4 text-right">Achieved Sales</th>
-                    <th className="py-3 px-4 text-center">Attainment</th>
-                    <th className="py-3 px-4 text-right">Commission Rate</th>
-                    <th className="py-3 px-4 text-right">Incentive ($)</th>
-                    <th className="py-3 px-4 text-right">Bonus ($)</th>
-                    <th className="py-3 px-4 text-right">Total Payout</th>
-                    <th className="py-3 px-4 text-center">Status</th>
-                    <th className="py-3 px-4 text-center">Action</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-stone-200 text-xs">
-                  {commissions.map((c) => (
-                    <tr key={c.id} className="hover:bg-stone-50/80 transition-colors">
-                      <td className="py-3 px-4 font-bold text-stone-900">{c.employeeName}</td>
-                      <td className="py-3 px-4 text-stone-600">{c.role}</td>
-                      <td className="py-3 px-4 text-right font-mono">{formatCurrency(c.salesTarget)}</td>
-                      <td className="py-3 px-4 text-right font-mono font-semibold text-stone-900">{formatCurrency(c.achievedSales)}</td>
-                      <td className="py-3 px-4 text-center">
-                        <span className={`inline-flex px-2 py-0.5 rounded text-[10px] font-bold ${
-                          c.targetPercent >= 120 ? 'bg-emerald-100 text-emerald-800' : 'bg-blue-100 text-blue-800'
-                        }`}>
-                          {c.targetPercent}%
-                        </span>
-                      </td>
-                      <td className="py-3 px-4 text-right font-mono">{c.commissionRate}%</td>
-                      <td className="py-3 px-4 text-right font-mono text-emerald-700">{formatCurrency(c.incentiveAmount)}</td>
-                      <td className="py-3 px-4 text-right font-mono text-blue-700">+{formatCurrency(c.bonusAmount)}</td>
-                      <td className="py-3 px-4 text-right font-bold text-stone-900">{formatCurrency(c.totalCommission)}</td>
-                      <td className="py-3 px-4 text-center">
-                        <span className={`inline-flex px-2 py-0.5 rounded text-[10px] font-semibold ${
-                          c.status === 'Paid' ? 'bg-emerald-100 text-emerald-800' :
-                          c.status === 'Approved' ? 'bg-blue-100 text-blue-800' : 'bg-amber-100 text-amber-800'
-                        }`}>
-                          {c.status}
-                        </span>
-                      </td>
-                      <td className="py-3 px-4 text-center">
-                        {c.status === 'Pending Review' ? (
-                          <button
-                            id={`approve-comm-${c.id}`}
-                            onClick={() => updateCommissionStatus(c.id, 'Approved')}
-                            className="px-2.5 py-1 bg-stone-900 hover:bg-stone-800 text-white rounded text-xs font-semibold"
-                          >
-                            Approve
-                          </button>
-                        ) : c.status === 'Approved' ? (
-                          <button
-                            id={`pay-comm-${c.id}`}
-                            onClick={() => updateCommissionStatus(c.id, 'Paid')}
-                            className="px-2.5 py-1 bg-emerald-800 hover:bg-emerald-900 text-white rounded text-xs font-semibold"
-                          >
-                            Mark Paid
-                          </button>
-                        ) : (
-                          <span className="text-[11px] text-emerald-600 flex items-center justify-center gap-1">
-                            <Check className="w-3 h-3" /> Disbursed
-                          </span>
-                        )}
-                      </td>
-                    </tr>
-                  ))}
                 </tbody>
               </table>
             </div>

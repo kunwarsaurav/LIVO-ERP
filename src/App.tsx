@@ -7,7 +7,8 @@ import { Sidebar, NavTab } from './components/layout/Sidebar';
 import { OverviewDashboard } from './components/dashboard/OverviewDashboard';
 import { StockManagement } from './components/stock/StockManagement';
 import { AccountingModule } from './components/accounting/AccountingModule';
-import { BillingPayrollModule } from './components/billing/BillingPayrollModule';
+import { POSBillingModule } from './components/billing/POSBillingModule';
+import { HRPayrollModule } from './components/billing/HRPayrollModule';
 import { ProductTagSystem } from './components/mrp/ProductTagSystem';
 import { PrintedCatalogues } from './components/catalogues/PrintedCatalogues';
 import { SupplierManagement } from './components/suppliers/SupplierManagement';
@@ -35,7 +36,7 @@ export default function App() {
   };
 
   const handleQuickPOS = () => {
-    setCurrentTab('billing');
+    setCurrentTab('pos');
   };
 
   return (
@@ -58,7 +59,7 @@ export default function App() {
           {currentTab === 'dashboard' && (
             <OverviewDashboard
               onNavigate={setCurrentTab}
-              onOpenPOS={() => setCurrentTab('billing')}
+              onOpenPOS={() => setCurrentTab('pos')}
             />
           )}
 
@@ -68,8 +69,8 @@ export default function App() {
 
           {currentTab === 'accounting' && <AccountingModule />}
 
-          {currentTab === 'billing' && (
-            <BillingPayrollModule
+          {currentTab === 'pos' && (
+            <POSBillingModule
               onPrintInvoice={(invoice) =>
                 setPrintDocument({ type: 'invoice', data: invoice })
               }
@@ -78,6 +79,8 @@ export default function App() {
               }
             />
           )}
+
+          {currentTab === 'hr' && <HRPayrollModule />}
 
           {currentTab === 'mrp' && (
             <ProductTagSystem initialSelectedProduct={selectedProductForTag} />
