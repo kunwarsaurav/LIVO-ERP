@@ -34,9 +34,9 @@ const request = async (endpoint: string, options: RequestInit = {}) => {
             supplierName: 'Milano Artisan Works',
             barcode: '123456789012',
             warrantyYears: 5,
-            imageUrl: 'https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=200',
-          },
-          {
+             image: ['https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=200'],
+           },
+           {
             id: 'prod-2',
             sku: 'BED-QEN-OAK',
             name: 'Oakwood Queen Bed',
@@ -54,7 +54,7 @@ const request = async (endpoint: string, options: RequestInit = {}) => {
             supplierName: 'Nordic Woodcrafters',
             barcode: '987654321098',
             warrantyYears: 3,
-            imageUrl: 'https://images.unsplash.com/photo-1505693314120-0d443867891c?w=200',
+             image: ['https://images.unsplash.com/photo-1505693314120-0d443867891c?w=200'],
           }
         ]
       };

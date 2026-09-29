@@ -65,18 +65,20 @@ export const PrintBarcodeModal: React.FC<PrintBarcodeModalProps> = ({ product, o
                 LIVO - {product.brand}
               </div>
               <div className="w-full flex justify-center scale-[0.85] origin-top text-black">
-                <Barcode 
-                  value={product.barcode} 
-                  width={1.2} 
-                  height={30} 
-                  displayValue={false}
-                  margin={0} 
-                  background="transparent" 
-                  lineColor="#000000"
-                />
+                {(product.barcode || product.sku) ? (
+                  <Barcode 
+                    value={product.barcode || product.sku} 
+                    width={1.2} 
+                    height={30} 
+                    displayValue={false}
+                    margin={0} 
+                    background="transparent" 
+                    lineColor="#000000"
+                  />
+                ) : null}
               </div>
               <div className="text-[8px] font-mono font-bold mt-[1px] text-black">
-                {product.barcode}
+                {product.barcode || product.sku || ''}
               </div>
               <div className="text-[7px] text-gray-500 font-mono mt-[1px] text-black">
                 SKU: {product.sku}

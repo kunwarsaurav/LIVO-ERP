@@ -54,20 +54,22 @@ export default function PrintBarcodePage() {
           LIVO - {product.brand}
         </div>
         <div className="w-full flex justify-center scale-90 origin-top">
-          <Barcode 
-            value={product.barcode} 
-            width={1.2} 
-            height={30} 
-            displayValue={false} 
-            margin={0} 
-            background="transparent" 
-            lineColor="#000000"
-          />
+          {(product.barcode || product.sku) && (
+            <Barcode 
+              value={product.barcode || product.sku} 
+              width={1.2} 
+              height={30} 
+              displayValue={false} 
+              margin={0} 
+              background="transparent" 
+              lineColor="#000000"
+            />
+          )}
         </div>
-        <div className="text-[8px] font-mono font-bold mt-[1px]">
+        <div className="text-[8px] font-mono font-bold mt-px">
           {product.barcode}
         </div>
-        <div className="text-[7px] text-gray-500 font-mono mt-[1px]">
+        <div className="text-[7px] text-gray-500 font-mono mt-px">
           SKU: {product.sku}
         </div>
       </div>

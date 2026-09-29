@@ -23,7 +23,7 @@ import {
 } from 'lucide-react';
 import { useERP } from '../../context/ERPContext';
 import { Product, ProductCategory } from '../../types';
-import { formatCurrency, formatDate } from '../../utils/formatters';
+import { formatCurrency, formatDate, getProductImage } from '../../utils/formatters';
 import { PrintBarcodeModal } from './PrintBarcodeModal';
 import { ImageDropZone } from '../features/protected/shared/ImageDropZone';
 
@@ -407,12 +407,18 @@ export const StockManagement: React.FC<StockManagementProps> = ({
                         >
                           <td className="py-3 px-4">
                             <div className="flex items-center gap-3">
-                              <img
-                                src={product.imageUrl}
-                                alt={product.name}
-                                className="w-11 h-11 rounded-lg object-cover border border-stone-200 shrink-0"
-                                referrerPolicy="no-referrer"
-                              />
+                    {product.image?.[0] || (product as any).imageUrl ? (
+                      <img
+                        src={product.image?.[0] || (product as any).imageUrl}
+                                  alt={product.name}
+                                  className="w-11 h-11 rounded-lg object-cover border border-stone-200 shrink-0"
+                                  referrerPolicy="no-referrer"
+                                />
+                              ) : (
+                                <div className="w-11 h-11 rounded-lg bg-stone-100 border border-stone-200 flex items-center justify-center text-stone-400 shrink-0">
+                                  <Boxes className="w-5 h-5" />
+                                </div>
+                              )}
                               <div>
                                 <div className="font-semibold text-stone-900">
                                   {product.name}
@@ -425,17 +431,19 @@ export const StockManagement: React.FC<StockManagementProps> = ({
                                     {product.modelNumber}
                                   </span>
                                 </div>
-                                <div className="mt-1.5 opacity-80" style={{ transform: 'scale(0.8)', transformOrigin: 'left top' }}>
-                                  <Barcode 
-                                    value={product.sku} 
-                                    width={1.2} 
-                                    height={24} 
-                                    displayValue={false} 
-                                    margin={0} 
-                                    background="transparent" 
-                                    lineColor="#44403c"
-                                  />
-                                </div>
+                                {(product.barcode || product.sku) && (
+                                  <div className="mt-1.5 opacity-80" style={{ transform: 'scale(0.8)', transformOrigin: 'left top' }}>
+                                    <Barcode 
+                                      value={product.barcode || product.sku} 
+                                      width={1.2} 
+                                      height={24} 
+                                      displayValue={false} 
+                                      margin={0} 
+                                      background="transparent" 
+                                      lineColor="#44403c"
+                                    />
+                                  </div>
+                                )}
                               </div>
                             </div>
                           </td>
@@ -1020,7 +1028,7 @@ const ProductFormModal: React.FC<ProductFormModalProps> = ({
     barcode: nextBarcode,
     warrantyYears: product?.warrantyYears || 5,
     description: product?.description || '',
-    imageUrl: product?.imageUrl || '',
+    image: product?.image || [],
     featuredInCatalogue: product?.featuredInCatalogue ?? true,
     specifications: product?.specifications || [
       "High-grade bespoke manufacture",
@@ -1430,9 +1438,14 @@ const ProductFormModal: React.FC<ProductFormModalProps> = ({
           <div>
             <label className="block text-stone-700 font-medium mb-1">Product Image</label>
             <ImageDropZone
-              mode="single"
-              value={formData.imageUrl ? [{ url: formData.imageUrl }] : []}
-              onChange={(images) => setFormData({ ...formData, imageUrl: images[0]?.url || '' })}
+              mode="multiple"
+              value={formData.image.map((url) => ({ url }))}
+              onChange={(images) =>
+                setFormData({
+                  ...formData,
+                  image: images.map((i) => i.url).filter(Boolean),
+                })
+              }
             />
           </div>
 

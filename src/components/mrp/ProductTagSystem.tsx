@@ -472,16 +472,18 @@ export const ProductTagSystem: React.FC<ProductTagSystemProps> = ({
 
                   <div className="flex items-center justify-between pt-1 gap-2">
                     <div className="flex-1 flex justify-center">
-                      <Barcode
-                        value={p.barcode}
-                        width={1.1}
-                        height={36}
-                        displayValue
-                        fontSize={8}
-                        margin={0}
-                        background="transparent"
-                        lineColor="#1c1917"
-                      />
+                      {(p.barcode || p.sku) && (
+                        <Barcode
+                          value={p.barcode || p.sku}
+                          width={1.1}
+                          height={36}
+                          displayValue
+                          fontSize={8}
+                          margin={0}
+                          background="transparent"
+                          lineColor="#1c1917"
+                        />
+                      )}
                     </div>
                     <QRCodeSVG
                       value={`https://livofurniture.com/verify?barcode=${p.barcode}&sku=${p.sku}`}
