@@ -191,7 +191,7 @@ export const HRPayrollModule: React.FC<BillingPayrollProps> = ({
     const discounted = item.product.sellingPrice * (1 - item.discount / 100);
     return sum + discounted * item.quantity;
   }, 0);
-  const cartVat = Number((cartSubtotal * 0.05).toFixed(2)); // Nepal VAT 5%
+  const cartVat = Number((cartSubtotal * 0.05).toFixed(2)); // Nepal VAT 13%
   const cartGrandTotal = cartSubtotal + cartVat;
 
   const handleCompletePosSale = () => {
@@ -200,7 +200,7 @@ export const HRPayrollModule: React.FC<BillingPayrollProps> = ({
 
     const newInvItems = posCart.map((item) => {
       const taxable = item.product.sellingPrice * item.quantity * (1 - item.discount / 100);
-      const vat = Number((taxable * 0.05).toFixed(2)); // Nepal VAT 5%
+      const vat = Number((taxable * 0.05).toFixed(2)); // Nepal VAT 13%
       return {
         productId: item.product.id,
         sku: item.product.sku,
@@ -240,7 +240,7 @@ export const HRPayrollModule: React.FC<BillingPayrollProps> = ({
     addInvoice(generatedInv);
     setRecentPosReceipt(generatedInv);
     setPosCart([]);
-    
+
     // Auto-trigger the A4 normal printer invoice formatting!
     if (onPrintInvoice) {
       onPrintInvoice(generatedInv);
@@ -271,7 +271,7 @@ export const HRPayrollModule: React.FC<BillingPayrollProps> = ({
     });
 
     const subtotal = items.reduce((sum, it) => sum + it.total, 0);
-    const vatAmount = Number((subtotal * 0.05).toFixed(2)); // Nepal VAT 5%
+    const vatAmount = Number((subtotal * 0.05).toFixed(2)); // Nepal VAT 13%
     const grandTotal = subtotal + vatAmount;
 
     const today = new Date();
@@ -396,10 +396,10 @@ export const HRPayrollModule: React.FC<BillingPayrollProps> = ({
       {/* 7 Direct Navigation Tabs matching User Request */}
       <div className="flex overflow-x-auto border-b border-stone-200 gap-1 pb-1 scrollbar-thin">
         {[
-          
-          
-          
-          
+
+
+
+
           { id: 'attendance', label: 'Employee Attendance', badge: 'Daily', icon: CalendarCheck2 },
           { id: 'payroll', label: 'Salary / Payroll', badge: `${employees.length} Staff`, icon: DollarSign },
           { id: 'commission', label: 'Commission / Incentives', badge: commissions.length, icon: Award },
@@ -410,21 +410,19 @@ export const HRPayrollModule: React.FC<BillingPayrollProps> = ({
               key={tab.id}
               id={`billing-tab-${tab.id}`}
               onClick={() => setActiveTab(tab.id as any)}
-              className={`flex items-center gap-2 px-3.5 py-2.5 text-xs md:text-sm font-semibold whitespace-nowrap rounded-t-lg transition-all border-b-2 ${
-                activeTab === tab.id
+              className={`flex items-center gap-2 px-3.5 py-2.5 text-xs md:text-sm font-semibold whitespace-nowrap rounded-t-lg transition-all border-b-2 ${activeTab === tab.id
                   ? 'border-stone-900 text-stone-900 bg-stone-100/80 shadow-sm'
                   : 'border-transparent text-stone-500 hover:text-stone-800 hover:bg-stone-50'
-              }`}
+                }`}
             >
               <Icon className="w-3.5 h-3.5" />
               <span>{tab.label}</span>
               {tab.badge !== undefined && tab.badge !== null && (
                 <span
-                  className={`text-[10px] px-1.5 py-0.5 rounded-full ${
-                    activeTab === tab.id
+                  className={`text-[10px] px-1.5 py-0.5 rounded-full ${activeTab === tab.id
                       ? 'bg-stone-900 text-stone-100 font-bold'
                       : 'bg-stone-200 text-stone-600'
-                  }`}
+                    }`}
                 >
                   {tab.badge}
                 </span>
@@ -513,11 +511,10 @@ export const HRPayrollModule: React.FC<BillingPayrollProps> = ({
                       <td className="py-3 px-4 font-mono">{rec.checkOut}</td>
                       <td className="py-3 px-4 text-center font-bold text-stone-800">{rec.overtimeHours || 0} hrs</td>
                       <td className="py-3 px-4 text-center">
-                        <span className={`inline-flex px-2 py-0.5 rounded text-[10px] font-semibold ${
-                          rec.status === 'Present' ? 'bg-emerald-100 text-emerald-800' :
-                          rec.status === 'On-Site' ? 'bg-blue-100 text-blue-800' :
-                          rec.status === 'Leave' ? 'bg-rose-100 text-rose-800' : 'bg-amber-100 text-amber-800'
-                        }`}>
+                        <span className={`inline-flex px-2 py-0.5 rounded text-[10px] font-semibold ${rec.status === 'Present' ? 'bg-emerald-100 text-emerald-800' :
+                            rec.status === 'On-Site' ? 'bg-blue-100 text-blue-800' :
+                              rec.status === 'Leave' ? 'bg-rose-100 text-rose-800' : 'bg-amber-100 text-amber-800'
+                          }`}>
                           {rec.status}
                         </span>
                       </td>
@@ -660,7 +657,7 @@ export const HRPayrollModule: React.FC<BillingPayrollProps> = ({
             </div>
             <div className="bg-white p-4 rounded-xl border border-stone-200 shadow-sm">
               <span className="text-xs font-medium text-stone-500 uppercase">Commission Model</span>
-              <div className="text-xl font-bold text-stone-900 mt-1">2.0% - 2.5%</div>
+              <div className="text-xl font-bold text-stone-900 mt-1">2.0% - 2.13%</div>
               <p className="text-xs text-stone-400 mt-1">+ Milestone completion bonuses</p>
             </div>
           </div>
@@ -699,9 +696,8 @@ export const HRPayrollModule: React.FC<BillingPayrollProps> = ({
                       <td className="py-3 px-4 text-right font-mono">{formatCurrency(c.salesTarget)}</td>
                       <td className="py-3 px-4 text-right font-mono font-semibold text-stone-900">{formatCurrency(c.achievedSales)}</td>
                       <td className="py-3 px-4 text-center">
-                        <span className={`inline-flex px-2 py-0.5 rounded text-[10px] font-bold ${
-                          c.targetPercent >= 120 ? 'bg-emerald-100 text-emerald-800' : 'bg-blue-100 text-blue-800'
-                        }`}>
+                        <span className={`inline-flex px-2 py-0.5 rounded text-[10px] font-bold ${c.targetPercent >= 120 ? 'bg-emerald-100 text-emerald-800' : 'bg-blue-100 text-blue-800'
+                          }`}>
                           {c.targetPercent}%
                         </span>
                       </td>
@@ -710,10 +706,9 @@ export const HRPayrollModule: React.FC<BillingPayrollProps> = ({
                       <td className="py-3 px-4 text-right font-mono text-blue-700">+{formatCurrency(c.bonusAmount)}</td>
                       <td className="py-3 px-4 text-right font-bold text-stone-900">{formatCurrency(c.totalCommission)}</td>
                       <td className="py-3 px-4 text-center">
-                        <span className={`inline-flex px-2 py-0.5 rounded text-[10px] font-semibold ${
-                          c.status === 'Paid' ? 'bg-emerald-100 text-emerald-800' :
-                          c.status === 'Approved' ? 'bg-blue-100 text-blue-800' : 'bg-amber-100 text-amber-800'
-                        }`}>
+                        <span className={`inline-flex px-2 py-0.5 rounded text-[10px] font-semibold ${c.status === 'Paid' ? 'bg-emerald-100 text-emerald-800' :
+                            c.status === 'Approved' ? 'bg-blue-100 text-blue-800' : 'bg-amber-100 text-amber-800'
+                          }`}>
                           {c.status}
                         </span>
                       </td>
@@ -1269,7 +1264,7 @@ export const HRPayrollModule: React.FC<BillingPayrollProps> = ({
                 <span>{formatCurrency(recentPosReceipt.subtotal)}</span>
               </div>
               <div className="flex justify-between">
-                <span>VAT (15%):</span>
+                <span>VAT (113%):</span>
                 <span>{formatCurrency(recentPosReceipt.vatTotal)}</span>
               </div>
               <div className="flex justify-between text-sm font-bold pt-1 border-t border-stone-200">
@@ -1321,7 +1316,7 @@ export const HRPayrollModule: React.FC<BillingPayrollProps> = ({
               ))}
             </div>
             <div className="pt-3 border-t border-stone-200 flex justify-between font-bold text-sm">
-              <span>Grand Total (incl 5% VAT):</span>
+              <span>Grand Total (incl 13% VAT):</span>
               <span>{formatCurrency(previewQuotation.grandTotal)}</span>
             </div>
             <div className="mt-4 flex justify-end gap-2">
@@ -1371,7 +1366,7 @@ export const HRPayrollModule: React.FC<BillingPayrollProps> = ({
                 <span className="font-mono">{formatCurrency(previewInvoice.subtotal)}</span>
               </div>
               <div className="flex justify-between text-stone-600">
-                <span>VAT (5%):</span>
+                <span>VAT (13%):</span>
                 <span className="font-mono">{formatCurrency(previewInvoice.vatTotal)}</span>
               </div>
               <div className="flex justify-between font-bold text-sm text-stone-900 pt-1 border-t border-stone-200">

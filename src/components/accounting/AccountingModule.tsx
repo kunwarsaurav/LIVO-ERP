@@ -109,7 +109,7 @@ export const AccountingModule: React.FC = () => {
   const netOperatingProfit = grossProfit - totalOperatingExpenses;
   const netMarginPct = totalSalesRevenue > 0 ? ((netOperatingProfit / totalSalesRevenue) * 100).toFixed(1) : '0';
 
-  // VAT calculations (5% UAE Standard VAT)
+  // VAT calculations (13% UAE Standard VAT)
   const outputVatCollected = invoices.reduce((acc, inv) => acc + inv.vatTotal, 0);
   const inputVatPurchases = purchases.reduce((acc, p) => acc + p.vatAmount, 0);
   const inputVatExpenses = expenses.reduce((acc, exp) => acc + exp.vatPaid, 0);
@@ -271,26 +271,24 @@ export const AccountingModule: React.FC = () => {
           },
           { id: 'cash-bank', label: 'Cash / Bank', badge: formatCurrency(totalLiquidity) },
           { id: 'pl', label: 'Profit & Loss' },
-          { id: 'vat', label: 'VAT / Tax Reports', badge: '5% Standard' },
+          { id: 'vat', label: 'VAT / Tax Reports', badge: '13% Standard' },
         ].map((tab) => (
           <button
             key={tab.id}
             id={`accounting-tab-${tab.id}`}
             onClick={() => setActiveTab(tab.id as any)}
-            className={`flex items-center gap-2 px-3.5 py-2.5 text-xs md:text-sm font-semibold whitespace-nowrap rounded-t-lg transition-all border-b-2 ${
-              activeTab === tab.id
+            className={`flex items-center gap-2 px-3.5 py-2.5 text-xs md:text-sm font-semibold whitespace-nowrap rounded-t-lg transition-all border-b-2 ${activeTab === tab.id
                 ? 'border-stone-900 text-stone-900 bg-stone-100/80 shadow-sm'
                 : 'border-transparent text-stone-500 hover:text-stone-800 hover:bg-stone-50'
-            }`}
+              }`}
           >
             <span>{tab.label}</span>
             {tab.badge !== undefined && tab.badge !== null && (
               <span
-                className={`text-[10px] px-1.5 py-0.5 rounded-full ${
-                  activeTab === tab.id
+                className={`text-[10px] px-1.5 py-0.5 rounded-full ${activeTab === tab.id
                     ? 'bg-stone-900 text-stone-100 font-bold'
                     : 'bg-stone-200 text-stone-600'
-                }`}
+                  }`}
               >
                 {tab.badge}
               </span>
@@ -324,7 +322,7 @@ export const AccountingModule: React.FC = () => {
             <div className="bg-white p-4 rounded-xl border border-stone-200 shadow-sm">
               <span className="text-xs font-medium text-stone-500 uppercase tracking-wider">Input VAT on Purchases</span>
               <div className="text-xl font-bold text-stone-900 mt-1">{formatCurrency(inputVatPurchases)}</div>
-              <p className="text-xs text-stone-400 mt-1">5% Recoverable Tax Credit</p>
+              <p className="text-xs text-stone-400 mt-1">13% Recoverable Tax Credit</p>
             </div>
           </div>
 
@@ -441,7 +439,7 @@ export const AccountingModule: React.FC = () => {
             <div className="bg-white p-4 rounded-xl border border-stone-200 shadow-sm">
               <span className="text-xs font-medium text-stone-500 uppercase tracking-wider">Output VAT on Sales</span>
               <div className="text-xl font-bold text-stone-900 mt-1">{formatCurrency(outputVatCollected)}</div>
-              <p className="text-xs text-stone-400 mt-1">5% Standard Rate</p>
+              <p className="text-xs text-stone-400 mt-1">13% Standard Rate</p>
             </div>
           </div>
 
@@ -463,7 +461,7 @@ export const AccountingModule: React.FC = () => {
                     <th className="py-3 px-4">Date</th>
                     <th className="py-3 px-4">Type</th>
                     <th className="py-3 px-4 text-right">Subtotal</th>
-                    <th className="py-3 px-4 text-right">VAT (5%)</th>
+                    <th className="py-3 px-4 text-right">VAT (13%)</th>
                     <th className="py-3 px-4 text-right">Grand Total</th>
                     <th className="py-3 px-4 text-right">Amount Paid</th>
                     <th className="py-3 px-4 text-right">Balance</th>
@@ -613,18 +611,16 @@ export const AccountingModule: React.FC = () => {
                 <button
                   id="ledger-toggle-customer"
                   onClick={() => setLedgerType('customer')}
-                  className={`px-3 py-1 text-xs font-semibold rounded-md transition-all ${
-                    ledgerType === 'customer' ? 'bg-stone-900 text-white shadow-sm' : 'text-stone-600 hover:text-stone-900'
-                  }`}
+                  className={`px-3 py-1 text-xs font-semibold rounded-md transition-all ${ledgerType === 'customer' ? 'bg-stone-900 text-white shadow-sm' : 'text-stone-600 hover:text-stone-900'
+                    }`}
                 >
                   Customer Ledger
                 </button>
                 <button
                   id="ledger-toggle-supplier"
                   onClick={() => setLedgerType('supplier')}
-                  className={`px-3 py-1 text-xs font-semibold rounded-md transition-all ${
-                    ledgerType === 'supplier' ? 'bg-stone-900 text-white shadow-sm' : 'text-stone-600 hover:text-stone-900'
-                  }`}
+                  className={`px-3 py-1 text-xs font-semibold rounded-md transition-all ${ledgerType === 'supplier' ? 'bg-stone-900 text-white shadow-sm' : 'text-stone-600 hover:text-stone-900'
+                    }`}
                 >
                   Supplier Ledger
                 </button>
@@ -1007,11 +1003,10 @@ export const AccountingModule: React.FC = () => {
                     <tr key={tx.id} className="hover:bg-stone-50/80 transition-colors">
                       <td className="py-3 px-4 text-stone-500">{formatDate(tx.date)}</td>
                       <td className="py-3 px-4 font-semibold text-stone-800">
-                        <span className={`px-2 py-0.5 rounded text-[10px] ${
-                          tx.type === 'SALE' ? 'bg-emerald-100 text-emerald-800' :
-                          tx.type === 'PURCHASE' ? 'bg-rose-100 text-rose-800' :
-                          'bg-stone-100 text-stone-800'
-                        }`}>
+                        <span className={`px-2 py-0.5 rounded text-[10px] ${tx.type === 'SALE' ? 'bg-emerald-100 text-emerald-800' :
+                            tx.type === 'PURCHASE' ? 'bg-rose-100 text-rose-800' :
+                              'bg-stone-100 text-stone-800'
+                          }`}>
                           {tx.type}
                         </span>
                       </td>
@@ -1143,7 +1138,7 @@ export const AccountingModule: React.FC = () => {
                   <span className="px-2 py-0.5 bg-stone-900 text-white text-[10px] font-bold rounded">FTA COMPLIANT</span>
                   <h3 className="text-lg font-bold text-stone-900">VAT 201 Periodic Tax Return</h3>
                 </div>
-                <p className="text-xs text-stone-500 mt-1">Standard 5% Value Added Tax Calculation</p>
+                <p className="text-xs text-stone-500 mt-1">Standard 13% Value Added Tax Calculation</p>
               </div>
               <button
                 onClick={() => window.print()}
@@ -1160,7 +1155,7 @@ export const AccountingModule: React.FC = () => {
                 <h4 className="font-bold text-stone-900 text-sm mb-3">VAT on Supplies (Output VAT - Collected)</h4>
                 <div className="space-y-2">
                   <div className="flex justify-between py-1 border-b border-stone-200">
-                    <span className="text-stone-600">Box 1: Standard Rated Supplies (5% Furniture Sales)</span>
+                    <span className="text-stone-600">Box 1: Standard Rated Supplies (13% Furniture Sales)</span>
                     <div className="flex gap-6">
                       <span className="font-mono text-stone-700">Taxable: {formatCurrency(totalSalesTaxable)}</span>
                       <span className="font-mono font-bold text-stone-900">VAT: {formatCurrency(outputVatCollected)}</span>
@@ -1480,7 +1475,7 @@ export const AccountingModule: React.FC = () => {
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold text-stone-700 mb-1">VAT Paid (5%)</label>
+                  <label className="block text-xs font-semibold text-stone-700 mb-1">VAT Paid (13%)</label>
                   <input
                     type="number"
                     value={newExpense.vatPaid}

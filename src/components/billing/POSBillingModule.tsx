@@ -73,8 +73,15 @@ export const POSBillingModule: React.FC<BillingPayrollProps> = ({
   const [posCart, setPosCart] = useState<Array<{ product: Product; quantity: number; discount: number }>>([]);
   const [posCustomerId, setPosCustomerId] = useState(customers[0]?.id || '');
   const [posPaymentMethod, setPosPaymentMethod] = useState<'Cash' | 'Credit Card' | 'Bank Transfer'>('Credit Card');
-  const [recentPosReceipt, setRecentPosReceipt] = useState<Invoice | null>(null);
   const [scanError, setScanError] = useState<string | null>(null);
+
+  const [isPosCheckoutModalOpen, setIsPosCheckoutModalOpen] = useState(false);
+  const [checkoutBuyerType, setCheckoutBuyerType] = useState<'Walk-in' | 'Distributor'>('Walk-in');
+  const [checkoutBuyerName, setCheckoutBuyerName] = useState('Walk-in Customer');
+  const [checkoutBuyerAddress, setCheckoutBuyerAddress] = useState('');
+  const [checkoutBuyerPan, setCheckoutBuyerPan] = useState('');
+  const [checkoutPaymentMode, setCheckoutPaymentMode] = useState<'Cash' | 'Cheque' | 'Credit' | 'Other'>('Cash');
+  const [checkoutDistributorId, setCheckoutDistributorId] = useState('');
 
   // ==========================================
   // Quotation State & Modal
@@ -191,16 +198,27 @@ export const POSBillingModule: React.FC<BillingPayrollProps> = ({
     const discounted = item.product.sellingPrice * (1 - item.discount / 100);
     return sum + discounted * item.quantity;
   }, 0);
-  const cartVat = Number((cartSubtotal * 0.05).toFixed(2)); // Nepal VAT 5%
+  const cartVat = Number((cartSubtotal * 0.05).toFixed(2)); // Nepal VAT 13%
   const cartGrandTotal = cartSubtotal + cartVat;
 
-  const handleCompletePosSale = () => {
+  const handleOpenCheckoutModal = () => {
     if (posCart.length === 0) return;
-    const cust = customers.find((c) => c.id === posCustomerId) || customers[0];
+    setIsPosCheckoutModalOpen(true);
+    setCheckoutBuyerType('Walk-in');
+    setCheckoutBuyerName('Walk-in Customer');
+    setCheckoutBuyerAddress('');
+    setCheckoutBuyerPan('');
+    setCheckoutPaymentMode('Cash');
+    setCheckoutDistributorId('');
+  };
+
+  const handleFinalizeSale = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (posCart.length === 0) return;
 
     const newInvItems = posCart.map((item) => {
       const taxable = item.product.sellingPrice * item.quantity * (1 - item.discount / 100);
-      const vat = Number((taxable * 0.05).toFixed(2)); // Nepal VAT 5%
+      const vat = Number((taxable * 0.05).toFixed(2)); // Nepal VAT 13%
       return {
         productId: item.product.id,
         sku: item.product.sku,
@@ -222,9 +240,11 @@ export const POSBillingModule: React.FC<BillingPayrollProps> = ({
     const generatedInv: Invoice = {
       id: `inv-${Date.now()}`,
       invoiceNumber: invNumber,
-      customerId: cust?.id || 'walk-in-001',
-      customerName: cust?.name || 'Walk-in Customer',
-      customerAddress: cust?.address || 'Dubai Showroom Walk-in',
+      customerId: checkoutBuyerType === 'Distributor' ? checkoutDistributorId : 'walk-in-001',
+      customerName: checkoutBuyerName,
+      customerAddress: checkoutBuyerAddress,
+      buyerPan: checkoutBuyerPan,
+      buyerType: checkoutBuyerType,
       date: today,
       dueDate: today,
       items: newInvItems,
@@ -233,14 +253,15 @@ export const POSBillingModule: React.FC<BillingPayrollProps> = ({
       grandTotal: cartGrandTotal,
       amountPaid: cartGrandTotal,
       paymentStatus: 'Paid',
-      paymentMethod: posPaymentMethod,
+      paymentMethod: checkoutPaymentMode,
       invoiceType: 'POS Receipt',
     };
 
     addInvoice(generatedInv);
-    setRecentPosReceipt(generatedInv);
     setPosCart([]);
-    
+    setIsPosCheckoutModalOpen(false);
+
+
     // Auto-trigger the A4 normal printer invoice formatting!
     if (onPrintInvoice) {
       onPrintInvoice(generatedInv);
@@ -271,7 +292,7 @@ export const POSBillingModule: React.FC<BillingPayrollProps> = ({
     });
 
     const subtotal = items.reduce((sum, it) => sum + it.total, 0);
-    const vatAmount = Number((subtotal * 0.05).toFixed(2)); // Nepal VAT 5%
+    const vatAmount = Number((subtotal * 0.05).toFixed(2)); // Nepal VAT 13%
     const grandTotal = subtotal + vatAmount;
 
     const today = new Date();
@@ -400,9 +421,9 @@ export const POSBillingModule: React.FC<BillingPayrollProps> = ({
           { id: 'quotation', label: 'Quotation', badge: quotations.length, icon: FileText },
           { id: 'invoice', label: 'Invoice', badge: invoices.length, icon: Receipt },
           { id: 'customers', label: 'Customer Database', badge: customers.length, icon: Users2 },
-          
-          
-          
+
+
+
         ].map((tab) => {
           const Icon = tab.icon;
           return (
@@ -410,21 +431,19 @@ export const POSBillingModule: React.FC<BillingPayrollProps> = ({
               key={tab.id}
               id={`billing-tab-${tab.id}`}
               onClick={() => setActiveTab(tab.id as any)}
-              className={`flex items-center gap-2 px-3.5 py-2.5 text-xs md:text-sm font-semibold whitespace-nowrap rounded-t-lg transition-all border-b-2 ${
-                activeTab === tab.id
+              className={`flex items-center gap-2 px-3.5 py-2.5 text-xs md:text-sm font-semibold whitespace-nowrap rounded-t-lg transition-all border-b-2 ${activeTab === tab.id
                   ? 'border-stone-900 text-stone-900 bg-stone-100/80 shadow-sm'
                   : 'border-transparent text-stone-500 hover:text-stone-800 hover:bg-stone-50'
-              }`}
+                }`}
             >
               <Icon className="w-3.5 h-3.5" />
               <span>{tab.label}</span>
               {tab.badge !== undefined && tab.badge !== null && (
                 <span
-                  className={`text-[10px] px-1.5 py-0.5 rounded-full ${
-                    activeTab === tab.id
+                  className={`text-[10px] px-1.5 py-0.5 rounded-full ${activeTab === tab.id
                       ? 'bg-stone-900 text-stone-100 font-bold'
                       : 'bg-stone-200 text-stone-600'
-                  }`}
+                    }`}
                 >
                   {tab.badge}
                 </span>
@@ -533,25 +552,6 @@ export const POSBillingModule: React.FC<BillingPayrollProps> = ({
                 <span className="text-xs text-stone-500 font-medium">{posCart.length} items</span>
               </div>
 
-              {/* Customer Selector */}
-              <div className="p-3 border-b border-stone-200 bg-white">
-                <label className="block text-[11px] font-bold text-stone-600 mb-1 uppercase tracking-wider">
-                  Billed To Client:
-                </label>
-                <select
-                  id="pos-customer-select"
-                  value={posCustomerId}
-                  onChange={(e) => setPosCustomerId(e.target.value)}
-                  className="w-full px-2.5 py-1.5 bg-stone-50 border border-stone-300 rounded text-xs font-medium text-stone-800"
-                >
-                  <option value="walk-in-001">Walk-in Customer (Default)</option>
-                  {customers.map((c) => (
-                    <option key={c.id} value={c.id}>
-                      {c.name} {c.companyName ? `(${c.companyName})` : ''} - {c.phone}
-                    </option>
-                  ))}
-                </select>
-              </div>
 
               {/* Cart Items List */}
               <div className="p-3 divide-y divide-stone-100 max-h-[300px] overflow-y-auto">
@@ -610,7 +610,7 @@ export const POSBillingModule: React.FC<BillingPayrollProps> = ({
                       <span className="font-mono">{formatCurrency(cartSubtotal)}</span>
                     </div>
                     <div className="flex justify-between">
-                      <span>VAT (5%)</span>
+                      <span>VAT (13%)</span>
                       <span className="font-mono">{formatCurrency(cartVat)}</span>
                     </div>
                     <div className="flex justify-between font-bold text-stone-900 text-base border-t border-stone-200 pt-2">
@@ -628,11 +628,10 @@ export const POSBillingModule: React.FC<BillingPayrollProps> = ({
                           key={mode}
                           type="button"
                           onClick={() => setPosPaymentMethod(mode)}
-                          className={`py-1.5 text-xs font-semibold rounded border transition-all ${
-                            posPaymentMethod === mode
+                          className={`py-1.5 text-xs font-semibold rounded border transition-all ${posPaymentMethod === mode
                               ? 'bg-stone-900 text-white border-stone-900 shadow-xs'
                               : 'bg-white text-stone-700 border-stone-200 hover:bg-stone-100'
-                          }`}
+                            }`}
                         >
                           {mode}
                         </button>
@@ -642,7 +641,7 @@ export const POSBillingModule: React.FC<BillingPayrollProps> = ({
 
                   <button
                     id="btn-complete-pos-sale"
-                    onClick={handleCompletePosSale}
+                    onClick={handleOpenCheckoutModal}
                     className="w-full py-2.5 bg-emerald-700 hover:bg-emerald-800 text-white rounded-lg text-sm font-bold shadow-sm transition-colors flex items-center justify-center gap-2"
                   >
                     <CheckCircle2 className="w-4 h-4" />
@@ -1431,89 +1430,7 @@ export const POSBillingModule: React.FC<BillingPayrollProps> = ({
         </div>
       )}
 
-      {/* ========================================================================= */}
-      {/* MODAL: POS Receipt Preview */}
-      {/* ========================================================================= */}
-      {recentPosReceipt && (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4 z-50 print:bg-white print:p-0">
-          <style>{`
-            @media print {
-              body * { visibility: hidden; }
-              #printable-pos-receipt, #printable-pos-receipt * { visibility: visible; }
-              #printable-pos-receipt { position: absolute; left: 0; top: 0; margin: 0; padding: 0; width: 100%; }
-              /* Hide the close/print buttons during print */
-              .receipt-actions { display: none !important; }
-            }
-          `}</style>
-          <div id="printable-pos-receipt" className="bg-white rounded-2xl max-w-sm w-full p-6 shadow-xl border border-stone-200 text-center font-mono print:border-none print:shadow-none print:p-2">
-            <div className="border-b border-stone-300 pb-3">
-              <h2 className="text-base font-bold text-stone-900 tracking-wider">LIVO LUXURY LIVING</h2>
-              <p className="text-[11px] text-stone-500">Dubai Design District, Building 4</p>
-              <p className="text-[10px] text-stone-400">TRN: 100489201900003</p>
-            </div>
 
-            <div className="py-3 border-b border-dashed border-stone-300 text-xs text-left space-y-1">
-              <div className="flex justify-between">
-                <span>Receipt #:</span>
-                <span className="font-bold">{recentPosReceipt.invoiceNumber}</span>
-              </div>
-              <div className="flex justify-between">
-                <span>Date:</span>
-                <span>{formatDate(recentPosReceipt.date)}</span>
-              </div>
-              <div className="flex justify-between">
-                <span>Customer:</span>
-                <span className="font-bold">{recentPosReceipt.customerName}</span>
-              </div>
-            </div>
-
-            <div className="py-3 border-b border-dashed border-stone-300 text-xs text-left space-y-2 max-h-48 overflow-y-auto">
-              {recentPosReceipt.items.map((it, i) => (
-                <div key={i} className="flex justify-between">
-                  <div>
-                    <div>{it.name}</div>
-                    <div className="text-[10px] text-stone-500">
-                      {it.quantity} x {formatCurrency(it.unitPrice)}
-                    </div>
-                  </div>
-                  <span className="font-bold">{formatCurrency(it.taxableAmount)}</span>
-                </div>
-              ))}
-            </div>
-
-            <div className="py-3 text-xs text-left space-y-1 border-b border-stone-300">
-              <div className="flex justify-between">
-                <span>Subtotal:</span>
-                <span>{formatCurrency(recentPosReceipt.subtotal)}</span>
-              </div>
-              <div className="flex justify-between">
-                <span>VAT (15%):</span>
-                <span>{formatCurrency(recentPosReceipt.vatTotal)}</span>
-              </div>
-              <div className="flex justify-between text-sm font-bold pt-1 border-t border-stone-200">
-                <span>TOTAL PAID:</span>
-                <span>{formatCurrency(recentPosReceipt.grandTotal)}</span>
-              </div>
-            </div>
-
-            <div className="pt-4 flex gap-2 receipt-actions">
-              <button
-                onClick={() => setRecentPosReceipt(null)}
-                className="flex-1 py-2 bg-stone-100 hover:bg-stone-200 text-stone-700 text-xs font-semibold rounded-lg font-sans"
-              >
-                Close
-              </button>
-              <button
-                onClick={() => window.print()}
-                className="flex-1 py-2 bg-stone-900 hover:bg-stone-800 text-white text-xs font-semibold rounded-lg font-sans flex items-center justify-center gap-1"
-              >
-                <Printer className="w-3.5 h-3.5" />
-                <span>Print</span>
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
 
       {/* ========================================================================= */}
       {/* MODAL: Simple Quotation Preview (fallback) */}
@@ -1539,7 +1456,7 @@ export const POSBillingModule: React.FC<BillingPayrollProps> = ({
               ))}
             </div>
             <div className="pt-3 border-t border-stone-200 flex justify-between font-bold text-sm">
-              <span>Grand Total (incl 5% VAT):</span>
+              <span>Grand Total (incl 13% VAT):</span>
               <span>{formatCurrency(previewQuotation.grandTotal)}</span>
             </div>
             <div className="mt-4 flex justify-end gap-2">
@@ -1589,7 +1506,7 @@ export const POSBillingModule: React.FC<BillingPayrollProps> = ({
                 <span className="font-mono">{formatCurrency(previewInvoice.subtotal)}</span>
               </div>
               <div className="flex justify-between text-stone-600">
-                <span>VAT (5%):</span>
+                <span>VAT (13%):</span>
                 <span className="font-mono">{formatCurrency(previewInvoice.vatTotal)}</span>
               </div>
               <div className="flex justify-between font-bold text-sm text-stone-900 pt-1 border-t border-stone-200">
@@ -1614,6 +1531,150 @@ export const POSBillingModule: React.FC<BillingPayrollProps> = ({
           </div>
         </div>
       )}
+      {/* ========================================================================= */}
+      {/* MODAL: POS Checkout */}
+      {/* ========================================================================= */}
+      {isPosCheckoutModalOpen && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-2xl max-w-lg w-full p-6 shadow-xl border border-stone-200 overflow-hidden">
+            <h3 className="text-xl font-serif font-bold text-stone-900 border-b border-stone-200 pb-4 mb-4">Checkout Details</h3>
+
+            <form onSubmit={handleFinalizeSale} className="space-y-4">
+              <div>
+                <label className="block text-xs font-bold text-stone-700 uppercase tracking-wider mb-2">Billed To Client (Type)</label>
+                <div className="flex gap-4">
+                  <label className="flex items-center gap-2 cursor-pointer">
+                    <input
+                      type="radio"
+                      name="buyerType"
+                      checked={checkoutBuyerType === 'Walk-in'}
+                      onChange={() => {
+                        setCheckoutBuyerType('Walk-in');
+                        setCheckoutBuyerName('Walk-in Customer');
+                        setCheckoutBuyerAddress('');
+                        setCheckoutBuyerPan('');
+                      }}
+                      className="accent-stone-900"
+                    />
+                    <span className="text-sm font-medium text-stone-800">Walk-in Customer</span>
+                  </label>
+                  <label className="flex items-center gap-2 cursor-pointer">
+                    <input
+                      type="radio"
+                      name="buyerType"
+                      checked={checkoutBuyerType === 'Distributor'}
+                      onChange={() => {
+                        setCheckoutBuyerType('Distributor');
+                        setCheckoutBuyerName('');
+                        setCheckoutBuyerAddress('');
+                        setCheckoutBuyerPan('');
+                        if (customers.length > 0) {
+                          setCheckoutDistributorId(customers[0].id);
+                          setCheckoutBuyerName(customers[0].name);
+                          setCheckoutBuyerAddress(customers[0].address);
+                          setCheckoutBuyerPan(customers[0].taxNumber || '');
+                        }
+                      }}
+                      className="accent-stone-900"
+                    />
+                    <span className="text-sm font-medium text-stone-800">Distributor</span>
+                  </label>
+                </div>
+              </div>
+
+              {checkoutBuyerType === 'Distributor' && (
+                <div>
+                  <label className="block text-xs font-bold text-stone-700 uppercase tracking-wider mb-2">Select Distributor</label>
+                  <select
+                    value={checkoutDistributorId}
+                    onChange={(e) => {
+                      const id = e.target.value;
+                      setCheckoutDistributorId(id);
+                      const c = customers.find(c => c.id === id);
+                      if (c) {
+                        setCheckoutBuyerName(c.name);
+                        setCheckoutBuyerAddress(c.address);
+                        setCheckoutBuyerPan(c.taxNumber || '');
+                      }
+                    }}
+                    className="w-full bg-stone-50 border border-stone-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-stone-400 focus:bg-white"
+                  >
+                    {customers.map(c => (
+                      <option key={c.id} value={c.id}>{c.name}</option>
+                    ))}
+                  </select>
+                </div>
+              )}
+
+              <div>
+                <label className="block text-xs font-bold text-stone-700 uppercase tracking-wider mb-2">Name of Buyer</label>
+                <input
+                  type="text"
+                  value={checkoutBuyerName}
+                  onChange={(e) => setCheckoutBuyerName(e.target.value)}
+                  readOnly={checkoutBuyerType === 'Distributor'}
+                  required
+                  className={`w-full border border-stone-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-stone-400 focus:bg-white ${checkoutBuyerType === 'Distributor' ? 'bg-stone-100 text-stone-500' : 'bg-stone-50 text-stone-900'}`}
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-stone-700 uppercase tracking-wider mb-2">Address</label>
+                <input
+                  type="text"
+                  value={checkoutBuyerAddress}
+                  onChange={(e) => setCheckoutBuyerAddress(e.target.value)}
+                  readOnly={checkoutBuyerType === 'Distributor'}
+                  className={`w-full border border-stone-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-stone-400 focus:bg-white ${checkoutBuyerType === 'Distributor' ? 'bg-stone-100 text-stone-500' : 'bg-stone-50 text-stone-900'}`}
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-stone-700 uppercase tracking-wider mb-2">Taxpayer's Registration Number (PAN/VAT)</label>
+                <input
+                  type="text"
+                  value={checkoutBuyerPan}
+                  onChange={(e) => setCheckoutBuyerPan(e.target.value)}
+                  readOnly={checkoutBuyerType === 'Distributor'}
+                  className={`w-full border border-stone-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-stone-400 focus:bg-white ${checkoutBuyerType === 'Distributor' ? 'bg-stone-100 text-stone-500' : 'bg-stone-50 text-stone-900'}`}
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-stone-700 uppercase tracking-wider mb-2">Mode of Payment</label>
+                <select
+                  value={checkoutPaymentMode}
+                  onChange={(e) => setCheckoutPaymentMode(e.target.value as any)}
+                  className="w-full bg-stone-50 border border-stone-200 rounded-xl px-4 py-2.5 text-sm text-stone-900 outline-none focus:border-stone-400 focus:bg-white"
+                >
+                  <option value="Cash">Cash</option>
+                  <option value="Cheque">Cheque</option>
+                  <option value="Credit">Credit</option>
+                  <option value="Other">Other</option>
+                </select>
+              </div>
+
+              <div className="pt-4 border-t border-stone-200 flex justify-end gap-3 mt-6">
+                <button
+                  type="button"
+                  onClick={() => setIsPosCheckoutModalOpen(false)}
+                  className="px-5 py-2.5 bg-stone-100 hover:bg-stone-200 text-stone-700 font-semibold rounded-xl transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="px-5 py-2.5 bg-emerald-700 hover:bg-emerald-800 text-white font-bold rounded-xl transition-colors shadow-sm flex items-center gap-2"
+                >
+                  <CheckCircle2 className="w-4 h-4" />
+                  Proceed to Payment
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
     </div>
   );
 };

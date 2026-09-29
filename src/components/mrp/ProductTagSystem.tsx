@@ -93,11 +93,10 @@ export const ProductTagSystem: React.FC<ProductTagSystemProps> = ({
         <div className="flex items-center gap-2.5">
           <button
             onClick={() => setIsBatchMode(!isBatchMode)}
-            className={`px-3 py-1.5 rounded-lg text-xs font-semibold border transition-all ${
-              isBatchMode
+            className={`px-3 py-1.5 rounded-lg text-xs font-semibold border transition-all ${isBatchMode
                 ? 'bg-amber-600 text-white border-amber-600'
                 : 'bg-stone-100 text-stone-800 border-stone-200 hover:bg-stone-200'
-            }`}
+              }`}
           >
             {isBatchMode ? 'Switch to Single Tag' : 'Batch Print Mode'}
           </button>
@@ -151,11 +150,10 @@ export const ProductTagSystem: React.FC<ProductTagSystemProps> = ({
                     key={fmt.id}
                     type="button"
                     onClick={() => setTagFormat(fmt.id as any)}
-                    className={`py-2 px-2 text-center rounded-lg text-xs font-semibold border transition-all ${
-                      tagFormat === fmt.id
+                    className={`py-2 px-2 text-center rounded-lg text-xs font-semibold border transition-all ${tagFormat === fmt.id
                         ? 'bg-amber-600 text-white border-amber-600'
                         : 'bg-stone-50 text-stone-700 border-stone-200 hover:bg-stone-100'
-                    }`}
+                      }`}
                   >
                     {fmt.label}
                   </button>
@@ -210,7 +208,7 @@ export const ProductTagSystem: React.FC<ProductTagSystemProps> = ({
               </label>
 
               <div className="h-px w-full bg-stone-200 my-2"></div>
-              
+
               <label className="flex items-center gap-2 cursor-pointer text-stone-700">
                 <input
                   type="checkbox"
@@ -287,13 +285,12 @@ export const ProductTagSystem: React.FC<ProductTagSystemProps> = ({
             {/* The Tag Preview Card */}
             <div
               id="printable-tag"
-              className={`bg-white border-2 border-stone-800 rounded-xl p-6 shadow-xl relative overflow-hidden transition-all text-stone-900 ${
-                tagFormat === 'hang-tag'
+              className={`bg-white border-2 border-stone-800 rounded-xl p-6 shadow-xl relative overflow-hidden transition-all text-stone-900 ${tagFormat === 'hang-tag'
                   ? 'max-w-sm w-full min-h-[540px]'
                   : tagFormat === 'shelf-talker'
-                  ? 'max-w-md w-full min-h-[380px]'
-                  : 'max-w-xl w-full min-h-[600px]'
-              }`}
+                    ? 'max-w-md w-full min-h-[380px]'
+                    : 'max-w-xl w-full min-h-[600px]'
+                }`}
             >
               {/* Luxury Hang Tag Hole punch simulation */}
               {tagFormat === 'hang-tag' && (
@@ -374,7 +371,7 @@ export const ProductTagSystem: React.FC<ProductTagSystemProps> = ({
                   <div className="font-serif text-xl font-bold font-mono text-white">
                     {formatCurrency(selectedProduct.sellingPrice)}
                   </div>
-                  <div className="text-[8px] text-stone-400">Inclusive of 5% Tax & Assembly</div>
+                  <div className="text-[8px] text-stone-400">Inclusive of 13% Tax & Assembly</div>
                 </div>
 
                 {showMrpStrike && (

@@ -155,6 +155,8 @@ export interface Invoice {
   customerId: string;
   customerName: string;
   customerAddress: string;
+  buyerPan?: string;
+  buyerType?: "Walk-in" | "Distributor";
   date: string;
   dueDate: string;
   items: InvoiceItem[];
@@ -163,7 +165,7 @@ export interface Invoice {
   grandTotal: number;
   amountPaid: number;
   paymentStatus: "Unpaid" | "Partial" | "Paid";
-  paymentMethod?: "Cash" | "Credit Card" | "Bank Transfer" | "Cheque";
+  paymentMethod?: "Cash" | "Credit Card" | "Bank Transfer" | "Cheque" | "Credit" | "Other";
   invoiceType: "Tax Invoice" | "POS Receipt" | "Proforma";
 }
 
