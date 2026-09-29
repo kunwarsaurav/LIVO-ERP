@@ -574,7 +574,7 @@ export const SalesCRMModule: React.FC = () => {
                     </td>
 
                     <td className="py-3 px-3 text-stone-700">
-                      {ord.items.length} Custom Pieces ({ord.projectType})
+                      {ord.items?.length || 0} Custom Pieces ({ord.projectType})
                     </td>
 
                     <td className="py-3 px-3 text-right font-mono font-bold text-stone-900">

@@ -98,6 +98,14 @@ const normalizeLead = (raw: Lead): Lead => {
   };
 };
 
+const normalizeOrder = (raw: any): SalesOrder => {
+  return {
+    ...raw,
+    status: raw.status ?? raw.productionStatus ?? 'Ordered',
+    items: raw.items ?? raw.itemsRaw ?? [],
+  };
+};
+
 export const ERPProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const queryClient = useQueryClient();
 
@@ -129,7 +137,8 @@ export const ERPProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     queryKey: ['orders'],
     queryFn: async () => {
       const response = await api.get('/orders?limit=200');
-      return Array.isArray(response.data) ? response.data : response.data?.data ?? [];
+      const list = Array.isArray(response.data) ? response.data : response.data?.data ?? [];
+      return list.map(normalizeOrder);
     },
   });
   const orders = Array.isArray(ordersResponse) ? ordersResponse : ordersResponse?.data ?? [];
