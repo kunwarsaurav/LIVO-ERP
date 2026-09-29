@@ -425,17 +425,19 @@ export const StockManagement: React.FC<StockManagementProps> = ({
                                     {product.modelNumber}
                                   </span>
                                 </div>
-                                <div className="mt-1.5 opacity-80" style={{ transform: 'scale(0.8)', transformOrigin: 'left top' }}>
-                                  <Barcode 
-                                    value={product.sku} 
-                                    width={1.2} 
-                                    height={24} 
-                                    displayValue={false} 
-                                    margin={0} 
-                                    background="transparent" 
-                                    lineColor="#44403c"
-                                  />
-                                </div>
+                                {product.sku && (
+                                  <div className="mt-1.5 opacity-80" style={{ transform: 'scale(0.8)', transformOrigin: 'left top' }}>
+                                    <Barcode 
+                                      value={product.sku} 
+                                      width={1.2} 
+                                      height={24} 
+                                      displayValue={false} 
+                                      margin={0} 
+                                      background="transparent" 
+                                      lineColor="#44403c"
+                                    />
+                                  </div>
+                                )}
                               </div>
                             </div>
                           </td>

@@ -58,14 +58,13 @@ export const PrintDocumentModal: React.FC<PrintDocumentModalProps> = ({
             margin: 0;
             padding: 0;
           }
-          /* Ensure backgrounds print correctly */
           * {
             -webkit-print-color-adjust: exact !important;
             print-color-adjust: exact !important;
           }
         }
       `}</style>
-      <div className="bg-white rounded-2xl shadow-2xl max-w-4xl w-full border border-stone-300 overflow-hidden my-6 print:border-none print:shadow-none print:my-0 print:max-w-none print:block print:overflow-visible">
+      <div id="printable-document-body" className="bg-white rounded-2xl shadow-2xl max-w-4xl w-full border border-stone-300 overflow-hidden my-6 print:border-none print:shadow-none print:my-0 print:max-w-none print:block print:overflow-visible">
         {/* Modal Top Bar (Hidden in Print) */}
         <div className="px-6 py-3.5 bg-stone-900 text-white flex items-center justify-between print:hidden">
           <span className="text-xs font-serif font-bold uppercase tracking-wider text-amber-300">
@@ -88,8 +87,6 @@ export const PrintDocumentModal: React.FC<PrintDocumentModalProps> = ({
           </div>
         </div>
 
-        {/* Printable Document Body */}
-        <div id="printable-document-body">
         {isInvoice && inv ? (
           <Schedule5TaxInvoice invoice={inv} />
         ) : (
@@ -293,7 +290,6 @@ export const PrintDocumentModal: React.FC<PrintDocumentModalProps> = ({
             </div>
           </div>
         )}
-        </div>
       </div>
     </div>
   );
